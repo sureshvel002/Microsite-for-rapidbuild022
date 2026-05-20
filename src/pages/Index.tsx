@@ -4,21 +4,21 @@ import { FileText, MessageSquare, Images, ArrowRight } from "lucide-react";
 const sections = [
   {
     title: "Challenge Cards",
-    description: "Explore customer-specific challenges across six Finnish accounts — mapped to AI-driven opportunities for TCS delivery.",
+    description: "Explore customer-specific challenges across key accounts — mapped to AI-driven opportunities for TCS advisory delivery.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-primary to-accent",
   },
   {
     title: "Deep Research Report",
-    description: "Read the TCS Finland Customer Intelligence Report — six account briefs and cross-industry synthesis from 2024–2025 public sources.",
+    description: "Read the Competitive & Strategic Intelligence Brief — account briefs and cross-industry synthesis from public sources.",
     icon: FileText,
     path: "/deep-research",
     gradient: "from-accent to-primary",
   },
   {
     title: "Prompts",
-    description: "Double Diamond framework prompts tailored for TCS Finland accounts. Copy and use with your preferred AI assistant.",
+    description: "Double Diamond framework prompts tailored for TCS AI Advisory accounts. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
@@ -33,13 +33,13 @@ const Index = () => {
       <div className="max-w-6xl w-full animate-fade-in">
         <div className="text-center mb-12">
           <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-3">
-            TCS Finland
+            TCS AI Advisory
           </p>
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            AI Immersion Day
+            Domain Immersion Day
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the rapid build immersion session — customer intelligence, frameworks, and prompts to accelerate AI adoption across TCS Finland accounts.
+            Resources for the domain immersion session — customer intelligence, frameworks, and prompts to accelerate AI adoption across key accounts.
           </p>
         </div>
 

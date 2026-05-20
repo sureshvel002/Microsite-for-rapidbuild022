@@ -13,8 +13,8 @@ const DeepResearch = () => {
 
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/documents/Executive Research Pack_ TCS Finland Top Accounts Workshop Intelligence.pdf";
-    link.download = "Executive Research Pack_ TCS Finland Top Accounts Workshop Intelligence.pdf";
+    link.href = "/documents/AI Workshop Competitive and Strategic Intelligence Brief.pdf";
+    link.download = "AI Workshop Competitive and Strategic Intelligence Brief.pdf";
     link.click();
   };
 
@@ -27,7 +27,7 @@ const DeepResearch = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="text-lg font-semibold font-display text-card-foreground">Customer Intelligence Report</h1>
+            <h1 className="text-lg font-semibold font-display text-card-foreground">Competitive & Strategic Intelligence Brief</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -48,9 +48,9 @@ const DeepResearch = () => {
       <div className="flex-1 p-4">
         <div className="max-w-5xl mx-auto h-[calc(100vh-100px)] bg-card rounded-xl border border-border shadow-sm overflow-hidden">
           <iframe
-            src="/documents/Executive Research Pack_ TCS Finland Top Accounts Workshop Intelligence.pdf"
+            src="/documents/AI Workshop Competitive and Strategic Intelligence Brief.pdf"
             className="w-full h-full"
-            title="TCS Finland Customer Intelligence Report"
+            title="AI Workshop Competitive and Strategic Intelligence Brief"
           />
         </div>
       </div>
