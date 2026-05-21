@@ -51,7 +51,33 @@ Score each on Impact × Feasibility × Confidence × Time-to-Value. Recommend on
   {
     step: 5,
     label: "Build",
-    text: `You are a product design expert. Using only the brief above, write a single [platform] product requirements prompt that includes Product name + one liner description (actions, process, capabilities), who it's for, screens + key components, brand colors, main user flow, sample data, concise headlines/CTAs, UI instructions, success metric card, constraints (no PII). Return the [platform] prompt only`,
+    text: `Act as a product design engineer.
+
+Using only the brief above, write a single [INSERT AI TOOL, e.g., Microsoft 365 Copilot] prompt that produces a self-contained, downloadable, interactive HTML UI prototype (one .html file, inline CSS and JavaScript, no external dependencies) for this pilot.
+
+The prompt you write must instruct the AI to first autonomously search for or retrieve [INSERT COMPANY NAME]'s official corporate brand identity, specifically:
+
+1. Primary brand color (Hex code)
+2. Primary corporate typography (or its closest standard/web-safe equivalent)
+3. Regional language dialect and spelling (e.g. UK English, Australian English, or US English) based on [INSERT COMPANY NAME]'s primary headquarters.
+4. Professional background aesthetic (e.g., clean light slate, off-white, or dark mode) used on their official platforms.
+
+The prompt must then instruct the AI to build the interactive HTML including:
+
+- Product name and one-line description
+- Who it is for (target user from the brief)
+- Screens and key components styled perfectly using the retrieved brand guidelines
+- Main user flow as the prototype's core interaction
+- A small representative sample dataset hardcoded inside the prototype (no API calls, no real PII)
+- Concise, localized headlines and CTAs matching the company's native region
+- A success-metric tile somewhere in the UI showing the baseline and target
+- Explicit constraints: no real customer, partner or employee names, no live external API calls, no functionality that requires authentication; everything runs offline in a single browser tab.
+
+Important output requirement:
+
+- Do not return the HTML as a chat code block.
+- Do not paste the full HTML source into the chat response.
+- Return the build-prompt only — we will paste it into a fresh Copilot chat.`,
   },
 ];
 
