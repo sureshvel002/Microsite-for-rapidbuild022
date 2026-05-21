@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Copy, Check, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, Check, X, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface ChallengeCard {
-  number: string;
-  company: string;
-  title: string;
-  context: string[];
-  coreChallenge: string;
-  tension: string;
-  opportunityAngle: string;
-  successMetrics: string[];
-}
+import {
+  type ChallengeCard,
+  useSelectedChallenge,
+} from "@/lib/challengeStorage";
 
 const challenges: ChallengeCard[] = [
   {
@@ -138,6 +131,15 @@ const ChallengeCards = () => {
   const [selected, setSelected] = useState<ChallengeCard | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [copiedPopup, setCopiedPopup] = useState(false);
+  const [activeChallenge, selectChallenge, clearChallenge] =
+    useSelectedChallenge();
+  const [justSavedNumber, setJustSavedNumber] = useState<string | null>(null);
+
+  const handleUseChallenge = (card: ChallengeCard) => {
+    selectChallenge(card);
+    setJustSavedNumber(card.number);
+    setTimeout(() => setJustSavedNumber(null), 1800);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -171,46 +173,87 @@ const ChallengeCards = () => {
           <h1 className="text-lg font-semibold font-display text-card-foreground">
             Challenge Cards
           </h1>
+
+          {activeChallenge && (
+            <div className="ml-auto flex items-center gap-2">
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                Selected:{" "}
+                <span className="font-semibold text-foreground">
+                  {activeChallenge.company}
+                </span>
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs"
+                onClick={clearChallenge}
+              >
+                Clear
+              </Button>
+              <Button
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => navigate("/prompts")}
+              >
+                Go to Prompts
+                <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Cards */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {challenges.map((card, idx) => (
-            <button
-              key={idx}
-              onClick={() => { setSelected(card); setCopiedPopup(false); }}
-              className="group relative rounded-xl border border-border bg-card p-6 text-left transition-all hover:shadow-lg hover:border-primary/30 hover:-translate-y-1"
-            >
-              <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-accent rounded-t-xl" />
+          {challenges.map((card, idx) => {
+            const isActive = activeChallenge?.number === card.number;
+            return (
+              <button
+                key={idx}
+                onClick={() => { setSelected(card); setCopiedPopup(false); }}
+                className={`group relative rounded-xl border bg-card p-6 text-left transition-all hover:shadow-lg hover:-translate-y-1 ${
+                  isActive
+                    ? "border-primary ring-2 ring-primary/40 shadow-md"
+                    : "border-border hover:border-primary/30"
+                }`}
+              >
+                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-accent rounded-t-xl" />
 
-              <div className="flex items-start justify-between mb-3">
-                <p className="text-xs font-bold text-primary uppercase tracking-wide">
-                  {card.company}
+                {isActive && (
+                  <span className="absolute -top-2 -right-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow">
+                    <CheckCircle2 className="h-3 w-3" /> Selected
+                  </span>
+                )}
+
+                <div className="flex items-start justify-between mb-3">
+                  <p className="text-xs font-bold text-primary uppercase tracking-wide">
+                    {card.company}
+                  </p>
+                  <button
+                    onClick={(e) => handleCopy(card, idx, e)}
+                    className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    title="Copy challenge content"
+                  >
+                    {copiedIdx === idx ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+
+                <h2 className="text-base font-semibold text-card-foreground font-display leading-snug mb-3 group-hover:text-primary transition-colors">
+                  {card.title}
+                </h2>
+
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                  {card.coreChallenge}
                 </p>
-                <button
-                  onClick={(e) => handleCopy(card, idx, e)}
-                  className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                  title="Copy challenge content"
-                >
-                  {copiedIdx === idx ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-
-              <h2 className="text-base font-semibold text-card-foreground font-display leading-snug mb-3 group-hover:text-primary transition-colors">
-                {card.title}
-              </h2>
-
-              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                {card.coreChallenge}
-              </p>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -270,7 +313,7 @@ const ChallengeCards = () => {
               <p className="text-sm text-card-foreground leading-relaxed font-medium">{selected.opportunityAngle}</p>
             </Section>
 
-            <Section label="Success Metrics" last>
+            <Section label="Success Metrics">
               <ul className="space-y-1.5">
                 {selected.successMetrics.map((m, i) => (
                   <li key={i} className="text-sm text-muted-foreground leading-relaxed flex gap-2">
@@ -279,6 +322,61 @@ const ChallengeCards = () => {
                 ))}
               </ul>
             </Section>
+
+            {/* Selection footer */}
+            <div className="mt-6 pt-5 border-t border-border flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+              <div className="text-xs text-muted-foreground">
+                {activeChallenge?.number === selected.number ? (
+                  <span className="inline-flex items-center gap-1.5 text-green-600 font-medium">
+                    <CheckCircle2 className="h-4 w-4" />
+                    This challenge is currently selected
+                  </span>
+                ) : (
+                  <span>Pick this challenge to anchor your prompts on the next page.</span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {activeChallenge?.number === selected.number ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        clearChallenge();
+                        setJustSavedNumber(null);
+                      }}
+                    >
+                      Clear
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => navigate("/prompts")}
+                    >
+                      Go to Prompts
+                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => handleUseChallenge(selected)}
+                    className={
+                      justSavedNumber === selected.number
+                        ? "bg-green-600 hover:bg-green-600 text-white"
+                        : ""
+                    }
+                  >
+                    {justSavedNumber === selected.number ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1" /> Saved
+                      </>
+                    ) : (
+                      <>Use this Challenge</>
+                    )}
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

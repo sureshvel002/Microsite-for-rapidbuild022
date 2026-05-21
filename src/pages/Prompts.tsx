@@ -1,7 +1,19 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Copy, Check, Maximize, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Copy,
+  Check,
+  Maximize,
+  X,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  type ChallengeCard,
+  formatChallengeText,
+  useSelectedChallenge,
+} from "@/lib/challengeStorage";
 
 const prompts = [
   {
@@ -43,10 +55,29 @@ Score each on Impact × Feasibility × Confidence × Time-to-Value. Recommend on
   },
 ];
 
+function buildPromptText(
+  step: number,
+  baseText: string,
+  challenge: ChallengeCard | null
+): { text: string; injected: boolean } {
+  // Inject the full challenge content into the Widen step (step 1).
+  if (step === 1 && challenge) {
+    const injected = `Act as a research aide for the following challenge:
+
+${formatChallengeText(challenge)}
+
+List key personas, top pains, current workarounds, and success metrics.
+Return 5 insights & 3 risks tailored to this challenge context.`;
+    return { text: injected, injected: true };
+  }
+  return { text: baseText, injected: false };
+}
+
 const Prompts = () => {
   const navigate = useNavigate();
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
+  const [challenge, , clearChallenge] = useSelectedChallenge();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -76,39 +107,54 @@ const Prompts = () => {
         </div>
       </header>
 
-      {/* Main content: Image left, All prompts right */}
+      {/* Main content: Selected challenge + image (left), All prompts (right) */}
       <div className="flex-1 min-h-0">
         <div className="max-w-[1600px] mx-auto h-full p-4 flex gap-5">
-          {/* Left: Image – sticky, stretched vertically */}
-          <div className="w-[45%] shrink-0 rounded-lg border border-border overflow-hidden bg-black relative hidden lg:flex flex-col">
-            <div className="w-full h-full bg-black flex items-center justify-center">
+          {/* Left column: Selected challenge above, framework image below */}
+          <div className="w-[45%] shrink-0 hidden lg:flex flex-col gap-3 min-h-0">
+            <SelectedChallengePanel
+              challenge={challenge}
+              onChange={() => navigate("/challenge-cards")}
+              onClear={clearChallenge}
+            />
+
+            <div className="shrink-0 h-[36vh] rounded-lg border border-border overflow-hidden bg-black relative">
+              <div className="w-full h-full bg-black flex items-center justify-center">
+                <img
+                  src="/dd-prompt.jpeg"
+                  alt="Framework diagram"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <button
+                className="absolute top-3 right-3 h-8 w-8 rounded-md bg-black/60 hover:bg-black/80 text-white flex items-center justify-center z-10"
+                onClick={() => setShowFullscreen(true)}
+              >
+                <Maximize className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile: Selected challenge + image shown above prompts */}
+          <div className="lg:hidden flex flex-col gap-3 mb-4">
+            <SelectedChallengePanel
+              challenge={challenge}
+              onChange={() => navigate("/challenge-cards")}
+              onClear={clearChallenge}
+            />
+            <div className="rounded-lg border border-border overflow-hidden bg-black relative">
               <img
                 src="/dd-prompt.jpeg"
                 alt="Framework diagram"
-                className="w-full h-full object-contain"
+                className="w-full h-auto object-contain"
               />
+              <button
+                className="absolute top-3 right-3 h-8 w-8 rounded-md bg-black/60 hover:bg-black/80 text-white flex items-center justify-center"
+                onClick={() => setShowFullscreen(true)}
+              >
+                <Maximize className="h-4 w-4" />
+              </button>
             </div>
-            <button
-              className="absolute top-3 right-3 h-8 w-8 rounded-md bg-black/60 hover:bg-black/80 text-white flex items-center justify-center z-10"
-              onClick={() => setShowFullscreen(true)}
-            >
-              <Maximize className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Mobile: Image shown above prompts */}
-          <div className="lg:hidden rounded-lg border border-border overflow-hidden bg-black relative mb-4">
-            <img
-              src="/dd-prompt.jpeg"
-              alt="Framework diagram"
-              className="w-full h-auto object-contain"
-            />
-            <button
-              className="absolute top-3 right-3 h-8 w-8 rounded-md bg-black/60 hover:bg-black/80 text-white flex items-center justify-center"
-              onClick={() => setShowFullscreen(true)}
-            >
-              <Maximize className="h-4 w-4" />
-            </button>
           </div>
 
           {/* Right: All prompts visible, scrollable */}
@@ -117,47 +163,62 @@ const Prompts = () => {
               Follow the {prompts.length}-Step Framework
             </h2>
 
-            {prompts.map((prompt, index) => (
-              <div
-                key={prompt.step}
-                className="rounded-lg border border-border bg-card overflow-hidden"
-              >
-                {/* Card header */}
-                <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30">
-                  <div className="flex items-center gap-2.5">
-                    <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                      {prompt.step}
-                    </span>
-                    <span className="text-sm font-semibold text-card-foreground font-display">
-                      {prompt.label}
-                    </span>
+            {prompts.map((prompt, index) => {
+              const { text, injected } = buildPromptText(
+                prompt.step,
+                prompt.text,
+                challenge
+              );
+              return (
+                <div
+                  key={prompt.step}
+                  className={`rounded-lg border bg-card overflow-hidden ${
+                    injected ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
+                  }`}
+                >
+                  {/* Card header */}
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30">
+                    <div className="flex items-center gap-2.5">
+                      <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                        {prompt.step}
+                      </span>
+                      <span className="text-sm font-semibold text-card-foreground font-display">
+                        {prompt.label}
+                      </span>
+                      {injected && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                          <Sparkles className="h-3 w-3" />
+                          Challenge injected
+                        </span>
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`h-7 text-xs ${copiedIndex === index ? "text-green-600 border-green-300" : ""}`}
+                      onClick={() => handleCopy(text, index)}
+                    >
+                      {copiedIndex === index ? (
+                        <>
+                          <Check className="h-3 w-3 mr-1" /> Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3 w-3 mr-1" /> Copy
+                        </>
+                      )}
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className={`h-7 text-xs ${copiedIndex === index ? "text-green-600 border-green-300" : ""}`}
-                    onClick={() => handleCopy(prompt.text, index)}
-                  >
-                    {copiedIndex === index ? (
-                      <>
-                        <Check className="h-3 w-3 mr-1" /> Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3 w-3 mr-1" /> Copy
-                      </>
-                    )}
-                  </Button>
-                </div>
 
-                {/* Prompt content */}
-                <div className="px-4 py-3">
-                  <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-line">
-                    {prompt.text}
-                  </p>
+                  {/* Prompt content */}
+                  <div className="px-4 py-3">
+                    <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-line">
+                      {text}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -185,5 +246,148 @@ const Prompts = () => {
     </div>
   );
 };
+
+interface SelectedChallengePanelProps {
+  challenge: ChallengeCard | null;
+  onChange: () => void;
+  onClear: () => void;
+}
+
+function SelectedChallengePanel({
+  challenge,
+  onChange,
+  onClear,
+}: SelectedChallengePanelProps) {
+  if (!challenge) {
+    return (
+      <div className="rounded-lg border border-dashed border-border bg-card/50 p-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="rounded-md bg-primary/10 p-1.5 shrink-0">
+            <Sparkles className="h-4 w-4 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-semibold text-card-foreground truncate">
+              No challenge selected
+            </p>
+            <p className="text-[11px] text-muted-foreground truncate">
+              Pick one to anchor the prompts below.
+            </p>
+          </div>
+        </div>
+        <Button size="sm" className="h-7 text-xs shrink-0" onClick={onChange}>
+          Choose Challenge
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-lg border border-primary/30 bg-card shadow-sm overflow-hidden flex flex-col min-h-0 flex-1">
+      {/* Sticky header */}
+      <div className="px-3 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border flex items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="rounded-md bg-primary/15 p-1 shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-primary shrink-0">
+            Selected Challenge
+          </span>
+          <span className="text-[10px] text-muted-foreground truncate">
+            · {challenge.company}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={onChange}
+            className="text-[11px] font-medium text-primary hover:underline px-1.5 py-0.5 rounded"
+            title="Pick a different challenge"
+          >
+            Change
+          </button>
+          <button
+            onClick={onClear}
+            className="text-muted-foreground hover:text-foreground p-1 rounded"
+            title="Clear selection"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable full-content body (mirrors the Challenge Cards popup) */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
+        <p className="text-[11px] font-bold text-primary uppercase tracking-wide mb-1">
+          {challenge.company}
+        </p>
+        <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-4">
+          {challenge.title}
+        </h3>
+
+        <PanelSection label="Context">
+          <ul className="space-y-1.5">
+            {challenge.context.map((c, i) => (
+              <li
+                key={i}
+                className="text-xs text-muted-foreground leading-relaxed flex gap-2"
+              >
+                <span className="text-primary mt-0.5 shrink-0">●</span> {c}
+              </li>
+            ))}
+          </ul>
+        </PanelSection>
+
+        <PanelSection label="Core Challenge">
+          <p className="text-xs text-card-foreground leading-relaxed font-medium italic">
+            {challenge.coreChallenge}
+          </p>
+        </PanelSection>
+
+        <PanelSection label="Tension">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {challenge.tension}
+          </p>
+        </PanelSection>
+
+        <PanelSection label="Opportunity Angle">
+          <p className="text-xs text-card-foreground leading-relaxed font-medium">
+            {challenge.opportunityAngle}
+          </p>
+        </PanelSection>
+
+        <PanelSection label="Success Metrics" last>
+          <ul className="space-y-1.5">
+            {challenge.successMetrics.map((m, i) => (
+              <li
+                key={i}
+                className="text-xs text-muted-foreground leading-relaxed flex gap-2"
+              >
+                <span className="text-primary mt-0.5 shrink-0">●</span> {m}
+              </li>
+            ))}
+          </ul>
+        </PanelSection>
+      </div>
+    </div>
+  );
+}
+
+function PanelSection({
+  label,
+  children,
+  last,
+}: {
+  label: string;
+  children: React.ReactNode;
+  last?: boolean;
+}) {
+  return (
+    <div className={last ? "" : "mb-4"}>
+      <h4 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+        {label}
+      </h4>
+      {children}
+    </div>
+  );
+}
 
 export default Prompts;
