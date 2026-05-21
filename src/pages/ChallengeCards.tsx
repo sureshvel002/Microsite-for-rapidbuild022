@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Copy, Check, X, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, Check, X, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
@@ -325,14 +325,17 @@ const ChallengeCards = () => {
 
             {/* Selection footer */}
             <div className="mt-6 pt-5 border-t border-border flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <div className="text-xs text-muted-foreground">
+              <div>
                 {activeChallenge?.number === selected.number ? (
-                  <span className="inline-flex items-center gap-1.5 text-green-600 font-medium">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-bold border border-green-200">
                     <CheckCircle2 className="h-4 w-4" />
                     This challenge is currently selected
                   </span>
                 ) : (
-                  <span>Pick this challenge to anchor your prompts on the next page.</span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-bold border border-primary/20">
+                    <Sparkles className="h-4 w-4" />
+                    Pick this challenge to anchor your prompts
+                  </span>
                 )}
               </div>
               <div className="flex gap-2">
