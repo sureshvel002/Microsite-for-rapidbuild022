@@ -16,6 +16,14 @@ export interface ChallengeCard {
   baselineMetrics: string[];    // evidence bullets (sourced from brief)
   audienceFit: string;          // primary breakout audience
   crossFunctionalHooks: string; // adjacent stakeholders
+  /**
+   * Controls how this challenge is injected into the Widen-step prompt
+   * when selected. Defaults to "title" (only the card title is injected).
+   * Set to "full" for cards that benefit from the entire structured block
+   * (theme, statement, why now, baseline metrics, audience, hooks) being
+   * passed to the AI verbatim.
+   */
+  injectionMode?: "title" | "full";
 }
 
 // Storage key includes a client + schema tag so stale selections are

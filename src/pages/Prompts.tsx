@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
+  formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
@@ -163,23 +164,130 @@ Return the file as a downloadable .html using Copilot's file-creation capability
   },
 ];
 
-function buildPromptText(
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+// Prompt segmentation — turns a plain prompt string into a list of typed
+// segments so the renderer can visually distinguish:
+//   • static       → normal prose
+//   • placeholder  → `[TOP PAIN]`-style tokens the user must fill in
+//   • injected     → text the system has substituted in (selected challenge)
+// The `text` field returned alongside is the plain concatenation, used by
+// the Copy button so the clipboard still gets the placeholder verbatim.
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+type PromptSegment =
+  | { type: "static"; text: string }
+  | { type: "placeholder"; text: string }
+  | { type: "injected"; text: string };
+
+// Matches uppercase bracketed tokens like `[TOP PAIN]`,
+// `[SELECTED CHALLENGE STATEMENT]`. Lowercase bracketed text is left alone.
+const PLACEHOLDER_RE = /\[[A-Z][A-Z0-9 _-]*\]/g;
+
+function splitPlaceholders(input: string): PromptSegment[] {
+  if (!input) return [];
+  const out: PromptSegment[] = [];
+  let cursor = 0;
+  for (const m of input.matchAll(PLACEHOLDER_RE)) {
+    const start = m.index ?? 0;
+    if (start > cursor) {
+      out.push({ type: "static", text: input.slice(cursor, start) });
+    }
+    out.push({ type: "placeholder", text: m[0] });
+    cursor = start + m[0].length;
+  }
+  if (cursor < input.length) {
+    out.push({ type: "static", text: input.slice(cursor) });
+  }
+  return out;
+}
+
+function buildPromptSegments(
   step: number,
   baseText: string,
   challenge: ChallengeCard | null
-): { text: string; injected: boolean } {
+): { segments: PromptSegment[]; text: string; injected: boolean } {
   // Step 1 (Widen) carries a `[SELECTED CHALLENGE STATEMENT]` placeholder.
-  // When a challenge is selected, swap that token in-place with the
-  // challenge card's title only — the surrounding sentence already
-  // anchors the context to "at Telia Finland".
+  // When a challenge is selected, swap it in-place. By default we inject
+  // the card title only. Cards with `injectionMode: "full"` instead get
+  // the entire structured challenge block injected for richer context.
   if (step === 1 && challenge) {
-    const placeholder = "[SELECTED CHALLENGE STATEMENT]";
-    if (baseText.includes(placeholder)) {
-      const injected = baseText.replace(placeholder, challenge.title);
-      return { text: injected, injected: true };
+    const tokenWithSuffix = "[SELECTED CHALLENGE STATEMENT] at Telia Finland.";
+    const tokenOnly = "[SELECTED CHALLENGE STATEMENT]";
+
+    if (
+      challenge.injectionMode === "full" &&
+      baseText.includes(tokenWithSuffix)
+    ) {
+      const idx = baseText.indexOf(tokenWithSuffix);
+      const before = baseText.slice(0, idx);
+      const after = baseText.slice(idx + tokenWithSuffix.length);
+      const injectedText = `following Telia Finland challenge:\n\n${formatChallengeText(
+        challenge
+      )}\n`;
+      const segments: PromptSegment[] = [
+        ...splitPlaceholders(before),
+        { type: "injected", text: injectedText },
+        ...splitPlaceholders(after),
+      ];
+      return { segments, text: before + injectedText + after, injected: true };
+    }
+
+    if (baseText.includes(tokenOnly)) {
+      const idx = baseText.indexOf(tokenOnly);
+      const before = baseText.slice(0, idx);
+      const after = baseText.slice(idx + tokenOnly.length);
+      const segments: PromptSegment[] = [
+        ...splitPlaceholders(before),
+        { type: "injected", text: challenge.title },
+        ...splitPlaceholders(after),
+      ];
+      return {
+        segments,
+        text: before + challenge.title + after,
+        injected: true,
+      };
     }
   }
-  return { text: baseText, injected: false };
+
+  // No injection — just split the literal placeholders so they get the
+  // "fill me in" pill treatment in the renderer.
+  return {
+    segments: splitPlaceholders(baseText),
+    text: baseText,
+    injected: false,
+  };
+}
+
+function PromptBody({ segments }: { segments: PromptSegment[] }) {
+  return (
+    <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-wrap">
+      {segments.map((seg, i) => {
+        if (seg.type === "injected") {
+          return (
+            <span
+              key={i}
+              className="rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20"
+              title="Filled in from your selected challenge"
+            >
+              {seg.text}
+            </span>
+          );
+        }
+        if (seg.type === "placeholder") {
+          return (
+            <span
+              key={i}
+              className="rounded-sm bg-amber-100 text-amber-800 border border-dashed border-amber-400 px-1 font-mono text-[12px] font-bold uppercase tracking-wide"
+              title="Replace this placeholder before running the prompt"
+            >
+              {seg.text}
+            </span>
+          );
+        }
+        return <Fragment key={i}>{seg.text}</Fragment>;
+      })}
+    </p>
+  );
 }
 
 const Prompts = () => {
@@ -277,9 +385,28 @@ const Prompts = () => {
 
           {/* Right: All prompts visible, scrollable */}
           <div className="flex-1 min-w-0 overflow-y-auto pr-1 space-y-3">
-            <h2 className="text-base font-bold font-display text-foreground mb-3">
-              Follow the {prompts.length}-Step Framework
-            </h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5 mb-3">
+              <h2 className="text-base font-bold font-display text-foreground">
+                Follow the {prompts.length}-Step Framework
+              </h2>
+              {/* Highlight legend — explains the two visual styles used inside
+                  each prompt body. Lives next to the heading so the user sees
+                  it before scanning the first card. */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="rounded-sm bg-amber-100 text-amber-800 border border-dashed border-amber-400 px-1 font-mono text-[10px] font-bold leading-tight">
+                    [PLACEHOLDER]
+                  </span>
+                  fill in manually
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20 text-[10px] leading-tight">
+                    selected challenge
+                  </span>
+                  auto-injected
+                </span>
+              </div>
+            </div>
 
             {prompts.map((prompt, index) => {
               const hasVariants = isVariantPrompt(prompt);
@@ -290,7 +417,7 @@ const Prompts = () => {
               const baseText = hasVariants
                 ? activeVariant!.text
                 : (prompt as SimplePrompt).text;
-              const { text, injected } = buildPromptText(
+              const { segments, text, injected } = buildPromptSegments(
                 prompt.step,
                 baseText,
                 challenge
@@ -396,12 +523,12 @@ const Prompts = () => {
                     </div>
                   )}
 
-                  {/* Prompt content — `whitespace-pre-wrap` preserves leading
-                      indent so nested bullet points stay nested visually. */}
+                  {/* Prompt content — segmented so dynamic content (system
+                      injections + user-fill placeholders) can be visually
+                      distinguished from static prose. `whitespace-pre-wrap`
+                      preserves leading indent on nested bullets. */}
                   <div className="px-4 py-3">
-                    <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-wrap">
-                      {text}
-                    </p>
+                    <PromptBody segments={segments} />
                   </div>
                 </div>
               );

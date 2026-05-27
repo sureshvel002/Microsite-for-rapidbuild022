@@ -224,6 +224,31 @@ const challenges: ChallengeCard[] = [
     crossFunctionalHooks:
       "CISO; Head of OSS; Director B2B Marketing/CIE & B2B Digital Ops; Finance Director",
   },
+  {
+    number: "CC12",
+    company: "Telia Finland",
+    theme: "B2B Delivery Services / Enterprise Productivity",
+    title: "Delivery capacity is falling short of demand",
+    summary:
+      "Hansel deliveries are running well below target; capacity, complexity and post-delivery work choke the pipeline.",
+    challengeStatement:
+      "Hansel project's customer deliveries are progressing too slowly, and current delivery capacity is insufficient to meet rising demand. The gap is driven by limited resources, delivery complexity in non-standard cases, and post-delivery work that has not been adequately accounted for. In addition, customer delays in providing information and missing support materials further slow the process.",
+    whyNow:
+      "Hansel delivery volumes have increased rapidly and will continue for 2+ years. Current delivery output does not scale with rising demand, backlogs and queues are starting to threaten customer experience and trust, and manual reactive control no longer works at this scale. The Hansel delivery end date keeps slipping further out, and multiple IT systems (e.g. customer-numbering data processing) further slow the delivery process.",
+    baselineMetrics: [
+      "Delivery throughput is significantly below target (about 1\u20132 deliveries per week vs. a target of 6\u20138)",
+      "Number-investigation backlog grew rapidly to ~150 cases",
+      "Delivery start dates are delayed by several weeks due to resource constraints and customer-data / delivery-information investigation bottlenecks",
+      "Asset creation and customer training take longer than before, especially when handled by less experienced personnel rather than dedicated back-office and customer trainers",
+      "Post-delivery warranty work consumes delivery capacity without systematic measurement",
+      "End-to-end delivery status must be manually assembled from multiple sources",
+    ],
+    audienceFit:
+      "Head of B2B Customer Operations; Head of B2B Delivery Services; Head of Large Corporate Customers; Head of B2B Development",
+    crossFunctionalHooks:
+      "Delivery & Operations (workload management, prioritisation, lead times); Sales (orderability, predictability, deal progression); IT & Architecture (system integration, automation, data availability); Customer Experience (communication timing, delivery quality, post-delivery experience); Management (predictive steering, capacity decisions, risk management)",
+    injectionMode: "full",
+  },
 ];
 
 const LG_BREAKPOINT = 1024;
