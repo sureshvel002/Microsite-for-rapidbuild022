@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -64,6 +65,7 @@ export default {
         chatgpt: "hsl(var(--chatgpt))",
         gemini: "hsl(var(--gemini))",
         claude: "hsl(var(--claude))",
+        googleai: "hsl(var(--googleai))",
         "copy-success": "hsl(var(--copy-success))",
       },
       borderRadius: {
@@ -92,5 +94,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

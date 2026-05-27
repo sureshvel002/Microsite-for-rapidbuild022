@@ -19,7 +19,7 @@ const prompts = [
   {
     step: 0,
     label: "Learn",
-    text: `Here is the Competitive & Strategic Intelligence Brief for the account we are going to discuss today. No action required. Use this report as additional context for your responses apart from web search and other resources.`,
+    text: `Here is the Competitive & Strategic Intelligence Brief for Telia Finland, the account we are going to discuss today. No action required. Use this report as additional context for your responses apart from web search and other resources.`,
   },
   {
     step: 1,
@@ -51,33 +51,20 @@ Score each on Impact × Feasibility × Confidence × Time-to-Value. Recommend on
   {
     step: 5,
     label: "Build",
-    text: `Act as a product design engineer.
+    text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes:
 
-Using only the brief above, write a single [INSERT AI TOOL, e.g., Microsoft 365 Copilot] prompt that produces a self-contained, downloadable, interactive HTML UI prototype (one .html file, inline CSS and JavaScript, no external dependencies) for this pilot.
+- Product name + one-liner description (actions, process, capabilities)
+- Who it's for (primary user, secondary users)
+- Screens + key components (list every screen and what sits on it)
+- Brand colours (Telia palette: primary purple, neutrals, semantic colours for success / warning / alert)
+- Main user flow (5–8 steps from entry to outcome)
+- Sample data (synthetic, plausible, Finnish locale, no real names)
+- Concise headlines and CTAs (plain business English, no marketing tone)
+- UI instructions (layout patterns, density, typography hierarchy, component states: empty / loading / populated / error)
+- Success metric card (baseline → target from the brief)
+- Constraints (no real customer / partner / employee PII; synthetic data only)
 
-The prompt you write must instruct the AI to first autonomously search for or retrieve [INSERT COMPANY NAME]'s official corporate brand identity, specifically:
-
-1. Primary brand color (Hex code)
-2. Primary corporate typography (or its closest standard/web-safe equivalent)
-3. Regional language dialect and spelling (e.g. UK English, Australian English, or US English) based on [INSERT COMPANY NAME]'s primary headquarters.
-4. Professional background aesthetic (e.g., clean light slate, off-white, or dark mode) used on their official platforms.
-
-The prompt must then instruct the AI to build the interactive HTML including:
-
-- Product name and one-line description
-- Who it is for (target user from the brief)
-- Screens and key components styled perfectly using the retrieved brand guidelines
-- Main user flow as the prototype's core interaction
-- A small representative sample dataset hardcoded inside the prototype (no API calls, no real PII)
-- Concise, localized headlines and CTAs matching the company's native region
-- A success-metric tile somewhere in the UI showing the baseline and target
-- Explicit constraints: no real customer, partner or employee names, no live external API calls, no functionality that requires authentication; everything runs offline in a single browser tab.
-
-Important output requirement:
-
-- Do not return the HTML as a chat code block.
-- Do not paste the full HTML source into the chat response.
-- Return the build-prompt only — we will paste it into a fresh Copilot chat.`,
+Return the Google AI Studio prompt only — no preamble, no commentary, no explanation of what you are about to do. Just the prompt, ready to paste into Google AI Studio.`,
   },
 ];
 
@@ -128,7 +115,7 @@ const Prompts = () => {
             <ArrowLeft className="h-4 w-4 mr-1" /> Back
           </Button>
           <h1 className="text-lg font-semibold font-display text-card-foreground">
-            From Abstract Ideas to Working Demos
+            Double Diamond Framework Prompts
           </h1>
         </div>
       </header>
@@ -342,47 +329,32 @@ function SelectedChallengePanel({
 
       {/* Scrollable full-content body (mirrors the Challenge Cards popup) */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
-        <p className="text-[11px] font-bold text-primary uppercase tracking-wide mb-1">
-          {challenge.company}
+        <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">
+          {challenge.theme}
         </p>
-        <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-4">
+        <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-3">
           {challenge.title}
         </h3>
 
-        <PanelSection label="Context">
-          <ul className="space-y-1.5">
-            {challenge.context.map((c, i) => (
-              <li
-                key={i}
-                className="text-xs text-muted-foreground leading-relaxed flex gap-2"
-              >
-                <span className="text-primary mt-0.5 shrink-0">●</span> {c}
-              </li>
-            ))}
-          </ul>
-        </PanelSection>
-
-        <PanelSection label="Core Challenge">
-          <p className="text-xs text-card-foreground leading-relaxed font-medium italic">
-            {challenge.coreChallenge}
+        {/* Highlighted challenge statement */}
+        <div className="mb-4 rounded-md border-l-[3px] border-accent bg-accent/5 px-3 py-2">
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">
+            Challenge statement
+          </h4>
+          <p className="text-xs text-card-foreground leading-relaxed italic">
+            &ldquo;{challenge.challengeStatement}&rdquo;
           </p>
-        </PanelSection>
+        </div>
 
-        <PanelSection label="Tension">
+        <PanelSection label="Why now">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            {challenge.tension}
+            {challenge.whyNow}
           </p>
         </PanelSection>
 
-        <PanelSection label="Opportunity Angle">
-          <p className="text-xs text-card-foreground leading-relaxed font-medium">
-            {challenge.opportunityAngle}
-          </p>
-        </PanelSection>
-
-        <PanelSection label="Success Metrics" last>
+        <PanelSection label="Baseline metrics / evidence">
           <ul className="space-y-1.5">
-            {challenge.successMetrics.map((m, i) => (
+            {challenge.baselineMetrics.map((m, i) => (
               <li
                 key={i}
                 className="text-xs text-muted-foreground leading-relaxed flex gap-2"
@@ -391,6 +363,18 @@ function SelectedChallengePanel({
               </li>
             ))}
           </ul>
+        </PanelSection>
+
+        <PanelSection label="Audience fit">
+          <p className="text-xs text-card-foreground leading-relaxed">
+            {challenge.audienceFit}
+          </p>
+        </PanelSection>
+
+        <PanelSection label="Cross-functional hooks" last>
+          <p className="text-xs text-card-foreground leading-relaxed">
+            {challenge.crossFunctionalHooks}
+          </p>
         </PanelSection>
       </div>
     </div>

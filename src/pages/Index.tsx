@@ -4,21 +4,21 @@ import { FileText, MessageSquare, Images, ArrowRight } from "lucide-react";
 const sections = [
   {
     title: "Challenge Cards",
-    description: "Explore customer-specific challenges across key accounts — mapped to AI-driven opportunities for TCS advisory delivery.",
+    description: "Explore the business problems extracted from the Telia Finland discovery brief — framed for mixed leadership / IT breakout discussions.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-primary to-accent",
   },
   {
     title: "Deep Research Report",
-    description: "Read the Competitive & Strategic Intelligence Brief — account briefs and cross-industry synthesis from public sources.",
+    description: "Read the Telia Finland Competitive & Strategic Intelligence Brief — market context and public-source synthesis.",
     icon: FileText,
     path: "/deep-research",
     gradient: "from-accent to-primary",
   },
   {
     title: "Prompts",
-    description: "Double Diamond framework prompts tailored for TCS AI Advisory accounts. Copy and use with your preferred AI assistant.",
+    description: "Double Diamond framework prompts tailored for the Telia Finland immersion. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
@@ -33,13 +33,13 @@ const Index = () => {
       <div className="max-w-6xl w-full animate-fade-in">
         <div className="text-center mb-12">
           <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-3">
-            TCS AI Advisory
+            TCS · Telia Finland
           </p>
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            Domain Immersion Day
+            Telia Finland — AI Immersion Day
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the domain immersion session — customer intelligence, frameworks, and prompts to accelerate AI adoption across key accounts.
+            Resources for the Telia Finland immersion — discovery context, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
           </p>
         </div>
 

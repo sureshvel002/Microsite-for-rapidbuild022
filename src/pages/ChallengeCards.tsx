@@ -1,139 +1,282 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Copy, Check, X, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Copy,
+  Check,
+  X,
+  CheckCircle2,
+  Sparkles,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
+  formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
+// Cards from the Telia Finland AI Immersion Day discovery brief, framed
+// as business problems for mixed leadership / IT breakout discussion
+// (not solution briefs). The internal `number` (CCxx) is kept as a stable
+// id for storage but is not surfaced in the UI per current design.
 const challenges: ChallengeCard[] = [
   {
-    number: "1",
-    company: "ABN AMRO",
-    title: "GenAI KYC \"Case Copilot\" (Control-Grade)",
-    context: [
-      "Know Your Customer (KYC) analysts spend heavy time reading documents, summarizing, completing checklists, and drafting rationales",
-      "The work must be fully audit-ready with strong governance and traceability",
+    number: "CC03",
+    company: "Telia Finland",
+    theme: "Customer Care / Omnichannel",
+    title: "Care journeys restart every time the channel changes",
+    summary:
+      "Channel hand-offs force customers to repeat themselves, eroding care quality and retention.",
+    challengeStatement:
+      "Customers contact us too many times to solve one issue, and each handoff makes them repeat context we should already know. The organization experiences it as queues and transfers; the customer experiences it as not being understood.",
+    whyNow:
+      "Telia says it accelerated AI in customer service during 2025 and routine enquiries are increasingly handled autonomously. Finland consumer mobile remains under competitive pressure while fixed and business solutions improve, making care quality a retention lever rather than only a support cost line.",
+    baselineMetrics: [
+      "2,396k mobile postpaid subscriptions excluding M2M",
+      "627k broadband subscriptions",
+      "659k TV subscriptions",
+      "Finland service revenue: SEK 3,077m in Q1 2026 and SEK 12,844m in FY2025",
+      "Vendor directional signal: Telia Finland CX program used RPA, attended automation, AI and analytics",
     ],
-    coreChallenge: "How do we deploy a GenAI copilot that drastically reduces analyst handling time while maintaining full audit-readiness, governance, and traceability?",
-    tension: "Speed and efficiency gains vs. control-grade compliance, evidence traceability, and policy adherence",
-    opportunityAngle: "Build an AI-assisted KYC workflow with document citation, audit-replayable rationales, and human-in-the-loop governance",
-    successMetrics: [
-      "\u226525\u201335% reduction in analyst handling time per KYC case",
-      "\u226530% reduction in end-to-end KYC cycle time (request \u2192 completion)",
-      "\u226595% of AI-generated rationales include evidence links (document citations) and are audit-replayable",
-      "\u22641% policy breach / escalation rate from copilot suggestions (with human-in-the-loop)",
-    ],
+    audienceFit:
+      "Head of B2B Customer Operations; Head of Sales Support B2C; Director Service Management Assurance & Operations; CRM & Development Lead",
+    crossFunctionalHooks:
+      "Head of OSS; CIO; Head of Business Intelligence; Senior Process Manager B2B; Brand Manager",
   },
   {
-    number: "2",
-    company: "Air India",
-    title: "Agentic AI for Refunds & Disruptions (Policy-Safe Automation)",
-    context: [
-      "Refunds and disruption servicing lead to backlogs and long waits",
-      "Agents navigate complex policies across cases",
-      "Scaling policy-safe agentic automation is a high-ROI wedge",
+    number: "CC05",
+    company: "Telia Finland",
+    theme: "SME Growth / Commercial Execution",
+    title: "SME growth is stuck in a three-player fight",
+    summary:
+      "Growth leans on discounting because timing, relevance, and execution don't differentiate enough.",
+    challengeStatement:
+      "We are competing in a market where everyone has nationwide capabilities and customers can compare prices instantly. The result is that too much growth depends on discounts and too little comes from timing, relevance, and execution.",
+    whyNow:
+      "Finland remains a tightly contested three-player market. Telia held about 29% telecom turnover share in 2023, behind Elisa at 37% and ahead of DNA at 23%. In mobile subscriptions, Telia is roughly level with DNA and behind Elisa; in fixed broadband, it trails both Elisa and DNA.",
+    baselineMetrics: [
+      "Telecom turnover share in 2023: Telia 29%, Elisa 37%, DNA 23%",
+      "Mobile subscription share in 2024: Telia about 30%, Elisa 38%, DNA 31%",
+      "Fixed broadband share in 2024: Telia 24%, Elisa 31%, DNA 34%",
+      "9m mobile subscriptions in use in Finland at end-2025",
+      "DNA reported 28k mobile net adds and 3k fixed net adds in Q3 2025",
     ],
-    coreChallenge: "How do we automate refund and disruption resolution at scale while ensuring policy compliance, proactive updates, and improved customer satisfaction?",
-    tension: "Automation speed and deflection vs. policy safety, accuracy, and customer trust",
-    opportunityAngle: "Deploy agentic AI that handles eligible refund cases end-to-end with policy guardrails and proactive customer communication",
-    successMetrics: [
-      "\u226530\u201350% reduction in refund resolution turnaround time (eligible cases)",
-      "\u226525\u201340% deflection of \"refund status\" contacts via proactive, accurate updates",
-      "\u226595% policy compliance on automated decisions (exceptions routed to humans)",
-      "\u226515% improvement in post-case CSAT (Customer Satisfaction)",
-    ],
+    audienceFit:
+      "Head of SME Customers; Client Manager SME; Head of B2B Marketing; Director B2B Marketing/CIE & B2B Digital Ops",
+    crossFunctionalHooks:
+      "Head of B2B Customer Insights; CRM & Development Lead; Finance Director; Head of Business Intelligence",
   },
   {
-    number: "3",
-    company: "ALDI",
-    title: "Demand Forecasting & Auto-Replenishment Copilot",
-    context: [
-      "Need to sustain consistently high shelf readiness and margin discipline",
-      "Cutting both stockouts and waste amid store-day demand swings, promotional surges, supplier and inbound variability",
-      "DC-to-store cadence constraints while keeping operational complexity off the shop floor",
+    number: "CC06",
+    company: "Telia Finland",
+    theme: "Consumer Retention / Churn",
+    title: "Retention signals arrive after the customer has left",
+    summary:
+      "Churn signals arrive too late — through complaints, silence, or partial disengagement.",
+    challengeStatement:
+      "We often understand churn too late, after the customer has already shown us what mattered through complaints, silence, or partial disengagement. By then we are trying to explain the loss rather than prevent it.",
+    whyNow:
+      "Telia Finland's mobile postpaid base excluding M2M fell by 79,000 year on year in Q1 2026, while mobile service revenue declined 2.0%. Telia says competitive pressure continues in Finland's mobile consumer business. The consumer proposition is also structurally changing because Telia no longer owns MTV but still sells bundle-rich entertainment offers.",
+    baselineMetrics: [
+      "Mobile postpaid base excluding M2M down 79k year on year to 2,396k at March 31, 2026",
+      "Mobile service revenue in Finland declined 2.0% like for like in Q1 2026",
+      "Postpaid mobile ARPU was EUR 19.3 in Q1 2026, up 1.0% year on year",
+      "Broadband subscriptions rose by 9k year on year and broadband ARPU rose 8.2%",
     ],
-    coreChallenge: "How do we optimize demand forecasting and auto-replenishment to maximize on-shelf availability while minimizing waste and operational complexity?",
-    tension: "Shelf readiness and margin discipline vs. demand variability, promotional surges, and supply chain constraints",
-    opportunityAngle: "Build an AI-powered demand forecasting and auto-replenishment copilot with human-in-the-loop for exceptions",
-    successMetrics: [
-      "On-Shelf Availability (OSA) +150\u2013300 bps on targeted SKUs within 2\u20133 quarters",
-      "Forecast MAPE \u221210\u201320% vs. baseline on pilot categories; service level \u226595%",
-      "Waste/markdowns \u221210\u201315% on pilot SKUs; DC \u2192 store order cycle time \u221210%",
-      "\u226570% automated reorder share on stabilized SKUs, with human-in-the-loop for exceptions",
-    ],
+    audienceFit:
+      "Head of Sales Support B2C; Senior Brand Manager; Head of Development Consumer Products; Head of B2B Customer Insights",
+    crossFunctionalHooks:
+      "CRM & Development Lead; Head of Business Intelligence; Service Management; Finance",
   },
   {
-    number: "4",
-    company: "ABB",
-    title: "AI-Powered Field Service & Remote Diagnostics",
-    context: [
-      "Fragmented, often offline knowledge slows diagnosis",
-      "Wrong-part orders, repeat visits and truck rolls, extended downtime",
-      "Delayed new-hire ramp-up, higher service costs, and weaker customer confidence",
+    number: "CC07",
+    company: "Telia Finland",
+    theme: "Fraud / Security / Trust",
+    title: "Fraud cases escalate faster than teams can triage",
+    summary:
+      "Fraud volume outpaces manual triage; pattern recognition and coordinated response lag.",
+    challengeStatement:
+      "The attack surface is growing across customers, channels, partners, and products, but case handling still depends too much on manual interpretation and fragmented escalation paths. We are good at reacting to obvious problems; we are slower on pattern recognition and coordinated response.",
+    whyNow:
+      "Telia's 2024 security foresight report says hacker attacks and cyber-crime are escalating rapidly. Telia Safe includes online security, privacy, and fraud prevention features. The AI Act timeline also matters operationally: AI literacy and prohibited-use rules are already in force, and most remaining obligations apply from August 2, 2026.",
+    baselineMetrics: [
+      "2,396k mobile postpaid subscriptions excluding M2M",
+      "627k broadband subscriptions",
+      "9m mobile subscriptions in Finland at end-2025; 72% used by private household consumers",
+      "14,498 Telia employees in continuing operations at year-end 2025",
+      "Most AI Act obligations apply from August 2, 2026",
     ],
-    coreChallenge: "How do we improve first-time-fix rates and reduce mean time to repair despite fragmented, often offline knowledge that slows diagnosis?",
-    tension: "Knowledge fragmentation and offline access vs. the need for fast, accurate diagnosis and resolution",
-    opportunityAngle: "Deploy an AI field service assistant that unifies knowledge, guides diagnosis, and enables remote resolution",
-    successMetrics: [
-      "FTF +8\u201312 pts; MTTR \u221215\u201320%",
-      "Avoided truck rolls \u221210\u201315% via remote resolution; parts mis-orders \u221220%",
-      "Technician ramp-up time \u221230\u201340%; assistant adoption \u226575% of active techs",
-      "100% reasoning trace & citations logged for audit and customer reports",
-    ],
+    audienceFit:
+      "CISO; Security Specialist; Director Service Management Assurance & Operations; Head of B2B Customer Operations",
+    crossFunctionalHooks:
+      "CIO; Head of Generative AI; Finance Director; Large Corporate Customers; SME Customers",
   },
   {
-    number: "5",
-    company: "Vodafone",
-    title: "Cross-Domain Telco Operations Intelligence",
-    context: [
-      "Network operations, OSS/BSS systems, and customer interaction data operate in silos",
-      "Delayed root-cause analysis and customer-impacting incidents escalate before resolution",
+    number: "CC08",
+    company: "Telia Finland",
+    theme: "IT Delivery / Legacy / Release Flow",
+    title: "Release trains stall around legacy dependencies",
+    summary:
+      "Old logic, brittle integrations, and untrusted data drag every release.",
+    challengeStatement:
+      "Too many deliveries still slow down when they hit old process logic, brittle integrations, or data that nobody fully trusts. We do not feel the cost as one big outage; we feel it as constant drag on speed, coordination, and confidence.",
+    whyNow:
+      "Telia's broader efficiency program targeted annual savings of at least SEK 2.6bn from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
+    baselineMetrics: [
+      "Group change program targeted annual savings of at least SEK 2.6bn",
+      "Finland proposed net reduction of around 200 positions in Q1 2026",
+      "Finland revenue: SEK 14,956m and service revenue: SEK 12,844m in FY2025",
+      "Finland adjusted EBITDA margin: 31.3% in FY2025",
+      "Dated public signal: Salesforce/Vlocity linked to Telia Finland digital transformation in 2017",
     ],
-    coreChallenge: "How do we design an AI-driven cross-domain operations copilot that predicts, detects, and resolves network issues proactively by unifying telemetry, service data, and customer impact signals under Responsible AI guardrails?",
-    tension: "Siloed operational domains vs. the need for unified, proactive incident detection and resolution",
-    opportunityAngle: "Build a cross-domain AI operations copilot that unifies network telemetry, service data, and customer signals for proactive issue resolution",
-    successMetrics: [
-      "30% reduction in major customer-impacting incidents",
-      "25% faster root-cause identification",
-      "Measurable NPS improvement in priority markets",
-      "Reduced operational costs in network support",
+    audienceFit:
+      "Finland CIO; Head of IT Execution & PMO; Release Manager; RTE / Execution Orchestrator",
+    crossFunctionalHooks:
+      "Head of OSS; CRM & Development Lead; Product Owner; Finance Director; Vendor Management",
+  },
+  {
+    number: "CC09",
+    company: "Telia Finland",
+    theme: "Workforce / Skills / AI Adoption",
+    title: "Skills gaps surface after strategy has moved",
+    summary:
+      "Skill gaps show up in delivery and control before they're mapped or rebuilt.",
+    challengeStatement:
+      "We are asking managers and teams to work in new ways faster than we can reliably map, build, and redeploy the necessary skills. By the time a gap is visible in performance, it is already delaying delivery or weakening control.",
+    whyNow:
+      "Telia investor messaging says there is a growing need to secure competence to capture future AI opportunities. Finland is going through simplification, including a proposed reduction of around 200 positions. AI governance now includes literacy expectations under the EU AI Act, and Telia's human-rights policy emphasizes responsible use, fairness, transparency, and accountability.",
+    baselineMetrics: [
+      "14,498 employees in continuing operations at year-end 2025",
+      "3,912 average employees in Finland in 2024",
+      "Proposed net reduction of around 200 positions in Q1 2026",
+      "98% of all employees had completed Telia Code of Conduct training by Q3 2025",
+      "Most AI Act obligations apply from August 2, 2026",
     ],
+    audienceFit: "People Partner; L&D Partner; Head of Generative AI; CIO",
+    crossFunctionalHooks: "CISO; PMO; Networks; Finance; Business Intelligence",
+  },
+  {
+    number: "CC10",
+    company: "Telia Finland",
+    theme: "Finance / Planning / Performance Management",
+    title: "Forecasts lag the business they are steering",
+    summary:
+      "Planning conversations arrive after the business mix has already shifted.",
+    challengeStatement:
+      "We still run planning and performance conversations on summaries that arrive after the mix has already moved. That makes it harder to react to shifts in subscriber quality, product mix, and delivery cost while they are still manageable.",
+    whyNow:
+      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below SEK 14bn per year.",
+    baselineMetrics: [
+      "Finland revenue: SEK 14,956m in FY2025",
+      "Finland service revenue: SEK 12,844m in FY2025",
+      "Finland adjusted EBITDA: SEK 4,682m in FY2025",
+      "Mobile postpaid subscriptions down 79k year on year in Q1 2026; broadband up 9k and TV up 8k",
+      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: SEK 13,443m",
+    ],
+    audienceFit:
+      "Director Finance; Head of Business Intelligence; Head of Strategic Portfolio Management; Development Manager Operational Excellence",
+    crossFunctionalHooks:
+      "CIO; PMO; B2B Development; Networks; Consumer Products",
+  },
+  {
+    number: "CC11",
+    company: "Telia Finland",
+    theme: "Data Governance / Responsible AI",
+    title: "Data accountability is weaker than digital ambition",
+    summary:
+      "Tools and decisions move faster than data lineage, ownership, and controls.",
+    challengeStatement:
+      "We are moving faster with new tools and new decisions than with the controls that explain where the data came from, how it was changed, and who owns the outcome. That creates friction with risk, confidence, and adoption all at once.",
+    whyNow:
+      "Telia says AI now spans customer service, networks, and internal processes. Telia's March 2026 human-rights policy raises the bar on responsible AI, fairness, transparency, and accountability. The AI Act timeline is close enough that operating-model questions cannot stay abstract; most obligations apply from August 2, 2026.",
+    baselineMetrics: [
+      "AI use described across customer service, networks and internal processes",
+      "14,498 employees in continuing operations at year-end 2025",
+      "2,396k mobile postpaid subscriptions excluding M2M and 627k broadband subscriptions in Finland",
+      "AI literacy and prohibited-use provisions are already in force; most remaining AI Act duties apply from August 2, 2026",
+    ],
+    audienceFit: "Head of Generative AI; CISO; CIO; Security Specialist",
+    crossFunctionalHooks:
+      "Finance; HR / L&D; OSS; CRM & Development; Business Intelligence",
+  },
+  {
+    number: "CC04",
+    company: "Telia Finland",
+    theme: "B2B Sales / Enterprise Productivity",
+    title: "Account teams spend too long assembling answers",
+    summary:
+      "Sellers lose hours stitching pricing, delivery, security, and network context together.",
+    challengeStatement:
+      "Our large-account sellers and customer teams lose hours pulling together pricing, delivery, assurance, security, and network context before they can even respond properly. That makes us slower than the customer expects and slower than the opportunity window allows.",
+    whyNow:
+      "About 50% of Telia Finland revenue comes from Enterprise customers. Finland business solutions revenue grew 5.1% in Q1 2026 and Telia was approved as a NATO framework supplier, raising the importance of complex, multi-stakeholder B2B selling.",
+    baselineMetrics: [
+      "About 50% of Telia Finland revenue comes from Enterprise customers",
+      "Business solutions revenue in Finland: SEK 2,913m in FY2025",
+      "Business solutions were about 22.7% of Finland service revenue in FY2025",
+      "Business solutions revenue grew 5.1% in Q1 2026",
+      "Finland service revenue totaled SEK 12,844m in FY2025",
+    ],
+    audienceFit:
+      "Head of Large Corporate Customers; Account Management Large Corp; Head of SME Customers; Head of B2B Development",
+    crossFunctionalHooks:
+      "CISO; Head of OSS; Director B2B Marketing/CIE & B2B Digital Ops; Finance Director",
+  },
+  {
+    number: "CC12",
+    company: "Telia Finland",
+    theme: "Application Support / Incident Intelligence",
+    title: "Enterprise application errors take too long to diagnose and resolve",
+    summary:
+      "Error interpretation, log searches, and team hand-offs slow every incident resolution.",
+    challengeStatement:
+      "Application and platform support teams spend too much time interpreting technical errors, searching logs, checking historical incidents and coordinating across functional and technical teams. The real issue is not only the error itself, it is the time lost in moving from symptom to root cause to resolution.",
+    whyNow:
+      "Enterprise application landscapes are increasingly complex, with business-critical processes depending on integrated platforms, legacy components, custom logic, interfaces and data flows. When incidents occur, support teams need faster ways to interpret error messages, correlate technical traces, identify likely causes and recommend the next best action. AI can help reduce manual investigation effort by assisting with error interpretation, log summarisation, incident pattern matching and guided remediation.",
+    baselineMetrics: [
+      "Average time taken to diagnose application incidents",
+      "Number of incidents requiring multiple handoffs between business, functional and technical teams",
+      "Repeated or recurring error categories across enterprise applications",
+      "Volume of support tickets linked to integration, configuration, authorisation, data or custom-code issues",
+      "Time spent searching previous incidents, logs, knowledge articles and system documentation",
+      "Percentage of incidents resolved using existing knowledge versus requiring new analysis",
+    ],
+    audienceFit:
+      "CIO; Head of IT Execution & PMO; Application Support Lead; Service Management Lead; Release Manager; Enterprise Application Owners; Product Owners; Functional Leads",
+    crossFunctionalHooks:
+      "Business Operations; Finance; HR / People Systems; CRM & Development; Data & Analytics; Security; Vendor Management; PMO",
   },
 ];
 
-function formatCardText(card: ChallengeCard): string {
-  const lines = [
-    `${card.company}`,
-    `Challenge Card: "${card.title}"`,
-    "",
-    "Context:",
-    ...card.context.map((c) => `● ${c}`),
-    "",
-    "Core Challenge:",
-    card.coreChallenge,
-    "",
-    "Tension:",
-    card.tension,
-    "",
-    "Opportunity Angle:",
-    card.opportunityAngle,
-    "",
-    "Success Metrics:",
-    ...card.successMetrics.map((m) => `● ${m}`),
-  ];
-  return lines.join("\n");
-}
+const LG_BREAKPOINT = 1024;
 
 const ChallengeCards = () => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<ChallengeCard | null>(null);
-  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
-  const [copiedPopup, setCopiedPopup] = useState(false);
   const [activeChallenge, selectChallenge, clearChallenge] =
     useSelectedChallenge();
+
+  // Right-pane preview (desktop split view). Defaults to the active
+  // challenge if one is selected, otherwise the first card.
+  const [viewing, setViewing] = useState<ChallengeCard>(
+    () => activeChallenge ?? challenges[0]
+  );
+  // Modal popup is the mobile fallback for the same content.
+  const [mobileOpen, setMobileOpen] = useState<ChallengeCard | null>(null);
+  const [copied, setCopied] = useState(false);
   const [justSavedNumber, setJustSavedNumber] = useState<string | null>(null);
+
+  const handleListItemClick = (card: ChallengeCard) => {
+    setViewing(card);
+    if (
+      typeof window !== "undefined" &&
+      window.innerWidth < LG_BREAKPOINT
+    ) {
+      setMobileOpen(card);
+      setCopied(false);
+    }
+  };
 
   const handleUseChallenge = (card: ChallengeCard) => {
     selectChallenge(card);
@@ -143,27 +286,20 @@ const ChallengeCards = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelected(null);
+      if (e.key === "Escape") setMobileOpen(null);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleCopy = async (card: ChallengeCard, idx: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await navigator.clipboard.writeText(formatCardText(card));
-    setCopiedIdx(idx);
-    setTimeout(() => setCopiedIdx(null), 2000);
-  };
-
-  const handlePopupCopy = async (card: ChallengeCard) => {
-    await navigator.clipboard.writeText(formatCardText(card));
-    setCopiedPopup(true);
-    setTimeout(() => setCopiedPopup(false), 2000);
+  const handleCopy = async (card: ChallengeCard) => {
+    await navigator.clipboard.writeText(formatChallengeText(card));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen lg:h-screen bg-background flex flex-col lg:overflow-hidden">
       {/* Header */}
       <header className="border-b border-border bg-card px-4 py-2 shrink-0">
         <div className="flex items-center gap-3">
@@ -176,11 +312,13 @@ const ChallengeCards = () => {
 
           {activeChallenge && (
             <div className="ml-auto flex items-center gap-2">
-              <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-                Selected:{" "}
-                <span className="font-semibold text-foreground">
-                  {activeChallenge.company}
+              <span className="hidden md:inline-flex items-center gap-1.5 text-xs text-muted-foreground max-w-[280px]">
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                <span className="truncate">
+                  Selected:{" "}
+                  <span className="font-semibold text-foreground">
+                    {activeChallenge.title}
+                  </span>
                 </span>
               </span>
               <Button
@@ -204,182 +342,95 @@ const ChallengeCards = () => {
         </div>
       </header>
 
-      {/* Cards */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {challenges.map((card, idx) => {
-            const isActive = activeChallenge?.number === card.number;
-            return (
-              <button
-                key={idx}
-                onClick={() => { setSelected(card); setCopiedPopup(false); }}
-                className={`group relative rounded-xl border bg-card p-6 text-left transition-all hover:shadow-lg hover:-translate-y-1 ${
-                  isActive
-                    ? "border-primary ring-2 ring-primary/40 shadow-md"
-                    : "border-border hover:border-primary/30"
-                }`}
-              >
-                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-accent rounded-t-xl" />
+      {/* Intro description — full-width, tighter top spacing */}
+      <div className="px-6 pt-3 pb-2 max-w-7xl mx-auto w-full text-center shrink-0">
+        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+          Extracted and structured from the discovery brief. These cards are
+          framed as{" "}
+          <strong className="text-foreground">business problems</strong> for
+          mixed leadership / IT breakout discussions — not solution briefs.
+          Click any card on the left to view its full context, then choose one
+          to carry into the prompts page.
+        </p>
+      </div>
 
-                {isActive && (
-                  <span className="absolute -top-2 -right-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow">
-                    <CheckCircle2 className="h-3 w-3" /> Selected
-                  </span>
-                )}
+      {/* Split view — list + detail */}
+      <div className="flex-1 px-4 sm:px-6 pb-6 max-w-7xl mx-auto w-full lg:min-h-0 lg:overflow-hidden mt-3">
+        <div className="h-full lg:grid lg:grid-cols-12 lg:gap-5">
+          {/* Left: scrollable list */}
+          <aside className="lg:col-span-5 lg:h-full lg:overflow-y-auto lg:pr-1 space-y-2.5 mb-4 lg:mb-0">
+            <div className="hidden lg:flex items-center justify-between sticky top-0 bg-background py-2 z-10 border-b border-border mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                {challenges.length} Challenges
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                Click to preview · Use to anchor prompts
+              </span>
+            </div>
+            {challenges.map((card) => {
+              const isActive = activeChallenge?.number === card.number;
+              const isViewing = viewing.number === card.number;
+              return (
+                <ListItem
+                  key={card.number}
+                  card={card}
+                  isActive={isActive}
+                  isViewing={isViewing}
+                  onClick={() => handleListItemClick(card)}
+                />
+              );
+            })}
+          </aside>
 
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-xs font-bold text-primary uppercase tracking-wide">
-                    {card.company}
-                  </p>
-                  <button
-                    onClick={(e) => handleCopy(card, idx, e)}
-                    className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                    title="Copy challenge content"
-                  >
-                    {copiedIdx === idx ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-
-                <h2 className="text-base font-semibold text-card-foreground font-display leading-snug mb-3 group-hover:text-primary transition-colors">
-                  {card.title}
-                </h2>
-
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                  {card.coreChallenge}
-                </p>
-              </button>
-            );
-          })}
+          {/* Right: sticky detail pane (desktop only) */}
+          <section className="hidden lg:block lg:col-span-7 lg:h-full lg:overflow-y-auto rounded-xl border border-border bg-card shadow-sm">
+            <DetailContent
+              card={viewing}
+              activeChallenge={activeChallenge}
+              justSavedNumber={justSavedNumber}
+              copied={copied}
+              onCopy={() => handleCopy(viewing)}
+              onUse={() => handleUseChallenge(viewing)}
+              onClear={() => {
+                clearChallenge();
+                setJustSavedNumber(null);
+              }}
+              onGoToPrompts={() => navigate("/prompts")}
+            />
+          </section>
         </div>
       </div>
 
-      {/* Detail popup */}
-      {selected && (
+      {/* Mobile-only modal popup (same content as the right pane) */}
+      {mobileOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelected(null)}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 lg:hidden"
+          onClick={() => setMobileOpen(null)}
         >
           <div
-            className="relative bg-card rounded-2xl border border-border shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-8"
+            className="relative bg-card rounded-2xl border border-border shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close + Copy buttons */}
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <button
-                onClick={() => handlePopupCopy(selected)}
-                className="rounded-full p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                title="Copy full challenge"
-              >
-                {copiedPopup ? (
-                  <Check className="h-5 w-5 text-green-500" />
-                ) : (
-                  <Copy className="h-5 w-5" />
-                )}
-              </button>
-              <button
-                onClick={() => setSelected(null)}
-                className="rounded-full p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <p className="text-xs font-bold text-primary uppercase tracking-wide mb-1">{selected.company}</p>
-            <h2 className="text-2xl font-bold font-display text-card-foreground mb-5 pr-16">{selected.title}</h2>
-
-            <Section label="Context">
-              <ul className="space-y-1.5">
-                {selected.context.map((c, i) => (
-                  <li key={i} className="text-sm text-muted-foreground leading-relaxed flex gap-2">
-                    <span className="text-primary mt-0.5 shrink-0">●</span> {c}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-
-            <Section label="Core Challenge">
-              <p className="text-sm text-card-foreground leading-relaxed font-medium italic">{selected.coreChallenge}</p>
-            </Section>
-
-            <Section label="Tension">
-              <p className="text-sm text-muted-foreground leading-relaxed">{selected.tension}</p>
-            </Section>
-
-            <Section label="Opportunity Angle">
-              <p className="text-sm text-card-foreground leading-relaxed font-medium">{selected.opportunityAngle}</p>
-            </Section>
-
-            <Section label="Success Metrics">
-              <ul className="space-y-1.5">
-                {selected.successMetrics.map((m, i) => (
-                  <li key={i} className="text-sm text-muted-foreground leading-relaxed flex gap-2">
-                    <span className="text-primary mt-0.5 shrink-0">●</span> {m}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-
-            {/* Selection footer */}
-            <div className="mt-6 pt-5 border-t border-border flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <div>
-                {activeChallenge?.number === selected.number ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-bold border border-green-200">
-                    <CheckCircle2 className="h-4 w-4" />
-                    This challenge is currently selected
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-bold border border-primary/20">
-                    <Sparkles className="h-4 w-4" />
-                    Pick this challenge to anchor your prompts
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                {activeChallenge?.number === selected.number ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        clearChallenge();
-                        setJustSavedNumber(null);
-                      }}
-                    >
-                      Clear
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => navigate("/prompts")}
-                    >
-                      Go to Prompts
-                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    size="sm"
-                    onClick={() => handleUseChallenge(selected)}
-                    className={
-                      justSavedNumber === selected.number
-                        ? "bg-green-600 hover:bg-green-600 text-white"
-                        : ""
-                    }
-                  >
-                    {justSavedNumber === selected.number ? (
-                      <>
-                        <Check className="h-3.5 w-3.5 mr-1" /> Saved
-                      </>
-                    ) : (
-                      <>Use this Challenge</>
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
+            <button
+              onClick={() => setMobileOpen(null)}
+              className="absolute top-4 right-4 z-30 rounded-full bg-card p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shadow-sm"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <DetailContent
+              card={mobileOpen}
+              activeChallenge={activeChallenge}
+              justSavedNumber={justSavedNumber}
+              copied={copied}
+              onCopy={() => handleCopy(mobileOpen)}
+              onUse={() => handleUseChallenge(mobileOpen)}
+              onClear={() => {
+                clearChallenge();
+                setJustSavedNumber(null);
+              }}
+              onGoToPrompts={() => navigate("/prompts")}
+              extraTopPadding
+            />
           </div>
         </div>
       )}
@@ -387,10 +438,264 @@ const ChallengeCards = () => {
   );
 };
 
-function Section({ label, children, last }: { label: string; children: React.ReactNode; last?: boolean }) {
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+// Subcomponents
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+
+interface ListItemProps {
+  card: ChallengeCard;
+  isActive: boolean;
+  isViewing: boolean;
+  onClick: () => void;
+}
+
+function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative w-full overflow-hidden rounded-xl border bg-card pl-5 pr-4 py-4 text-left transition-all ${
+        isActive
+          ? "border-green-500/50 bg-green-50/40 shadow-md ring-1 ring-green-500/20"
+          : isViewing
+          ? "border-primary bg-primary/[0.04] shadow-md"
+          : "border-border hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
+      }`}
+    >
+      {/* Left vertical accent stripe — green when selected, primary when viewing, faint on hover */}
+      <div
+        className={`pointer-events-none absolute left-0 top-0 h-full w-1 transition-all ${
+          isActive
+            ? "bg-gradient-to-b from-green-500 to-emerald-600"
+            : isViewing
+            ? "bg-gradient-to-b from-primary to-accent"
+            : "bg-transparent group-hover:bg-primary/30"
+        }`}
+      />
+
+      <div className="flex items-start gap-3">
+        <div className="flex-1 min-w-0">
+          {/* Header row: full Selected chip (when active) + theme pill */}
+          <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+            {isActive && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-green-600 text-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                <CheckCircle2 className="h-3 w-3 shrink-0" />
+                Selected
+              </span>
+            )}
+            <span
+              className={`inline-block rounded-full text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 ${
+                isActive
+                  ? "bg-green-100 text-green-800 border border-green-200"
+                  : "bg-primary/10 text-primary"
+              }`}
+            >
+              {card.theme}
+            </span>
+          </div>
+          <h3
+            className={`text-sm font-semibold font-display leading-snug mb-1.5 transition-colors ${
+              isActive
+                ? "text-green-900"
+                : isViewing
+                ? "text-primary"
+                : "text-card-foreground group-hover:text-primary"
+            }`}
+          >
+            {card.title}
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+            {card.summary}
+          </p>
+        </div>
+
+        <ChevronRight
+          className={`h-4 w-4 shrink-0 mt-1 transition-all ${
+            isActive
+              ? "text-green-600 translate-x-0.5"
+              : isViewing
+              ? "text-primary translate-x-0.5"
+              : "text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5"
+          }`}
+        />
+      </div>
+    </button>
+  );
+}
+
+interface DetailContentProps {
+  card: ChallengeCard;
+  activeChallenge: ChallengeCard | null;
+  justSavedNumber: string | null;
+  copied: boolean;
+  onCopy: () => void;
+  onUse: () => void;
+  onClear: () => void;
+  onGoToPrompts: () => void;
+  /**
+   * When rendered inside the mobile modal, the close button is positioned
+   * absolutely at top-right of the modal scroll container. The sticky
+   * action strip needs extra right padding so its buttons don't sit under
+   * the close button.
+   */
+  extraTopPadding?: boolean;
+}
+
+function DetailContent({
+  card,
+  activeChallenge,
+  justSavedNumber,
+  copied,
+  onCopy,
+  onUse,
+  onClear,
+  onGoToPrompts,
+  extraTopPadding,
+}: DetailContentProps) {
+  const isActive = activeChallenge?.number === card.number;
+  return (
+    <div className="flex flex-col">
+      {/* Sticky top action strip — chip + primary action + copy.
+          Stays pinned at top of the scroll container as the body scrolls. */}
+      <div
+        className={`sticky top-0 z-10 bg-card/95 supports-[backdrop-filter]:bg-card/85 backdrop-blur border-b border-border px-6 sm:px-8 py-4 ${
+          extraTopPadding ? "pr-14" : ""
+        }`}
+      >
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            {isActive ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-bold border border-green-200">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                This challenge is currently selected
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-bold border border-primary/20">
+                <Sparkles className="h-4 w-4 shrink-0" />
+                Pick this challenge to anchor your prompts
+              </span>
+            )}
+          </div>
+          <div className="flex gap-2 items-center shrink-0">
+            {isActive ? (
+              <>
+                <Button variant="outline" size="sm" onClick={onClear}>
+                  Clear
+                </Button>
+                <Button size="sm" onClick={onGoToPrompts}>
+                  Go to Prompts
+                  <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                onClick={onUse}
+                className={
+                  justSavedNumber === card.number
+                    ? "bg-green-600 hover:bg-green-600 text-white"
+                    : ""
+                }
+              >
+                {justSavedNumber === card.number ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 mr-1" /> Saved
+                  </>
+                ) : (
+                  <>Use this Challenge</>
+                )}
+              </Button>
+            )}
+            <button
+              onClick={onCopy}
+              className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+              title="Copy full challenge"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable body content */}
+      <div className="px-6 sm:px-8 py-6 sm:py-8">
+        {/* Theme + Title */}
+        <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">
+          {card.theme}
+        </p>
+        <h2 className="text-2xl font-bold font-display text-card-foreground leading-snug mb-5">
+          {card.title}
+        </h2>
+
+        {/* Highlighted challenge statement */}
+        <div className="mb-6 rounded-lg border-l-4 border-accent bg-accent/5 px-4 py-3">
+          <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+            Challenge statement
+          </h3>
+          <p className="text-base text-card-foreground leading-relaxed italic">
+            &ldquo;{card.challengeStatement}&rdquo;
+          </p>
+        </div>
+
+        <Section label="Why now">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {card.whyNow}
+          </p>
+        </Section>
+
+        <Section label="Baseline metrics / evidence">
+          <ul className="space-y-1.5">
+            {card.baselineMetrics.map((m, i) => (
+              <li
+                key={i}
+                className="text-sm text-muted-foreground leading-relaxed flex gap-2"
+              >
+                <span className="text-primary mt-0.5 shrink-0">●</span> {m}
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="rounded-lg border border-border bg-muted/30 p-3">
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+              Audience fit
+            </h3>
+            <p className="text-xs text-card-foreground leading-relaxed">
+              {card.audienceFit}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border bg-muted/30 p-3">
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+              Cross-functional hooks
+            </h3>
+            <p className="text-xs text-card-foreground leading-relaxed">
+              {card.crossFunctionalHooks}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Section({
+  label,
+  children,
+  last,
+}: {
+  label: string;
+  children: React.ReactNode;
+  last?: boolean;
+}) {
   return (
     <div className={last ? "" : "mb-5"}>
-      <h3 className="text-xs font-bold uppercase tracking-wide text-primary mb-2">{label}</h3>
+      <h3 className="text-xs font-bold uppercase tracking-wide text-primary mb-2">
+        {label}
+      </h3>
       {children}
     </div>
   );
