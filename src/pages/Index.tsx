@@ -11,7 +11,7 @@ const sections = [
   },
   {
     title: "Telia Finland Context Pack",
-    description: "The reference document for Step 0 of the prompts — Telia Finland's business model, market position, strategic priorities and competitive landscape. Open this first; the prompts refer back to it as the 'Telia Finland context pack'.",
+    description: "Read up on Telia Finland — business model, market position, strategic priorities and competitive landscape.",
     icon: FileText,
     path: "/deep-research",
     gradient: "from-accent to-primary",

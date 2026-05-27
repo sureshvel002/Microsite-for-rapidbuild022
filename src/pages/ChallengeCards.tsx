@@ -224,30 +224,6 @@ const challenges: ChallengeCard[] = [
     crossFunctionalHooks:
       "CISO; Head of OSS; Director B2B Marketing/CIE & B2B Digital Ops; Finance Director",
   },
-  {
-    number: "CC12",
-    company: "Telia Finland",
-    theme: "Application Support / Incident Intelligence",
-    title: "Enterprise application errors take too long to diagnose and resolve",
-    summary:
-      "Error interpretation, log searches, and team hand-offs slow every incident resolution.",
-    challengeStatement:
-      "Application and platform support teams spend too much time interpreting technical errors, searching logs, checking historical incidents and coordinating across functional and technical teams. The real issue is not only the error itself, it is the time lost in moving from symptom to root cause to resolution.",
-    whyNow:
-      "Enterprise application landscapes are increasingly complex, with business-critical processes depending on integrated platforms, legacy components, custom logic, interfaces and data flows. When incidents occur, support teams need faster ways to interpret error messages, correlate technical traces, identify likely causes and recommend the next best action. AI can help reduce manual investigation effort by assisting with error interpretation, log summarisation, incident pattern matching and guided remediation.",
-    baselineMetrics: [
-      "Average time taken to diagnose application incidents",
-      "Number of incidents requiring multiple handoffs between business, functional and technical teams",
-      "Repeated or recurring error categories across enterprise applications",
-      "Volume of support tickets linked to integration, configuration, authorisation, data or custom-code issues",
-      "Time spent searching previous incidents, logs, knowledge articles and system documentation",
-      "Percentage of incidents resolved using existing knowledge versus requiring new analysis",
-    ],
-    audienceFit:
-      "CIO; Head of IT Execution & PMO; Application Support Lead; Service Management Lead; Release Manager; Enterprise Application Owners; Product Owners; Functional Leads",
-    crossFunctionalHooks:
-      "Business Operations; Finance; HR / People Systems; CRM & Development; Data & Analytics; Security; Vendor Management; PMO",
-  },
 ];
 
 const LG_BREAKPOINT = 1024;
