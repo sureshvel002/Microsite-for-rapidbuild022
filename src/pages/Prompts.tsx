@@ -7,51 +7,120 @@ import {
   Maximize,
   X,
   Sparkles,
+  Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
-  formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
-const prompts = [
+interface PromptVariant {
+  id: string;
+  title: string;
+  subtitle: string;
+  text: string;
+}
+
+interface BasePrompt {
+  step: number;
+  label: string;
+}
+
+interface SimplePrompt extends BasePrompt {
+  text: string;
+}
+
+interface VariantPrompt extends BasePrompt {
+  variants: PromptVariant[];
+}
+
+type Prompt = SimplePrompt | VariantPrompt;
+
+const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
+  "variants" in p && Array.isArray((p as VariantPrompt).variants);
+
+const prompts: Prompt[] = [
   {
     step: 0,
     label: "Learn",
-    text: `Here is a deep research report for the topic we are going to discuss today. No action required. Use this report as additional context for your responses apart from web search and other resources.`,
+    text: `Here is the Telia Finland context pack and the challenge card we will work on today. No action required yet — read both as background.
+
+Confirm you have understood (1) Telia Finland's business model and current strategic context, and (2) the specific friction this challenge describes.
+
+Note three things from this material that surprised you and one assumption you would test first.`,
   },
   {
     step: 1,
     label: "Widen",
-    text: `Act as a research aide for the [selected challenge].  List key personas, top pains, current workarounds, and success metrics.
-Return 5 insights & 3 risks tailored to this challenge context.`,
+    text: `Act as a research aide for the [SELECTED CHALLENGE STATEMENT] at Telia Finland.
+
+List the key personas inside Telia Finland who feel this friction day-to-day, the top three pains they experience, and then:
+
+Cluster the persona pains into 2–4 system-level pains that recur across multiple personas.
+
+For each system-level pain:
+a) Give it a short label (SP1, SP2, etc.)
+b) Provide a one-sentence description
+c) List which personas experience it
+
+Also list the current workarounds they rely on (manual spreadsheets, email threads, vendor tools, key-person knowledge), and the success metrics that would tell us the friction is reducing.
+
+Return five fresh insights and three risks.`,
   },
   {
     step: 2,
     label: "Diagnose",
-    text: `Let's pick the [top pain-point] for this challenge.  For this pain, run a Five Whys.
-Propose 3 root-cause hypotheses and the disproof evidence for each. Specify the minimum data cut & owners to pull.
-Output a root-cause map, test plan, and privacy constraints.`,
+    text: `Pick the [TOP PAIN] for this Telia Finland challenge.
+
+For this pain, run a Five Whys. Propose three root-cause hypotheses and the disproof evidence for each — what would have to be true for the hypothesis to be wrong.
+
+Specify the minimum data extract needed to test each hypothesis and which Telia team is most likely to own that data (BSS / OSS, Salesforce / Vlocity CRM-CPQ, Telia ACE contact centre, ServiceNow, Microsoft 365 / SharePoint, the data platform, network management systems, billing, or any other system referenced in the Telia context pack).
+
+Output a root-cause map and a test plan.`,
   },
   {
     step: 3,
     label: "Ideate",
-    text: `Generate and Cluster possible AI driven ideas into 3 Options:
-1.Process (policy, ways of working),
-2.Analytics/ML (forecast, optimise, recommend),
-3.AI & Automation (Computer Vision, Retrieval Augmented Generation, Agentic AI, etc.).
-Score each on Impact × Feasibility × Confidence × Time-to-Value. Recommend one pilot with the smallest integration surface and clearest value proof.`,
+    text: `Generate and cluster possible AI-driven solutions for this Telia Finland challenge into three options:
+
+1. Process — policy, ways of working, governance changes.
+2. Analytics / ML — forecast, optimise, recommend.
+3. AI & Automation — RAG, agents, computer vision, copilot patterns.
+
+For each category, list 2–3 distinct ideas. For each idea give me a brief description.
+
+Tabulate and score each idea on Impact × Feasibility × Confidence × Time-to-Value (1–5 each) and show the total score for that idea.
+
+Recommend one pilot, scoring it on three things:
+
+- Ease of build — which option needs the fewest existing Telia systems to be connected? (i.e. the option that depends least on Salesforce / Vlocity, BSS / OSS, ServiceNow, Telia ACE, SharePoint or Microsoft 365)
+- Owner clarity — which option has the clearest single person in the room today who could lead it?
+- Strategic anchor — which option ties to a clear forcing function the room recognises today (a deadline, a leadership commitment, or a measurable outcome already on a roadmap).`,
   },
   {
     step: 4,
     label: "Brief",
-    text: `For the recommended pilot, create a one-page pilot brief including:  Target user(s), problem statement, success metrics & baselines, target uplift, key flow (5–7 steps), screens/components, sample UI copy, representative sample data, integration points, and relevant guardrails ((domain specific regulation boundaries, bias tests, fallback behaviour, etc.).`,
+    text: `For the recommended pilot, create a one-page Telia Finland pilot brief including:
+
+• Target user (named or archetype, drawn from the persona list above)
+• Problem statement in their voice
+• Success metric with current baseline and target uplift
+• Key flow in 5–7 steps
+• Screens or components needed
+• Sample UI copy in plain business English (no marketing tone, no superlatives)
+• Representative sample data (no real customer / partner / employee data; use synthetic Telia-like names and amounts)
+• Integration points across the Telia stack`,
   },
   {
     step: 5,
     label: "Build",
-    text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes:
+    variants: [
+      {
+        id: "ai-studio",
+        title: "Google AI Studio",
+        subtitle: "Generate a PRD-style prompt to paste into AI Studio",
+        text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes:
 
 - Product name + one-liner description (actions, process, capabilities)
 - Who it's for (primary user, secondary users)
@@ -65,6 +134,32 @@ Score each on Impact × Feasibility × Confidence × Time-to-Value. Recommend on
 - Constraints (no real customer / partner / employee PII; synthetic data only)
 
 Return the Google AI Studio prompt only — no preamble, no commentary, no explanation of what you are about to do. Just the prompt, ready to paste into Google AI Studio.`,
+      },
+      {
+        id: "copilot-html",
+        title: "Microsoft 365 Copilot",
+        subtitle: "Generate a clickable HTML mockup directly via Copilot",
+        text: `Create a single .html file for a clickable mock-up based on the information in the product brief generated above.
+
+Target user: from the brief generated above
+Main user flow: from the brief generated above
+
+Requirements:
+
+• One .html file, inline CSS and JavaScript, no external dependencies.
+• Apply the Telia brand UI directly inside the file (do not reference external files):
+    • Brand colours: Telia primary purple (#990AE3) for primary actions, headers and key accents. Clean light slate or off-white background. Dark slate body text. Semantic colours: green for success, amber for warning, red for alert.
+    • Typography: Telia Sans (or a clean web-safe sans-serif fallback such as Inter or system-ui) with a clear hierarchy: display, heading, body, caption.
+    • Layout: generous whitespace, consistent rounded corners, subtle shadows, compact-but-readable density, responsive desktop-first layout.
+    • Component states: every interactive component must render empty, loading, populated and error states.
+• Cover all the screens needed by the main user flow as suggested by the selected challenge card and the brief. Do not artificially cap the screen count. Include navigation between screens so the flow is clickable end-to-end.
+• Synthetic sample data inline. No real names, no API calls. Use plausible Finnish-locale data (Helsinki, Espoo, Tampere; € amounts; Finnish company or contact placeholders).
+• Plain business English in all UI copy. No marketing tone, no superlatives.
+• A success-metric tile showing baseline and target from the brief.
+
+Return the file as a downloadable .html using Copilot's file-creation capability. Do not paste HTML into the chat.`,
+      },
+    ],
   },
 ];
 
@@ -73,15 +168,16 @@ function buildPromptText(
   baseText: string,
   challenge: ChallengeCard | null
 ): { text: string; injected: boolean } {
-  // Inject the full challenge content into the Widen step (step 1).
+  // Step 1 (Widen) carries a `[SELECTED CHALLENGE STATEMENT]` placeholder.
+  // When a challenge is selected, swap that token in-place with the
+  // challenge card's title only — the surrounding sentence already
+  // anchors the context to "at Telia Finland".
   if (step === 1 && challenge) {
-    const injected = `Act as a research aide for the following challenge:
-
-${formatChallengeText(challenge)}
-
-List key personas, top pains, current workarounds, and success metrics.
-Return 5 insights & 3 risks tailored to this challenge context.`;
-    return { text: injected, injected: true };
+    const placeholder = "[SELECTED CHALLENGE STATEMENT]";
+    if (baseText.includes(placeholder)) {
+      const injected = baseText.replace(placeholder, challenge.title);
+      return { text: injected, injected: true };
+    }
   }
   return { text: baseText, injected: false };
 }
@@ -91,6 +187,15 @@ const Prompts = () => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [challenge, , clearChallenge] = useSelectedChallenge();
+  // Tracks the currently selected Build-step tool variant. Defaults to the
+  // first variant defined in the prompts data (currently "ai-studio").
+  const [activeBuildVariant, setActiveBuildVariant] = useState<string>(() => {
+    const buildPrompt = prompts.find((p) => p.step === 5);
+    if (buildPrompt && isVariantPrompt(buildPrompt)) {
+      return buildPrompt.variants[0]?.id ?? "";
+    }
+    return "";
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -177,9 +282,17 @@ const Prompts = () => {
             </h2>
 
             {prompts.map((prompt, index) => {
+              const hasVariants = isVariantPrompt(prompt);
+              const activeVariant = hasVariants
+                ? prompt.variants.find((v) => v.id === activeBuildVariant) ??
+                  prompt.variants[0]
+                : null;
+              const baseText = hasVariants
+                ? activeVariant!.text
+                : (prompt as SimplePrompt).text;
               const { text, injected } = buildPromptText(
                 prompt.step,
-                prompt.text,
+                baseText,
                 challenge
               );
               return (
@@ -204,6 +317,11 @@ const Prompts = () => {
                           Challenge injected
                         </span>
                       )}
+                      {hasVariants && activeVariant && (
+                        <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                          {activeVariant.title}
+                        </span>
+                      )}
                     </div>
                     <Button
                       variant="outline"
@@ -223,9 +341,65 @@ const Prompts = () => {
                     </Button>
                   </div>
 
-                  {/* Prompt content */}
+                  {/* Variant selector — only for prompts with multiple variants */}
+                  {hasVariants && (
+                    <div className="px-4 pt-3 pb-1 bg-gradient-to-b from-muted/20 to-transparent">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <Wrench className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Pick the tool you have access to
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {prompt.variants.map((v) => {
+                          const isSelected = v.id === activeBuildVariant;
+                          return (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => setActiveBuildVariant(v.id)}
+                              className={`group relative rounded-md border px-3 py-2 text-left transition-all ${
+                                isSelected
+                                  ? "border-primary bg-primary/5 ring-1 ring-primary/30 shadow-sm"
+                                  : "border-border bg-card hover:border-primary/40 hover:bg-muted/30"
+                              }`}
+                            >
+                              <div className="flex items-start gap-2">
+                                <span
+                                  className={`mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border ${
+                                    isSelected
+                                      ? "border-primary bg-primary"
+                                      : "border-muted-foreground/40 bg-transparent"
+                                  }`}
+                                >
+                                  {isSelected && (
+                                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                                  )}
+                                </span>
+                                <div className="min-w-0">
+                                  <div
+                                    className={`text-xs font-bold leading-tight ${
+                                      isSelected ? "text-primary" : "text-card-foreground"
+                                    }`}
+                                  >
+                                    {v.title}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground leading-snug mt-0.5">
+                                    {v.subtitle}
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Prompt content — `whitespace-pre-wrap` preserves leading
+                      indent so nested bullet points stay nested visually. */}
                   <div className="px-4 py-3">
-                    <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-line">
+                    <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-wrap">
                       {text}
                     </p>
                   </div>

@@ -10,8 +10,7 @@ const AI_TOOLS = [
 ];
 
 const PDF_PATH = "/documents/telia_finland_deepresearch.pdf";
-const DOWNLOAD_FILENAME =
-  "Telia Finland - Deep Research Report.pdf";
+const DOWNLOAD_FILENAME = "Telia Finland - Context Pack.pdf";
 
 const DeepResearch = () => {
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ const DeepResearch = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="text-lg font-semibold font-display text-card-foreground">Deep Research Report</h1>
+            <h1 className="text-lg font-semibold font-display text-card-foreground">Telia Finland Context Pack</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -55,7 +54,7 @@ const DeepResearch = () => {
           <iframe
             src={PDF_PATH}
             className="w-full h-full"
-            title="Telia Finland - Competitive & Strategic Intelligence Brief"
+            title="Telia Finland Context Pack"
           />
         </div>
       </div>

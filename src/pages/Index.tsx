@@ -10,8 +10,8 @@ const sections = [
     gradient: "from-primary to-accent",
   },
   {
-    title: "Deep Research Report",
-    description: "Read the Telia Finland Competitive & Strategic Intelligence Brief — market context and public-source synthesis.",
+    title: "Telia Finland Context Pack",
+    description: "The reference document for Step 0 of the prompts — Telia Finland's business model, market position, strategic priorities and competitive landscape. Open this first; the prompts refer back to it as the 'Telia Finland context pack'.",
     icon: FileText,
     path: "/deep-research",
     gradient: "from-accent to-primary",
