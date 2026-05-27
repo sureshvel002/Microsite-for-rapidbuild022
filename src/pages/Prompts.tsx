@@ -8,6 +8,8 @@ import {
   X,
   Sparkles,
   Wrench,
+  Bot,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +42,36 @@ type Prompt = SimplePrompt | VariantPrompt;
 
 const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
   "variants" in p && Array.isArray((p as VariantPrompt).variants);
+
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+// Workshop-tool selection
+//
+// Senior stakeholders running the workshop pick a single AI assistant
+// upfront (Google AI Studio vs Microsoft 365 Copilot). That choice drives
+// which variant of the Step-5 (Build) prompt is shown, and is reminded
+// across the page so participants don't second-guess themselves at Step 5
+// after using one tool for Steps 1–4. Persisted in localStorage so the
+// pick survives page reloads (matches the challenge-selection pattern).
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+const TOOL_STORAGE_KEY = "workshopTool:telia-finland-v1";
+
+function readStoredTool(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(TOOL_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredTool(toolId: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(TOOL_STORAGE_KEY, toolId);
+  } catch {
+    // ignore (private mode, quota, etc.)
+  }
+}
 
 const prompts: Prompt[] = [
   {
@@ -120,7 +152,7 @@ Recommend one pilot, scoring it on three things:
       {
         id: "ai-studio",
         title: "Google AI Studio",
-        subtitle: "Generate a PRD-style prompt to paste into AI Studio",
+        subtitle: "Chat returns a PRD prompt → paste into AI Studio to build",
         text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes:
 
 - Product name + one-liner description (actions, process, capabilities)
@@ -139,7 +171,7 @@ Return the Google AI Studio prompt only — no preamble, no commentary, no expla
       {
         id: "copilot-html",
         title: "Microsoft 365 Copilot",
-        subtitle: "Generate a clickable HTML mockup directly via Copilot",
+        subtitle: "Chat returns a downloadable HTML mockup file — done",
         text: `Create a single .html file for a clickable mock-up based on the information in the product brief generated above.
 
 Target user: from the brief generated above
@@ -295,15 +327,22 @@ const Prompts = () => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [challenge, , clearChallenge] = useSelectedChallenge();
-  // Tracks the currently selected Build-step tool variant. Defaults to the
-  // first variant defined in the prompts data (currently "ai-studio").
-  const [activeBuildVariant, setActiveBuildVariant] = useState<string>(() => {
+  // Tracks the currently selected workshop tool. Persisted in localStorage
+  // so the pick survives reloads. Falls back to the first variant defined
+  // in the prompts data when nothing is stored yet.
+  const buildVariants = (() => {
     const buildPrompt = prompts.find((p) => p.step === 5);
-    if (buildPrompt && isVariantPrompt(buildPrompt)) {
-      return buildPrompt.variants[0]?.id ?? "";
-    }
-    return "";
+    return buildPrompt && isVariantPrompt(buildPrompt) ? buildPrompt.variants : [];
+  })();
+  const [activeBuildVariant, setActiveBuildVariantState] = useState<string>(() => {
+    const stored = readStoredTool();
+    if (stored && buildVariants.some((v) => v.id === stored)) return stored;
+    return buildVariants[0]?.id ?? "";
   });
+  const setActiveBuildVariant = useCallback((toolId: string) => {
+    setActiveBuildVariantState(toolId);
+    writeStoredTool(toolId);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -423,8 +462,19 @@ const Prompts = () => {
                 challenge
               );
               return (
+                <Fragment key={prompt.step}>
+                  {/* Workshop-tool picker — rendered immediately above the
+                      variant-bearing Step 5 card so the build-path choice
+                      sits exactly where it applies. Keeps Steps 0–4 reading
+                      uninterrupted at the top of the prompts column. */}
+                  {hasVariants && (
+                    <WorkshopToolPicker
+                      variants={prompt.variants}
+                      activeId={activeBuildVariant}
+                      onChange={setActiveBuildVariant}
+                    />
+                  )}
                 <div
-                  key={prompt.step}
                   className={`rounded-lg border bg-card overflow-hidden ${
                     injected ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
                   }`}
@@ -445,7 +495,11 @@ const Prompts = () => {
                         </span>
                       )}
                       {hasVariants && activeVariant && (
-                        <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                          title="Paste this prompt into the same chat as Steps 0–4. The label below tells you what it produces."
+                        >
+                          <Bot className="h-3 w-3" />
                           {activeVariant.title}
                         </span>
                       )}
@@ -468,61 +522,6 @@ const Prompts = () => {
                     </Button>
                   </div>
 
-                  {/* Variant selector — only for prompts with multiple variants */}
-                  {hasVariants && (
-                    <div className="px-4 pt-3 pb-1 bg-gradient-to-b from-muted/20 to-transparent">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <Wrench className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                          Pick the tool you have access to
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {prompt.variants.map((v) => {
-                          const isSelected = v.id === activeBuildVariant;
-                          return (
-                            <button
-                              key={v.id}
-                              type="button"
-                              onClick={() => setActiveBuildVariant(v.id)}
-                              className={`group relative rounded-md border px-3 py-2 text-left transition-all ${
-                                isSelected
-                                  ? "border-primary bg-primary/5 ring-1 ring-primary/30 shadow-sm"
-                                  : "border-border bg-card hover:border-primary/40 hover:bg-muted/30"
-                              }`}
-                            >
-                              <div className="flex items-start gap-2">
-                                <span
-                                  className={`mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border ${
-                                    isSelected
-                                      ? "border-primary bg-primary"
-                                      : "border-muted-foreground/40 bg-transparent"
-                                  }`}
-                                >
-                                  {isSelected && (
-                                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
-                                  )}
-                                </span>
-                                <div className="min-w-0">
-                                  <div
-                                    className={`text-xs font-bold leading-tight ${
-                                      isSelected ? "text-primary" : "text-card-foreground"
-                                    }`}
-                                  >
-                                    {v.title}
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground leading-snug mt-0.5">
-                                    {v.subtitle}
-                                  </div>
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Prompt content — segmented so dynamic content (system
                       injections + user-fill placeholders) can be visually
                       distinguished from static prose. `whitespace-pre-wrap`
@@ -531,6 +530,7 @@ const Prompts = () => {
                     <PromptBody segments={segments} />
                   </div>
                 </div>
+                </Fragment>
               );
             })}
           </div>
@@ -677,6 +677,100 @@ function SelectedChallengePanel({
             {challenge.crossFunctionalHooks}
           </p>
         </PanelSection>
+      </div>
+    </div>
+  );
+}
+
+interface WorkshopToolPickerProps {
+  variants: PromptVariant[];
+  activeId: string;
+  onChange: (toolId: string) => void;
+}
+
+// Upfront, page-level tool picker. Shown at the top of the prompts column
+// so participants commit to one assistant (Google AI Studio vs Microsoft
+// 365 Copilot) before they start running prompts — and aren't surprised
+// by a tool decision when they reach Step 5. Step 5's prompt body
+// automatically follows whatever is selected here.
+function WorkshopToolPicker({
+  variants,
+  activeId,
+  onChange,
+}: WorkshopToolPickerProps) {
+  if (variants.length === 0) return null;
+  return (
+    <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-card to-accent/5 shadow-sm overflow-hidden">
+      <div className="px-4 py-2 border-b border-primary/20 bg-primary/5">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="rounded-md bg-primary/15 p-1 shrink-0">
+            <Wrench className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+            Step 5 · Build path
+          </span>
+        </div>
+      </div>
+
+      <div className="px-4 py-3">
+        <p className="text-xs text-card-foreground leading-relaxed mb-3 flex items-start gap-1.5">
+          <MessageCircle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+          <span>
+            Paste Step 5's prompt in the <span className="font-semibold">same chat</span> as
+            Steps 0–4. Pick the tool you want to produce with:
+          </span>
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {variants.map((v) => {
+            const isSelected = v.id === activeId;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => onChange(v.id)}
+                aria-pressed={isSelected}
+                className={`group relative rounded-lg border-2 px-3 py-2.5 text-left transition-all ${
+                  isSelected
+                    ? "border-primary bg-primary/10 shadow-md"
+                    : "border-border bg-card hover:border-primary/50 hover:bg-muted/30"
+                }`}
+              >
+                <div className="flex items-start gap-2.5">
+                  <span
+                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
+                      isSelected
+                        ? "border-primary bg-primary"
+                        : "border-muted-foreground/40 bg-transparent group-hover:border-primary/50"
+                    }`}
+                  >
+                    {isSelected && (
+                      <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                    )}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <Bot
+                        className={`h-3.5 w-3.5 shrink-0 ${
+                          isSelected ? "text-primary" : "text-muted-foreground"
+                        }`}
+                      />
+                      <div
+                        className={`text-sm font-bold leading-tight ${
+                          isSelected ? "text-primary" : "text-card-foreground"
+                        }`}
+                      >
+                        {v.title}
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground leading-snug">
+                      {v.subtitle}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
