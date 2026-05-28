@@ -10,6 +10,7 @@ import {
   Wrench,
   Bot,
   MessageCircle,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -290,20 +291,74 @@ function buildPromptSegments(
   };
 }
 
+// Inline highlight for system-injected challenge content. When the injected
+// payload is long (e.g. C11's `injectionMode: "full"` block), it's
+// collapsed by default with a Read more / Read less toggle — keeps the
+// surrounding prompt instructions readable. Short injections (title-only
+// mode) render as a plain inline highlight, no toggle.
+function InjectedSegment({ text }: { text: string }) {
+  const COLLAPSE_THRESHOLD = 220;
+  const [expanded, setExpanded] = useState(false);
+
+  const highlightClass =
+    "rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20";
+
+  if (text.length <= COLLAPSE_THRESHOLD) {
+    return (
+      <span
+        className={highlightClass}
+        title="Filled in from your selected challenge"
+      >
+        {text}
+      </span>
+    );
+  }
+
+  // Find a clean clip point — prefer the end of a line, then a sentence
+  // boundary near the threshold; fall back to a hard cut + ellipsis.
+  const slice = text.slice(0, COLLAPSE_THRESHOLD);
+  const lastNewline = slice.lastIndexOf("\n");
+  const lastSentence = slice.lastIndexOf(". ");
+  const clipPoint = Math.max(
+    lastNewline,
+    lastSentence > 0 ? lastSentence + 1 : -1
+  );
+  const clipped =
+    clipPoint > COLLAPSE_THRESHOLD * 0.4
+      ? text.slice(0, clipPoint)
+      : `${slice}\u2026`;
+
+  return (
+    <>
+      <span
+        className={highlightClass}
+        title="Filled in from your selected challenge"
+      >
+        {expanded ? text : clipped}
+      </span>
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="ml-1.5 align-baseline text-[11px] font-bold text-primary hover:underline inline-flex items-center gap-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+        aria-expanded={expanded}
+      >
+        {expanded ? "Read less" : "Read more"}
+        <ChevronRight
+          className={`h-3 w-3 transition-transform ${
+            expanded ? "-rotate-90" : "rotate-90"
+          }`}
+        />
+      </button>
+    </>
+  );
+}
+
 function PromptBody({ segments }: { segments: PromptSegment[] }) {
   return (
     <p className="text-sm text-card-foreground leading-relaxed whitespace-pre-wrap">
       {segments.map((seg, i) => {
         if (seg.type === "injected") {
-          return (
-            <span
-              key={i}
-              className="rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20"
-              title="Filled in from your selected challenge"
-            >
-              {seg.text}
-            </span>
-          );
+          return <InjectedSegment key={i} text={seg.text} />;
         }
         if (seg.type === "placeholder") {
           return (
