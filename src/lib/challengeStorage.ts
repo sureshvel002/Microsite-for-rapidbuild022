@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // has a different shape, update this interface, the storage key suffix,
 // formatChallengeText, and the renderers in ChallengeCards.tsx + Prompts.tsx.
 export interface ChallengeCard {
-  number: string;               // e.g. "CC03" — stable internal id (not shown in UI)
+  number: string;               // e.g. "C1" — stable internal id (not shown in UI)
   company: string;              // e.g. "Telia Finland"
   theme: string;                // e.g. "Customer Care / Omnichannel"
   title: string;                // short problem framing
@@ -30,7 +30,7 @@ export interface ChallengeCard {
 // auto-invalidated whenever the data shape changes. Bump the suffix on
 // each new client immersion *and* whenever the ChallengeCard interface
 // above changes shape.
-const STORAGE_KEY = "selectedChallenge:telia-finland-v3";
+const STORAGE_KEY = "selectedChallenge:telia-finland-v4";
 const STORAGE_EVENT = "selectedChallenge:changed";
 
 // Best-effort cleanup of legacy keys from prior immersions / schemas so
@@ -39,6 +39,7 @@ const LEGACY_STORAGE_KEYS = [
   "selectedChallenge",
   "selectedChallenge:telia-finland",
   "selectedChallenge:telia-finland-v2",
+  "selectedChallenge:telia-finland-v3",
 ];
 
 if (typeof window !== "undefined") {
@@ -52,7 +53,7 @@ if (typeof window !== "undefined") {
 }
 
 export function formatChallengeText(card: ChallengeCard): string {
-  // Note: the internal `number` (e.g. "CC03") and `company` are intentionally
+  // Note: the internal `number` (e.g. "C1") and `company` are intentionally
   // NOT rendered into the output — they're internal IDs only and should not
   // surface in the Widen-step prompt injection or in copy-to-clipboard text.
   const lines = [

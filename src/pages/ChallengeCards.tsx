@@ -19,11 +19,11 @@ import {
 
 // Cards from the Telia Finland AI Immersion Day discovery brief, framed
 // as business problems for mixed leadership / IT breakout discussion
-// (not solution briefs). The internal `number` (CCxx) is kept as a stable
+// (not solution briefs). The internal `number` (Cxx) is kept as a stable
 // id for storage but is not surfaced in the UI per current design.
 const challenges: ChallengeCard[] = [
   {
-    number: "CC03",
+    number: "C1",
     company: "Telia Finland",
     theme: "Customer Care / Omnichannel",
     title: "Care journeys restart every time the channel changes",
@@ -46,163 +46,7 @@ const challenges: ChallengeCard[] = [
       "Head of OSS; CIO; Head of Business Intelligence; Senior Process Manager B2B; Brand Manager",
   },
   {
-    number: "CC05",
-    company: "Telia Finland",
-    theme: "SME Growth / Commercial Execution",
-    title: "SME growth is stuck in a three-player fight",
-    summary:
-      "Growth leans on discounting because timing, relevance, and execution don't differentiate enough.",
-    challengeStatement:
-      "We are competing in a market where everyone has nationwide capabilities and customers can compare prices instantly. The result is that too much growth depends on discounts and too little comes from timing, relevance, and execution.",
-    whyNow:
-      "Finland remains a tightly contested three-player market. Telia held about 29% telecom turnover share in 2023, behind Elisa at 37% and ahead of DNA at 23%. In mobile subscriptions, Telia is roughly level with DNA and behind Elisa; in fixed broadband, it trails both Elisa and DNA.",
-    baselineMetrics: [
-      "Telecom turnover share in 2023: Telia 29%, Elisa 37%, DNA 23%",
-      "Mobile subscription share in 2024: Telia about 30%, Elisa 38%, DNA 31%",
-      "Fixed broadband share in 2024: Telia 24%, Elisa 31%, DNA 34%",
-      "9m mobile subscriptions in use in Finland at end-2025",
-      "DNA reported 28k mobile net adds and 3k fixed net adds in Q3 2025",
-    ],
-    audienceFit:
-      "Head of SME Customers; Client Manager SME; Head of B2B Marketing; Director B2B Marketing/CIE & B2B Digital Ops",
-    crossFunctionalHooks:
-      "Head of B2B Customer Insights; CRM & Development Lead; Finance Director; Head of Business Intelligence",
-  },
-  {
-    number: "CC06",
-    company: "Telia Finland",
-    theme: "Consumer Retention / Churn",
-    title: "Retention signals arrive after the customer has left",
-    summary:
-      "Churn signals arrive too late — through complaints, silence, or partial disengagement.",
-    challengeStatement:
-      "We often understand churn too late, after the customer has already shown us what mattered through complaints, silence, or partial disengagement. By then we are trying to explain the loss rather than prevent it.",
-    whyNow:
-      "Telia Finland's mobile postpaid base excluding M2M fell by 79,000 year on year in Q1 2026, while mobile service revenue declined 2.0%. Telia says competitive pressure continues in Finland's mobile consumer business. The consumer proposition is also structurally changing because Telia no longer owns MTV but still sells bundle-rich entertainment offers.",
-    baselineMetrics: [
-      "Mobile postpaid base excluding M2M down 79k year on year to 2,396k at March 31, 2026",
-      "Mobile service revenue in Finland declined 2.0% like for like in Q1 2026",
-      "Postpaid mobile ARPU was EUR 19.3 in Q1 2026, up 1.0% year on year",
-      "Broadband subscriptions rose by 9k year on year and broadband ARPU rose 8.2%",
-    ],
-    audienceFit:
-      "Head of Sales Support B2C; Senior Brand Manager; Head of Development Consumer Products; Head of B2B Customer Insights",
-    crossFunctionalHooks:
-      "CRM & Development Lead; Head of Business Intelligence; Service Management; Finance",
-  },
-  {
-    number: "CC07",
-    company: "Telia Finland",
-    theme: "Fraud / Security / Trust",
-    title: "Fraud cases escalate faster than teams can triage",
-    summary:
-      "Fraud volume outpaces manual triage; pattern recognition and coordinated response lag.",
-    challengeStatement:
-      "The attack surface is growing across customers, channels, partners, and products, but case handling still depends too much on manual interpretation and fragmented escalation paths. We are good at reacting to obvious problems; we are slower on pattern recognition and coordinated response.",
-    whyNow:
-      "Telia's 2024 security foresight report says hacker attacks and cyber-crime are escalating rapidly. Telia Safe includes online security, privacy, and fraud prevention features. The AI Act timeline also matters operationally: AI literacy and prohibited-use rules are already in force, and most remaining obligations apply from August 2, 2026.",
-    baselineMetrics: [
-      "2,396k mobile postpaid subscriptions excluding M2M",
-      "627k broadband subscriptions",
-      "9m mobile subscriptions in Finland at end-2025; 72% used by private household consumers",
-      "14,498 Telia employees in continuing operations at year-end 2025",
-      "Most AI Act obligations apply from August 2, 2026",
-    ],
-    audienceFit:
-      "CISO; Security Specialist; Director Service Management Assurance & Operations; Head of B2B Customer Operations",
-    crossFunctionalHooks:
-      "CIO; Head of Generative AI; Finance Director; Large Corporate Customers; SME Customers",
-  },
-  {
-    number: "CC08",
-    company: "Telia Finland",
-    theme: "IT Delivery / Legacy / Release Flow",
-    title: "Release trains stall around legacy dependencies",
-    summary:
-      "Old logic, brittle integrations, and untrusted data drag every release.",
-    challengeStatement:
-      "Too many deliveries still slow down when they hit old process logic, brittle integrations, or data that nobody fully trusts. We do not feel the cost as one big outage; we feel it as constant drag on speed, coordination, and confidence.",
-    whyNow:
-      "Telia's broader efficiency program targeted annual savings of at least SEK 2.6bn from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
-    baselineMetrics: [
-      "Group change program targeted annual savings of at least SEK 2.6bn",
-      "Finland proposed net reduction of around 200 positions in Q1 2026",
-      "Finland revenue: SEK 14,956m and service revenue: SEK 12,844m in FY2025",
-      "Finland adjusted EBITDA margin: 31.3% in FY2025",
-      "Dated public signal: Salesforce/Vlocity linked to Telia Finland digital transformation in 2017",
-    ],
-    audienceFit:
-      "Finland CIO; Head of IT Execution & PMO; Release Manager; RTE / Execution Orchestrator",
-    crossFunctionalHooks:
-      "Head of OSS; CRM & Development Lead; Product Owner; Finance Director; Vendor Management",
-  },
-  {
-    number: "CC09",
-    company: "Telia Finland",
-    theme: "Workforce / Skills / AI Adoption",
-    title: "Skills gaps surface after strategy has moved",
-    summary:
-      "Skill gaps show up in delivery and control before they're mapped or rebuilt.",
-    challengeStatement:
-      "We are asking managers and teams to work in new ways faster than we can reliably map, build, and redeploy the necessary skills. By the time a gap is visible in performance, it is already delaying delivery or weakening control.",
-    whyNow:
-      "Telia investor messaging says there is a growing need to secure competence to capture future AI opportunities. Finland is going through simplification, including a proposed reduction of around 200 positions. AI governance now includes literacy expectations under the EU AI Act, and Telia's human-rights policy emphasizes responsible use, fairness, transparency, and accountability.",
-    baselineMetrics: [
-      "14,498 employees in continuing operations at year-end 2025",
-      "3,912 average employees in Finland in 2024",
-      "Proposed net reduction of around 200 positions in Q1 2026",
-      "98% of all employees had completed Telia Code of Conduct training by Q3 2025",
-      "Most AI Act obligations apply from August 2, 2026",
-    ],
-    audienceFit: "People Partner; L&D Partner; Head of Generative AI; CIO",
-    crossFunctionalHooks: "CISO; PMO; Networks; Finance; Business Intelligence",
-  },
-  {
-    number: "CC10",
-    company: "Telia Finland",
-    theme: "Finance / Planning / Performance Management",
-    title: "Forecasts lag the business they are steering",
-    summary:
-      "Planning conversations arrive after the business mix has already shifted.",
-    challengeStatement:
-      "We still run planning and performance conversations on summaries that arrive after the mix has already moved. That makes it harder to react to shifts in subscriber quality, product mix, and delivery cost while they are still manageable.",
-    whyNow:
-      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below SEK 14bn per year.",
-    baselineMetrics: [
-      "Finland revenue: SEK 14,956m in FY2025",
-      "Finland service revenue: SEK 12,844m in FY2025",
-      "Finland adjusted EBITDA: SEK 4,682m in FY2025",
-      "Mobile postpaid subscriptions down 79k year on year in Q1 2026; broadband up 9k and TV up 8k",
-      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: SEK 13,443m",
-    ],
-    audienceFit:
-      "Director Finance; Head of Business Intelligence; Head of Strategic Portfolio Management; Development Manager Operational Excellence",
-    crossFunctionalHooks:
-      "CIO; PMO; B2B Development; Networks; Consumer Products",
-  },
-  {
-    number: "CC11",
-    company: "Telia Finland",
-    theme: "Data Governance / Responsible AI",
-    title: "Data accountability is weaker than digital ambition",
-    summary:
-      "Tools and decisions move faster than data lineage, ownership, and controls.",
-    challengeStatement:
-      "We are moving faster with new tools and new decisions than with the controls that explain where the data came from, how it was changed, and who owns the outcome. That creates friction with risk, confidence, and adoption all at once.",
-    whyNow:
-      "Telia says AI now spans customer service, networks, and internal processes. Telia's March 2026 human-rights policy raises the bar on responsible AI, fairness, transparency, and accountability. The AI Act timeline is close enough that operating-model questions cannot stay abstract; most obligations apply from August 2, 2026.",
-    baselineMetrics: [
-      "AI use described across customer service, networks and internal processes",
-      "14,498 employees in continuing operations at year-end 2025",
-      "2,396k mobile postpaid subscriptions excluding M2M and 627k broadband subscriptions in Finland",
-      "AI literacy and prohibited-use provisions are already in force; most remaining AI Act duties apply from August 2, 2026",
-    ],
-    audienceFit: "Head of Generative AI; CISO; CIO; Security Specialist",
-    crossFunctionalHooks:
-      "Finance; HR / L&D; OSS; CRM & Development; Business Intelligence",
-  },
-  {
-    number: "CC04",
+    number: "C2",
     company: "Telia Finland",
     theme: "B2B Sales / Enterprise Productivity",
     title: "Account teams spend too long assembling answers",
@@ -225,7 +69,188 @@ const challenges: ChallengeCard[] = [
       "CISO; Head of OSS; Director B2B Marketing/CIE & B2B Digital Ops; Finance Director",
   },
   {
-    number: "CC12",
+    number: "C3",
+    company: "Telia Finland",
+    theme: "SME Growth / Commercial Execution",
+    title: "SME growth is stuck in a three-player fight",
+    summary:
+      "Growth leans on discounting because timing, relevance, and execution don't differentiate enough.",
+    challengeStatement:
+      "We are competing in a market where everyone has nationwide capabilities and customers can compare prices instantly. The result is that too much growth depends on discounts and too little comes from timing, relevance, and execution.",
+    whyNow:
+      "Finland remains a tightly contested three-player market. Telia held about 29% telecom turnover share in 2023, behind Elisa at 37% and ahead of DNA at 23%. In mobile subscriptions, Telia is roughly level with DNA and behind Elisa; in fixed broadband, it trails both Elisa and DNA.",
+    baselineMetrics: [
+      "Telecom turnover share in 2023: Telia 29%, Elisa 37%, DNA 23%",
+      "Mobile subscription share in 2024: Telia about 30%, Elisa 38%, DNA 31%",
+      "Fixed broadband share in 2024: Telia 24%, Elisa 31%, DNA 34%",
+      "9m mobile subscriptions in use in Finland at end-2025",
+      "DNA reported 28k mobile net adds and 3k fixed net adds in Q3 2025",
+    ],
+    audienceFit:
+      "Head of SME Customers; Client Manager SME; Head of B2B Marketing; Director B2B Marketing/CIE & B2B Digital Ops",
+    crossFunctionalHooks:
+      "Head of B2B Customer Insights; CRM & Development Lead; Finance Director; Head of Business Intelligence",
+  },
+  {
+    number: "C4",
+    company: "Telia Finland",
+    theme: "Consumer Retention / Churn",
+    title: "Retention signals arrive after the customer has left",
+    summary:
+      "Churn signals arrive too late — through complaints, silence, or partial disengagement.",
+    challengeStatement:
+      "We often understand churn too late, after the customer has already shown us what mattered through complaints, silence, or partial disengagement. By then we are trying to explain the loss rather than prevent it.",
+    whyNow:
+      "Telia Finland's mobile postpaid base excluding M2M fell by 79,000 year on year in Q1 2026, while mobile service revenue declined 2.0%. Telia says competitive pressure continues in Finland's mobile consumer business. The consumer proposition is also structurally changing because Telia no longer owns MTV but still sells bundle-rich entertainment offers.",
+    baselineMetrics: [
+      "Mobile postpaid base excluding M2M down 79k year on year to 2,396k at March 31, 2026",
+      "Mobile service revenue in Finland declined 2.0% like for like in Q1 2026",
+      "Postpaid mobile ARPU was EUR 19.3 in Q1 2026, up 1.0% year on year",
+      "Broadband subscriptions rose by 9k year on year and broadband ARPU rose 8.2%",
+    ],
+    audienceFit:
+      "Head of Sales Support B2C; Senior Brand Manager; Head of Development Consumer Products; Head of B2B Customer Insights",
+    crossFunctionalHooks:
+      "CRM & Development Lead; Head of Business Intelligence; Service Management; Finance",
+  },
+  {
+    number: "C5",
+    company: "Telia Finland",
+    theme: "Fraud / Security / Trust",
+    title: "Fraud cases escalate faster than teams can triage",
+    summary:
+      "Fraud volume outpaces manual triage; pattern recognition and coordinated response lag.",
+    challengeStatement:
+      "The attack surface is growing across customers, channels, partners, and products, but case handling still depends too much on manual interpretation and fragmented escalation paths. We are good at reacting to obvious problems; we are slower on pattern recognition and coordinated response.",
+    whyNow:
+      "Telia's 2024 security foresight report says hacker attacks and cyber-crime are escalating rapidly. Telia Safe includes online security, privacy, and fraud prevention features. The AI Act timeline also matters operationally: AI literacy and prohibited-use rules are already in force, and most remaining obligations apply from August 2, 2026.",
+    baselineMetrics: [
+      "2,396k mobile postpaid subscriptions excluding M2M",
+      "627k broadband subscriptions",
+      "9m mobile subscriptions in Finland at end-2025; 72% used by private household consumers",
+      "14,498 Telia employees in continuing operations at year-end 2025",
+      "Most AI Act obligations apply from August 2, 2026",
+    ],
+    audienceFit:
+      "CISO; Security Specialist; Director Service Management Assurance & Operations; Head of B2B Customer Operations",
+    crossFunctionalHooks:
+      "CIO; Head of Generative AI; Finance Director; Large Corporate Customers; SME Customers",
+  },
+  {
+    number: "C6",
+    company: "Telia Finland",
+    theme: "IT Delivery / Legacy / Release Flow",
+    title: "Release trains stall around legacy dependencies",
+    summary:
+      "Old logic, brittle integrations, and untrusted data drag every release.",
+    challengeStatement:
+      "Too many deliveries still slow down when they hit old process logic, brittle integrations, or data that nobody fully trusts. We do not feel the cost as one big outage; we feel it as constant drag on speed, coordination, and confidence.",
+    whyNow:
+      "Telia's broader efficiency program targeted annual savings of at least SEK 2.6bn from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
+    baselineMetrics: [
+      "Group change program targeted annual savings of at least SEK 2.6bn",
+      "Finland proposed net reduction of around 200 positions in Q1 2026",
+      "Finland revenue: SEK 14,956m and service revenue: SEK 12,844m in FY2025",
+      "Finland adjusted EBITDA margin: 31.3% in FY2025",
+      "Dated public signal: Salesforce/Vlocity linked to Telia Finland digital transformation in 2017",
+    ],
+    audienceFit:
+      "Finland CIO; Head of IT Execution & PMO; Release Manager; RTE / Execution Orchestrator",
+    crossFunctionalHooks:
+      "Head of OSS; CRM & Development Lead; Product Owner; Finance Director; Vendor Management",
+  },
+  {
+    number: "C7",
+    company: "Telia Finland",
+    theme: "Workforce / Skills / AI Adoption",
+    title: "Skills gaps surface after strategy has moved",
+    summary:
+      "Skill gaps show up in delivery and control before they're mapped or rebuilt.",
+    challengeStatement:
+      "We are asking managers and teams to work in new ways faster than we can reliably map, build, and redeploy the necessary skills. By the time a gap is visible in performance, it is already delaying delivery or weakening control.",
+    whyNow:
+      "Telia investor messaging says there is a growing need to secure competence to capture future AI opportunities. Finland is going through simplification, including a proposed reduction of around 200 positions. AI governance now includes literacy expectations under the EU AI Act, and Telia's human-rights policy emphasizes responsible use, fairness, transparency, and accountability.",
+    baselineMetrics: [
+      "14,498 employees in continuing operations at year-end 2025",
+      "3,912 average employees in Finland in 2024",
+      "Proposed net reduction of around 200 positions in Q1 2026",
+      "98% of all employees had completed Telia Code of Conduct training by Q3 2025",
+      "Most AI Act obligations apply from August 2, 2026",
+    ],
+    audienceFit: "People Partner; L&D Partner; Head of Generative AI; CIO",
+    crossFunctionalHooks: "CISO; PMO; Networks; Finance; Business Intelligence",
+  },
+  {
+    number: "C8",
+    company: "Telia Finland",
+    theme: "Finance / Planning / Performance Management",
+    title: "Forecasts lag the business they are steering",
+    summary:
+      "Planning conversations arrive after the business mix has already shifted.",
+    challengeStatement:
+      "We still run planning and performance conversations on summaries that arrive after the mix has already moved. That makes it harder to react to shifts in subscriber quality, product mix, and delivery cost while they are still manageable.",
+    whyNow:
+      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below SEK 14bn per year.",
+    baselineMetrics: [
+      "Finland revenue: SEK 14,956m in FY2025",
+      "Finland service revenue: SEK 12,844m in FY2025",
+      "Finland adjusted EBITDA: SEK 4,682m in FY2025",
+      "Mobile postpaid subscriptions down 79k year on year in Q1 2026; broadband up 9k and TV up 8k",
+      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: SEK 13,443m",
+    ],
+    audienceFit:
+      "Director Finance; Head of Business Intelligence; Head of Strategic Portfolio Management; Development Manager Operational Excellence",
+    crossFunctionalHooks:
+      "CIO; PMO; B2B Development; Networks; Consumer Products",
+  },
+  {
+    number: "C9",
+    company: "Telia Finland",
+    theme: "Data Governance / Responsible AI",
+    title: "Data accountability is weaker than digital ambition",
+    summary:
+      "Tools and decisions move faster than data lineage, ownership, and controls.",
+    challengeStatement:
+      "We are moving faster with new tools and new decisions than with the controls that explain where the data came from, how it was changed, and who owns the outcome. That creates friction with risk, confidence, and adoption all at once.",
+    whyNow:
+      "Telia says AI now spans customer service, networks, and internal processes. Telia's March 2026 human-rights policy raises the bar on responsible AI, fairness, transparency, and accountability. The AI Act timeline is close enough that operating-model questions cannot stay abstract; most obligations apply from August 2, 2026.",
+    baselineMetrics: [
+      "AI use described across customer service, networks and internal processes",
+      "14,498 employees in continuing operations at year-end 2025",
+      "2,396k mobile postpaid subscriptions excluding M2M and 627k broadband subscriptions in Finland",
+      "AI literacy and prohibited-use provisions are already in force; most remaining AI Act duties apply from August 2, 2026",
+    ],
+    audienceFit: "Head of Generative AI; CISO; CIO; Security Specialist",
+    crossFunctionalHooks:
+      "Finance; HR / L&D; OSS; CRM & Development; Business Intelligence",
+  },
+  {
+    number: "C10",
+    company: "Telia Finland",
+    theme: "Application Support / Incident Intelligence",
+    title: "Enterprise application errors take too long to diagnose and resolve",
+    summary:
+      "Error interpretation, log searches, and team hand-offs slow every incident resolution.",
+    challengeStatement:
+      "Application and platform support teams spend too much time interpreting technical errors, searching logs, checking historical incidents and coordinating across functional and technical teams. The real issue is not only the error itself, it is the time lost in moving from symptom to root cause to resolution.",
+    whyNow:
+      "Enterprise application landscapes are increasingly complex, with business-critical processes depending on integrated platforms, legacy components, custom logic, interfaces and data flows. When incidents occur, support teams need faster ways to interpret error messages, correlate technical traces, identify likely causes and recommend the next best action. AI can help reduce manual investigation effort by assisting with error interpretation, log summarisation, incident pattern matching and guided remediation.",
+    baselineMetrics: [
+      "Average time taken to diagnose application incidents",
+      "Number of incidents requiring multiple handoffs between business, functional and technical teams",
+      "Repeated or recurring error categories across enterprise applications",
+      "Volume of support tickets linked to integration, configuration, authorisation, data or custom-code issues",
+      "Time spent searching previous incidents, logs, knowledge articles and system documentation",
+      "Percentage of incidents resolved using existing knowledge versus requiring new analysis",
+    ],
+    audienceFit:
+      "CIO; Head of IT Execution & PMO; Application Support Lead; Service Management Lead; Release Manager; Enterprise Application Owners; Product Owners; Functional Leads",
+    crossFunctionalHooks:
+      "Business Operations; Finance; HR / People Systems; CRM & Development; Data & Analytics; Security; Vendor Management; PMO",
+    injectionMode: "full",
+  },
+  {
+    number: "C11",
     company: "Telia Finland",
     theme: "B2B Delivery Services / Enterprise Productivity",
     title: "Delivery capacity is falling short of demand",
@@ -475,8 +500,23 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
 
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          {/* Header row: full Selected chip (when active) + theme pill */}
+          {/* Header row: card-number tag + full Selected chip (when active) + theme pill.
+              The tiny mono number chip is shown ONLY here in the list view —
+              it's intentionally not included in the Widen-step prompt
+              injection or the copy-to-clipboard text. */}
           <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+            <span
+              className={`inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-[10px] font-bold font-mono leading-none ${
+                isActive
+                  ? "bg-green-50 text-green-700 border-green-200"
+                  : isViewing
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : "bg-muted text-muted-foreground border-border"
+              }`}
+              title={`Challenge ${card.number}`}
+            >
+              {card.number}
+            </span>
             {isActive && (
               <span className="inline-flex items-center gap-1 rounded-full bg-green-600 text-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
                 <CheckCircle2 className="h-3 w-3 shrink-0" />

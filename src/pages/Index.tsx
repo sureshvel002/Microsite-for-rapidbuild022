@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Download, Images, MessageSquare, ArrowRight, ChevronRight } from "lucide-react";
-import tcsLogo from "@/assets/tata-consultancy-services-logo.png";
+import tcsLogo from "@/assets/TCS Co Logo SVG.svg";
 import teliaLogo from "@/assets/Telia Co Logo SVG.svg";
 
 const steps = [
@@ -42,23 +42,23 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-12 overflow-x-hidden">
       <div className="max-w-6xl w-full animate-fade-in">
-        {/* Logo header — identical bounding boxes so both logos render at the same visual size */}
+        {/* Logo header — both logos pinned to the same VISUAL height with
+            `w-auto`, so they balance regardless of each SVG's aspect ratio.
+            (Boxing them in equal width+height containers makes the wider
+            Telia mark render shorter than TCS — same height + auto width
+            keeps them visually matched.) */}
         <div className="flex items-center justify-center gap-8 md:gap-12 mb-10">
-          <div className="flex items-center justify-center h-14 md:h-16 w-40 md:w-48">
-            <img
-              src={tcsLogo}
-              alt="TCS"
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
-          <div className="h-12 md:h-14 w-px bg-border" aria-hidden="true" />
-          <div className="flex items-center justify-center h-14 md:h-16 w-40 md:w-48">
-            <img
-              src={teliaLogo}
-              alt="Telia Finland"
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
+          <img
+            src={tcsLogo}
+            alt="TCS"
+            className="h-10 md:h-12 w-auto"
+          />
+          <div className="h-10 md:h-12 w-px bg-border" aria-hidden="true" />
+          <img
+            src={teliaLogo}
+            alt="Telia Finland"
+            className="h-10 md:h-12 w-auto"
+          />
         </div>
 
         {/* Title block */}
