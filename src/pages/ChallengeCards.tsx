@@ -37,7 +37,7 @@ const challenges: ChallengeCard[] = [
       "2,396k mobile postpaid subscriptions excluding M2M",
       "627k broadband subscriptions",
       "659k TV subscriptions",
-      "Finland service revenue: SEK 3,077m in Q1 2026 and SEK 12,844m in FY2025",
+      "Finland service revenue: EUR ~290m in Q1 2026 and EUR ~1,205m in FY2025",
       "Vendor directional signal: Telia Finland CX program used RPA, attended automation, AI and analytics",
     ],
     audienceFit:
@@ -58,10 +58,10 @@ const challenges: ChallengeCard[] = [
       "About 50% of Telia Finland revenue comes from Enterprise customers. Finland business solutions revenue grew 5.1% in Q1 2026 and Telia was approved as a NATO framework supplier, raising the importance of complex, multi-stakeholder B2B selling.",
     baselineMetrics: [
       "About 50% of Telia Finland revenue comes from Enterprise customers",
-      "Business solutions revenue in Finland: SEK 2,913m in FY2025",
+      "Business solutions revenue in Finland: EUR ~275m in FY2025",
       "Business solutions were about 22.7% of Finland service revenue in FY2025",
       "Business solutions revenue grew 5.1% in Q1 2026",
-      "Finland service revenue totaled SEK 12,844m in FY2025",
+      "Finland service revenue totaled EUR ~1,205m in FY2025",
     ],
     audienceFit:
       "Head of Large Corporate Customers; Account Management Large Corp; Head of SME Customers; Head of B2B Development",
@@ -146,11 +146,11 @@ const challenges: ChallengeCard[] = [
     challengeStatement:
       "Too many deliveries still slow down when they hit old process logic, brittle integrations, or data that nobody fully trusts. We do not feel the cost as one big outage; we feel it as constant drag on speed, coordination, and confidence.",
     whyNow:
-      "Telia's broader efficiency program targeted annual savings of at least SEK 2.6bn from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
+      "Telia's broader efficiency program targeted annual savings of at least EUR ~245m from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
     baselineMetrics: [
-      "Group change program targeted annual savings of at least SEK 2.6bn",
+      "Group change program targeted annual savings of at least EUR ~245m",
       "Finland proposed net reduction of around 200 positions in Q1 2026",
-      "Finland revenue: SEK 14,956m and service revenue: SEK 12,844m in FY2025",
+      "Finland revenue: EUR ~1,405m and service revenue: EUR ~1,205m in FY2025",
       "Finland adjusted EBITDA margin: 31.3% in FY2025",
       "Dated public signal: Salesforce/Vlocity linked to Telia Finland digital transformation in 2017",
     ],
@@ -190,13 +190,13 @@ const challenges: ChallengeCard[] = [
     challengeStatement:
       "We still run planning and performance conversations on summaries that arrive after the mix has already moved. That makes it harder to react to shifts in subscriber quality, product mix, and delivery cost while they are still manageable.",
     whyNow:
-      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below SEK 14bn per year.",
+      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below EUR ~1.32bn per year.",
     baselineMetrics: [
-      "Finland revenue: SEK 14,956m in FY2025",
-      "Finland service revenue: SEK 12,844m in FY2025",
-      "Finland adjusted EBITDA: SEK 4,682m in FY2025",
+      "Finland revenue: EUR ~1,405m in FY2025",
+      "Finland service revenue: EUR ~1,205m in FY2025",
+      "Finland adjusted EBITDA: EUR ~440m in FY2025",
       "Mobile postpaid subscriptions down 79k year on year in Q1 2026; broadband up 9k and TV up 8k",
-      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: SEK 13,443m",
+      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: EUR ~1,265m",
     ],
     audienceFit:
       "Director Finance; Head of Business Intelligence; Head of Strategic Portfolio Management; Development Manager Operational Excellence",
