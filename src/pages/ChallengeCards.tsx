@@ -17,262 +17,146 @@ import {
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
-// Cards from the Telia Finland AI Immersion Day discovery brief, framed
-// as business problems for mixed leadership / IT breakout discussion
-// (not solution briefs). The internal `number` (Cxx) is kept as a stable
-// id for storage but is not surfaced in the UI per current design.
+// Cards from the Boehringer Ingelheim AI Immersion Day discovery brief,
+// framed as business problems for mixed leadership / HR breakout discussion
+// (not solution briefs). Ordered by impact priority — highest-impact cards
+// first. The internal `number` (Cxx) is kept as a stable id for storage
+// but is not surfaced in the UI per current design.
 const challenges: ChallengeCard[] = [
   {
     number: "C1",
-    company: "Telia Finland",
-    theme: "Customer Care / Omnichannel",
-    title: "Care journeys restart every time the channel changes",
+    company: "Boehringer Ingelheim",
+    theme: "Hiring & Recruitment / Launch & Scientific Talent",
+    title: "Critical launch roles are sourced too slowly to hit the launch window",
     summary:
-      "Channel hand-offs force customers to repeat themselves, eroding care quality and retention.",
+      "Launch-critical roles in commercial, medical and computational science take too long to fill, putting peak-share at risk.",
     challengeStatement:
-      "Customers contact us too many times to solve one issue, and each handoff makes them repeat context we should already know. The organization experiences it as queues and transfers; the customer experiences it as not being understood.",
+      "When a launch or a new platform lands, we're given a date, not a runway. The roles we need most — launch commercial, medical, oncology, computational science — are the hardest to fill, and by the time we've sourced and screened, the window has moved. We're always recruiting against the clock, and the clock keeps speeding up.",
     whyNow:
-      "Telia says it accelerated AI in customer service during 2025 and routine enquiries are increasingly handled autonomously. Finland consumer mobile remains under competitive pressure while fixed and business solutions improve, making care quality a retention lever rather than only a support cost line.",
+      "Hernexeos (US Aug 2025) and Jascayd (approved Oct/Dec 2025) are launching now, and survodutide's Phase III obesity readout (Apr 2026) points to a category-defining launch. The $20bn US build adds sustained demand. Launch peak-share is won or lost in the first months — exactly when hard-to-fill roles are still open.",
     baselineMetrics: [
-      "2,396k mobile postpaid subscriptions excluding M2M",
-      "627k broadband subscriptions",
-      "659k TV subscriptions",
-      "Finland service revenue: EUR ~290m in Q1 2026 and EUR ~1,205m in FY2025",
-      "Vendor directional signal: Telia Finland CX program used RPA, attended automation, AI and analytics",
+      "Two live launches (Hernexeos, Jascayd) + one late-stage obesity asset (survodutide, ~16.6% mean weight loss, Ph III)",
+      "$20bn US investment plan 2025–2030 (sustained hiring demand)",
+      "R&D \u20AC6.4bn / 22.9% of sales — a deep, specialist hiring base",
+      "Operational baseline not public: time-to-fill, req volumes, offer-accept, cost-per-hire — validate live",
     ],
     audienceFit:
-      "Head of B2B Customer Operations; Head of Sales Support B2C; Director Service Management Assurance & Operations; CRM & Development Lead",
+      "Head of Talent Acquisition (launch & scientific); HRBP Human Pharma; TA Operations Lead",
     crossFunctionalHooks:
-      "Head of OSS; CIO; Head of Business Intelligence; Senior Process Manager B2B; Brand Manager",
+      "Launch Excellence Lead; Medical Affairs; Innovation Unit; Employer Brand; AI Governance Counsel",
   },
   {
     number: "C2",
-    company: "Telia Finland",
-    theme: "B2B Sales / Enterprise Productivity",
-    title: "Account teams spend too long assembling answers",
+    company: "Boehringer Ingelheim",
+    theme: "Talent Development / Launch Readiness",
+    title: "Launch readiness depends on capability we must build faster than we can hire",
     summary:
-      "Sellers lose hours stitching pricing, delivery, security, and network context together.",
+      "Field, medical and access teams can't be made launch-ready at launch speed using traditional content and classroom methods.",
     challengeStatement:
-      "Our large-account sellers and customer teams lose hours pulling together pricing, delivery, assurance, security, and network context before they can even respond properly. That makes us slower than the customer expects and slower than the opportunity window allows.",
+      "A launch lives or dies on whether the field, medical and access teams are ready on day one. Building that readiness the old way — classroom, slides, slow content — can't keep up with the launch calendar, and every market needs it slightly differently. We're always one cycle behind the launch we're training for.",
     whyNow:
-      "About 50% of Telia Finland revenue comes from Enterprise customers. Finland business solutions revenue grew 5.1% in Q1 2026 and Telia was approved as a NATO framework supplier, raising the importance of complex, multi-stakeholder B2B selling.",
+      "Live launches (Hernexeos, Jascayd) and a probable obesity/MASH launch (survodutide) create back-to-back readiness demand across markets. The gap is not 'do we have academies' — it's whether content can be generated and localised at launch speed.",
     baselineMetrics: [
-      "About 50% of Telia Finland revenue comes from Enterprise customers",
-      "Business solutions revenue in Finland: EUR ~275m in FY2025",
-      "Business solutions were about 22.7% of Finland service revenue in FY2025",
-      "Business solutions revenue grew 5.1% in Q1 2026",
-      "Finland service revenue totaled EUR ~1,205m in FY2025",
+      "Two live launches + survodutide late-stage; multi-market rollout",
+      "Existing Functional-Specific Academies and Global Leadership Development Programs",
+      "Operational baseline not public: completion, time-to-competency, field-readiness scores — validate live",
+      "Academies exist; no public evidence of AI-accelerated, launch-speed content generation/localisation — that speed is the gap",
     ],
     audienceFit:
-      "Head of Large Corporate Customers; Account Management Large Corp; Head of SME Customers; Head of B2B Development",
+      "Head of Commercial / Medical Learning; Launch Excellence Lead; COE Learning",
     crossFunctionalHooks:
-      "CISO; Head of OSS; Director B2B Marketing/CIE & B2B Digital Ops; Finance Director",
+      "Medical Affairs (MLR sign-off); Market access; Local affiliate L&D; Regulatory",
   },
   {
     number: "C3",
-    company: "Telia Finland",
-    theme: "SME Growth / Commercial Execution",
-    title: "SME growth is stuck in a three-player fight",
+    company: "Boehringer Ingelheim",
+    theme: "HR Shared Services / Employee & Manager Self-Service",
+    title: "Employees and managers in 130+ markets wait too long for routine HR answers",
     summary:
-      "Growth leans on discounting because timing, relevance, and execution don't differentiate enough.",
+      "Repeat HR queries in a dozen languages across time zones swamp GBS agents and crowd out complex cases.",
     challengeStatement:
-      "We are competing in a market where everyone has nationwide capabilities and customers can compare prices instantly. The result is that too much growth depends on discounts and too little comes from timing, relevance, and execution.",
+      "Most of what people ask us, we've answered a thousand times — leave, pay, policy, 'where do I go for X'. But it arrives in a dozen languages across a dozen time zones, and it sits in a queue. People lose time, our agents drown in repeat tickets, and the simple stuff crowds out the cases that actually need a human.",
     whyNow:
-      "Finland remains a tightly contested three-player market. Telia held about 29% telecom turnover share in 2023, behind Elisa at 37% and ahead of DNA at 23%. In mobile subscriptions, Telia is roughly level with DNA and behind Elisa; in fixed broadband, it trails both Elisa and DNA.",
+      "GBS already runs hire-to-retire from four hubs, and the Feb 2026 IT/GBS board seat sharpens the mandate to automate Tier-0. GenAI makes confident, source-grounded answers viable where legacy portals don't.",
     baselineMetrics: [
-      "Telecom turnover share in 2023: Telia 29%, Elisa 37%, DNA 23%",
-      "Mobile subscription share in 2024: Telia about 30%, Elisa 38%, DNA 31%",
-      "Fixed broadband share in 2024: Telia 24%, Elisa 31%, DNA 34%",
-      "9m mobile subscriptions in use in Finland at end-2025",
-      "DNA reported 28k mobile net adds and 3k fixed net adds in Q3 2025",
+      "GBS: ~2,000 staff across 4 centres (Manila, Buenos Aires, Germany, Wroclaw) running 'hire-to-retire'",
+      "130+ markets — multilingual, multi-policy demand",
+      "Harsha Deshmukh — IT & GBS board responsibility from 1 Feb 2026",
+      "Operational baseline not public: ticket volumes, deflection, handle times — validate live",
     ],
     audienceFit:
-      "Head of SME Customers; Client Manager SME; Head of B2B Marketing; Director B2B Marketing/CIE & B2B Digital Ops",
+      "Head of HR Services / HR@GBS; GBS Service-Line Owner",
     crossFunctionalHooks:
-      "Head of B2B Customer Insights; CRM & Development Lead; Finance Director; Head of Business Intelligence",
+      "IT & GBS (Deshmukh org); Data Privacy; COE Policy; local HR",
   },
   {
     number: "C4",
-    company: "Telia Finland",
-    theme: "Consumer Retention / Churn",
-    title: "Retention signals arrive after the customer has left",
+    company: "Boehringer Ingelheim",
+    theme: "Hiring & Recruitment / Responsible AI Governance",
+    title: "Hiring and talent-decision AI must be provably fair, transparent and human-overseen",
     summary:
-      "Churn signals arrive too late — through complaints, silence, or partial disengagement.",
+      "EU AI Act makes recruitment AI high-risk from Aug 2026 — BI needs an assurance layer it can stand behind to regulators and works councils.",
     challengeStatement:
-      "We often understand churn too late, after the customer has already shown us what mattered through complaints, silence, or partial disengagement. By then we are trying to explain the loss rather than prevent it.",
+      "Anything we build that touches who gets hired, promoted or moved is high-risk by law — and high-stakes for trust. We can't bolt governance on afterwards, but we also can't let 'it might be risky' freeze every useful tool. We need a way to deploy AI in talent decisions we can stand behind to a regulator, a works council and a candidate.",
     whyNow:
-      "Telia Finland's mobile postpaid base excluding M2M fell by 79,000 year on year in Q1 2026, while mobile service revenue declined 2.0%. Telia says competitive pressure continues in Finland's mobile consumer business. The consumer proposition is also structurally changing because Telia no longer owns MTV but still sells bundle-rich entertainment offers.",
+      "EU AI Act Annex III makes recruitment and worker-management AI high-risk; obligations apply from 2 Aug 2026, with fines up to \u20AC15m or 3% of global turnover. German co-determination adds a works-council dimension. This is buildable now and underpins every other hiring-related card.",
     baselineMetrics: [
-      "Mobile postpaid base excluding M2M down 79k year on year to 2,396k at March 31, 2026",
-      "Mobile service revenue in Finland declined 2.0% like for like in Q1 2026",
-      "Postpaid mobile ARPU was EUR 19.3 in Q1 2026, up 1.0% year on year",
-      "Broadband subscriptions rose by 9k year on year and broadband ARPU rose 8.2%",
+      "EU AI Act (Reg. 2024/1689) Annex III — employment / worker-management = high-risk; obligations from 2 Aug 2026",
+      "Penalties up to \u20AC15,000,000 or 3% of worldwide annual turnover (Art. 99(4))",
+      "German Betriebsrat co-determination + GDPR Art. 22 constraints",
+      "Operational baseline not public: BI's current HR-AI inventory and works-council agreements — validate live",
+      "No public evidence of an HR-specific AI assurance layer — likely a real gap given the Aug 2026 deadline",
     ],
     audienceFit:
-      "Head of Sales Support B2C; Senior Brand Manager; Head of Development Consumer Products; Head of B2B Customer Insights",
+      "CHRO office + AI Governance / Data Privacy Counsel; People Analytics; Employee Relations / Co-determination Lead",
     crossFunctionalHooks:
-      "CRM & Development Lead; Head of Business Intelligence; Service Management; Finance",
+      "Legal & Compliance; IT & GBS; Data Governance; Works Council liaison",
   },
   {
     number: "C5",
-    company: "Telia Finland",
-    theme: "Fraud / Security / Trust",
-    title: "Fraud cases escalate faster than teams can triage",
+    company: "Boehringer Ingelheim",
+    theme: "Talent Development / Skills Intelligence",
+    title: "We can't see the skills we already have, so we over-hire and under-deploy",
     summary:
-      "Fraud volume outpaces manual triage; pattern recognition and coordinated response lag.",
+      "Without an enterprise skills view, BI defaults to costly external hiring while internal talent stays invisible.",
     challengeStatement:
-      "The attack surface is growing across customers, channels, partners, and products, but case handling still depends too much on manual interpretation and fragmented escalation paths. We are good at reacting to obvious problems; we are slower on pattern recognition and coordinated response.",
+      "When a new priority lands, our first instinct is to hire — because we genuinely can't see who inside already has the adjacent skills. People who could grow into launch or AI-critical roles stay invisible, and we pay twice: external hiring cost, and disengaged internal talent who weren't asked.",
     whyNow:
-      "Telia's 2024 security foresight report says hacker attacks and cyber-crime are escalating rapidly. Telia Safe includes online security, privacy, and fraud prevention features. The AI Act timeline also matters operationally: AI literacy and prohibited-use rules are already in force, and most remaining obligations apply from August 2, 2026.",
+      "Simultaneous launch + AI + US-build demand makes internal redeployment economically essential. Without a skills view, the default is always external hiring — the slowest, costliest option for scarce roles.",
     baselineMetrics: [
-      "2,396k mobile postpaid subscriptions excluding M2M",
-      "627k broadband subscriptions",
-      "9m mobile subscriptions in Finland at end-2025; 72% used by private household consumers",
-      "14,498 Telia employees in continuing operations at year-end 2025",
-      "Most AI Act obligations apply from August 2, 2026",
+      "~54,000+ employees across 130+ markets — a large latent skills base",
+      "COE owns talent & succession and people development (natural home)",
+      "Growth-engine roles (launch, AI, manufacturing) all need adjacent skills",
+      "Operational baseline not public: internal-fill rate, skills coverage, mobility rate — validate live",
+      "No public evidence of an enterprise skills graph at BI — confirm in discovery",
     ],
     audienceFit:
-      "CISO; Security Specialist; Director Service Management Assurance & Operations; Head of B2B Customer Operations",
+      "Head of Talent Management / Strategic Workforce Planning; People Analytics",
     crossFunctionalHooks:
-      "CIO; Head of Generative AI; Finance Director; Large Corporate Customers; SME Customers",
+      "HRBP community; IT & GBS; Data Privacy (employee-data sensitivity); function heads",
   },
   {
     number: "C6",
-    company: "Telia Finland",
-    theme: "IT Delivery / Legacy / Release Flow",
-    title: "Release trains stall around legacy dependencies",
+    company: "Boehringer Ingelheim",
+    theme: "Talent Development / Manufacturing Capability",
+    title: "The US manufacturing build needs GMP & Annex-1 capability faster than the labour market supplies it",
     summary:
-      "Old logic, brittle integrations, and untrusted data drag every release.",
+      "BI can pour concrete faster than it can build the qualified, GMP-ready workforce to fill new US facilities.",
     challengeStatement:
-      "Too many deliveries still slow down when they hit old process logic, brittle integrations, or data that nobody fully trusts. We do not feel the cost as one big outage; we feel it as constant drag on speed, coordination, and confidence.",
+      "We're committing billions to US manufacturing, but the people who can run modern sterile and biologics operations to current standards are scarce and slow to develop. We can pour concrete faster than we can build the qualified, GMP-ready workforce to fill the building.",
     whyNow:
-      "Telia's broader efficiency program targeted annual savings of at least EUR ~245m from September 2024. Finland announced a proposed net reduction of around 200 positions in Q1 2026 as part of simplification and efficiency work. Public Finland-specific stack signals point to a layered environment rather than a clean-sheet one.",
+      "The $20bn US plan includes manufacturing capex, and EU GMP Annex 1 (in force Aug 2023) raises the capability bar globally. Qualified operators and QA staff must be ready as capacity comes online — qualification can't be rushed.",
     baselineMetrics: [
-      "Group change program targeted annual savings of at least EUR ~245m",
-      "Finland proposed net reduction of around 200 positions in Q1 2026",
-      "Finland revenue: EUR ~1,405m and service revenue: EUR ~1,205m in FY2025",
-      "Finland adjusted EBITDA margin: 31.3% in FY2025",
-      "Dated public signal: Salesforce/Vlocity linked to Telia Finland digital transformation in 2017",
+      "$20bn US plan 2025–2030 (manufacturing capex component)",
+      "EU GMP Annex 1 contamination-control expectations",
+      "Global manufacturing & biologics (BioXcellence) network",
+      "Operational baseline not public: site headcount, qualification timelines, competency gaps — validate live",
+      "General manufacturing training exists; no public evidence of AI-accelerated qualification for the new US build",
     ],
     audienceFit:
-      "Finland CIO; Head of IT Execution & PMO; Release Manager; RTE / Execution Orchestrator",
+      "Head of Manufacturing / Operations L&D; Site HR; Quality Training Lead",
     crossFunctionalHooks:
-      "Head of OSS; CRM & Development Lead; Product Owner; Finance Director; Vendor Management",
-  },
-  {
-    number: "C7",
-    company: "Telia Finland",
-    theme: "Workforce / Skills / AI Adoption",
-    title: "Skills gaps surface after strategy has moved",
-    summary:
-      "Skill gaps show up in delivery and control before they're mapped or rebuilt.",
-    challengeStatement:
-      "We are asking managers and teams to work in new ways faster than we can reliably map, build, and redeploy the necessary skills. By the time a gap is visible in performance, it is already delaying delivery or weakening control.",
-    whyNow:
-      "Telia investor messaging says there is a growing need to secure competence to capture future AI opportunities. Finland is going through simplification, including a proposed reduction of around 200 positions. AI governance now includes literacy expectations under the EU AI Act, and Telia's human-rights policy emphasizes responsible use, fairness, transparency, and accountability.",
-    baselineMetrics: [
-      "14,498 employees in continuing operations at year-end 2025",
-      "3,912 average employees in Finland in 2024",
-      "Proposed net reduction of around 200 positions in Q1 2026",
-      "98% of all employees had completed Telia Code of Conduct training by Q3 2025",
-      "Most AI Act obligations apply from August 2, 2026",
-    ],
-    audienceFit: "People Partner; L&D Partner; Head of Generative AI; CIO",
-    crossFunctionalHooks: "CISO; PMO; Networks; Finance; Business Intelligence",
-  },
-  {
-    number: "C8",
-    company: "Telia Finland",
-    theme: "Finance / Planning / Performance Management",
-    title: "Forecasts lag the business they are steering",
-    summary:
-      "Planning conversations arrive after the business mix has already shifted.",
-    challengeStatement:
-      "We still run planning and performance conversations on summaries that arrive after the mix has already moved. That makes it harder to react to shifts in subscriber quality, product mix, and delivery cost while they are still manageable.",
-    whyNow:
-      "Finland's Q1 2026 picture was mixed: service revenue up 0.3%, adjusted EBITDA up 1.3%, mobile service revenue down 2.0%, business solutions up 5.1%, and broadband up 7.6%. Telia's 2025\u20132027 group ambitions are exacting: 2% CAGR in service revenue, 4% CAGR in adjusted EBITDA, and CAPEX below EUR ~1.32bn per year.",
-    baselineMetrics: [
-      "Finland revenue: EUR ~1,405m in FY2025",
-      "Finland service revenue: EUR ~1,205m in FY2025",
-      "Finland adjusted EBITDA: EUR ~440m in FY2025",
-      "Mobile postpaid subscriptions down 79k year on year in Q1 2026; broadband up 9k and TV up 8k",
-      "2025 group CAPEX excluding licenses, spectrum fees and right-of-use assets: EUR ~1,265m",
-    ],
-    audienceFit:
-      "Director Finance; Head of Business Intelligence; Head of Strategic Portfolio Management; Development Manager Operational Excellence",
-    crossFunctionalHooks:
-      "CIO; PMO; B2B Development; Networks; Consumer Products",
-  },
-  {
-    number: "C9",
-    company: "Telia Finland",
-    theme: "Data Governance / Responsible AI",
-    title: "Data accountability is weaker than digital ambition",
-    summary:
-      "Tools and decisions move faster than data lineage, ownership, and controls.",
-    challengeStatement:
-      "We are moving faster with new tools and new decisions than with the controls that explain where the data came from, how it was changed, and who owns the outcome. That creates friction with risk, confidence, and adoption all at once.",
-    whyNow:
-      "Telia says AI now spans customer service, networks, and internal processes. Telia's March 2026 human-rights policy raises the bar on responsible AI, fairness, transparency, and accountability. The AI Act timeline is close enough that operating-model questions cannot stay abstract; most obligations apply from August 2, 2026.",
-    baselineMetrics: [
-      "AI use described across customer service, networks and internal processes",
-      "14,498 employees in continuing operations at year-end 2025",
-      "2,396k mobile postpaid subscriptions excluding M2M and 627k broadband subscriptions in Finland",
-      "AI literacy and prohibited-use provisions are already in force; most remaining AI Act duties apply from August 2, 2026",
-    ],
-    audienceFit: "Head of Generative AI; CISO; CIO; Security Specialist",
-    crossFunctionalHooks:
-      "Finance; HR / L&D; OSS; CRM & Development; Business Intelligence",
-  },
-  {
-    number: "C10",
-    company: "Telia Finland",
-    theme: "Application Support / Incident Intelligence",
-    title: "Enterprise application errors take too long to diagnose and resolve",
-    summary:
-      "Error interpretation, log searches, and team hand-offs slow every incident resolution.",
-    challengeStatement:
-      "Application and platform support teams spend too much time interpreting technical errors, searching logs, checking historical incidents and coordinating across functional and technical teams. The real issue is not only the error itself, it is the time lost in moving from symptom to root cause to resolution.",
-    whyNow:
-      "Enterprise application landscapes are increasingly complex, with business-critical processes depending on integrated platforms, legacy components, custom logic, interfaces and data flows. When incidents occur, support teams need faster ways to interpret error messages, correlate technical traces, identify likely causes and recommend the next best action. AI can help reduce manual investigation effort by assisting with error interpretation, log summarisation, incident pattern matching and guided remediation.",
-    baselineMetrics: [
-      "Average time taken to diagnose application incidents",
-      "Number of incidents requiring multiple handoffs between business, functional and technical teams",
-      "Repeated or recurring error categories across enterprise applications",
-      "Volume of support tickets linked to integration, configuration, authorisation, data or custom-code issues",
-      "Time spent searching previous incidents, logs, knowledge articles and system documentation",
-      "Percentage of incidents resolved using existing knowledge versus requiring new analysis",
-    ],
-    audienceFit:
-      "CIO; Head of IT Execution & PMO; Application Support Lead; Service Management Lead; Release Manager; Enterprise Application Owners; Product Owners; Functional Leads",
-    crossFunctionalHooks:
-      "Business Operations; Finance; HR / People Systems; CRM & Development; Data & Analytics; Security; Vendor Management; PMO",
-    injectionMode: "full",
-  },
-  {
-    number: "C11",
-    company: "Telia Finland",
-    theme: "B2B Delivery Services / Enterprise Productivity",
-    title: "Delivery capacity is falling short of demand",
-    summary:
-      "Hansel deliveries are running well below target; capacity, complexity and post-delivery work choke the pipeline.",
-    challengeStatement:
-      "Hansel project's customer deliveries are progressing too slowly, and current delivery capacity is insufficient to meet rising demand. The gap is driven by limited resources, delivery complexity in non-standard cases, and post-delivery work that has not been adequately accounted for. In addition, customer delays in providing information and missing support materials further slow the process.",
-    whyNow:
-      "Hansel delivery volumes have increased rapidly and will continue for 2+ years. Current delivery output does not scale with rising demand, backlogs and queues are starting to threaten customer experience and trust, and manual reactive control no longer works at this scale. The Hansel delivery end date keeps slipping further out, and multiple IT systems (e.g. customer-numbering data processing) further slow the delivery process.",
-    baselineMetrics: [
-      "Delivery throughput is significantly below target (about 1\u20132 deliveries per week vs. a target of 6\u20138)",
-      "Number-investigation backlog grew rapidly to ~150 cases",
-      "Delivery start dates are delayed by several weeks due to resource constraints and customer-data / delivery-information investigation bottlenecks",
-      "Asset creation and customer training take longer than before, especially when handled by less experienced personnel rather than dedicated back-office and customer trainers",
-      "Post-delivery warranty work consumes delivery capacity without systematic measurement",
-      "End-to-end delivery status must be manually assembled from multiple sources",
-    ],
-    audienceFit:
-      "Head of B2B Customer Operations; Head of B2B Delivery Services; Head of Large Corporate Customers; Head of B2B Development",
-    crossFunctionalHooks:
-      "Delivery & Operations (workload management, prioritisation, lead times); Sales (orderability, predictability, deal progression); IT & Architecture (system integration, automation, data availability); Customer Experience (communication timing, delivery quality, post-delivery experience); Management (predictive steering, capacity decisions, risk management)",
-    injectionMode: "full",
+      "Operations / Product Supply; Quality; Regulatory; IT & GBS",
   },
 ];
 
@@ -374,7 +258,7 @@ const ChallengeCards = () => {
           Extracted and structured from the discovery brief. These cards are
           framed as{" "}
           <strong className="text-foreground">business problems</strong> for
-          mixed leadership / IT breakout discussions — not solution briefs.
+          mixed leadership / HR breakout discussions — not solution briefs.
           Click any card on the left to view its full context, then choose one
           to carry into the prompts page.
         </p>

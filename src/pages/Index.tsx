@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Download, Images, MessageSquare, ArrowRight, ChevronRight } from "lucide-react";
 import tcsLogo from "@/assets/TCS Co Logo SVG.svg";
-import teliaLogo from "@/assets/Telia Co Logo SVG.svg";
+import biLogo from "@/assets/BI Co Logo SVG.svg";
 
 const steps = [
   {
@@ -9,7 +9,7 @@ const steps = [
     title: "Context Pack",
     tagline: "Get Context",
     description:
-      "Download the Telia Finland discovery brief — business model, market position, strategic priorities and competitive landscape.",
+      "Download the Boehringer Ingelheim discovery brief — business model, pipeline, strategic priorities and competitive landscape.",
     icon: Download,
     path: "/deep-research",
     gradient: "from-primary to-accent",
@@ -19,7 +19,7 @@ const steps = [
     title: "Challenge Cards",
     tagline: "Pick Challenge",
     description:
-      "Explore the business problems extracted from the discovery brief — framed for mixed leadership / IT breakout discussions.",
+      "Explore the business problems extracted from the discovery brief — framed for mixed leadership / HR breakout discussions.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-accent to-primary",
@@ -29,7 +29,7 @@ const steps = [
     title: "Prompts",
     tagline: "Run Prompt",
     description:
-      "Double Diamond framework prompts tailored for the Telia Finland immersion. Copy and use with your preferred AI assistant.",
+      "Double Diamond framework prompts tailored for the Boehringer Ingelheim immersion. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
@@ -42,32 +42,28 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 sm:px-6 py-12 overflow-x-hidden">
       <div className="max-w-6xl w-full animate-fade-in">
-        {/* Logo header — both logos pinned to the same VISUAL height with
-            `w-auto`, so they balance regardless of each SVG's aspect ratio.
-            (Boxing them in equal width+height containers makes the wider
-            Telia mark render shorter than TCS — same height + auto width
-            keeps them visually matched.) */}
+        {/* Logo header */}
         <div className="flex items-center justify-center gap-8 md:gap-12 mb-10">
           <img
             src={tcsLogo}
             alt="TCS"
-            className="h-10 md:h-12 w-auto"
+            className="h-7 md:h-8 w-auto"
           />
-          <div className="h-10 md:h-12 w-px bg-border" aria-hidden="true" />
+          <div className="h-7 md:h-8 w-px bg-border" aria-hidden="true" />
           <img
-            src={teliaLogo}
-            alt="Telia Finland"
-            className="h-10 md:h-12 w-auto"
+            src={biLogo}
+            alt="Boehringer Ingelheim"
+            className="h-auto w-40 md:w-48"
           />
         </div>
 
         {/* Title block */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            Telia Finland — AI Immersion Day
+            Boehringer Ingelheim — AI Immersion Day
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the Telia Finland immersion — discovery context, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
+            Resources for the Boehringer Ingelheim immersion — discovery context, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
           </p>
         </div>
 

@@ -54,7 +54,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:telia-finland-v1";
+const TOOL_STORAGE_KEY = "workshopTool:boehringer-ingelheim-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;
@@ -78,122 +78,38 @@ const prompts: Prompt[] = [
   {
     step: 0,
     label: "Learn",
-    text: `Here is the Telia Finland context pack and the challenge card we will work on today. No action required yet — read both as background.
-
-Confirm you have understood (1) Telia Finland's business model and current strategic context, and (2) the specific friction this challenge describes.
-
-Note three things from this material that surprised you and one assumption you would test first.`,
+    text: `Here is a deep research report for the topic we are going to discuss today. No action required. Use this report as additional context for your responses apart from web search and other resources.`,
   },
   {
     step: 1,
     label: "Widen",
-    text: `Act as a research aide for the [SELECTED CHALLENGE STATEMENT] at Telia Finland.
-
-List the key personas inside Telia Finland who feel this friction day-to-day, the top three pains they experience, and then:
-
-Cluster the persona pains into 2–4 system-level pains that recur across multiple personas.
-
-For each system-level pain:
-a) Give it a short label (SP1, SP2, etc.)
-b) Provide a one-sentence description
-c) List which personas experience it
-
-Also list the current workarounds they rely on (manual spreadsheets, email threads, vendor tools, key-person knowledge), and the success metrics that would tell us the friction is reducing.
-
-Return five fresh insights and three risks.`,
+    text: `Act as a research aide for [SELECTED CHALLENGE] for Boehringer Ingelheim. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
   },
   {
     step: 2,
     label: "Diagnose",
-    text: `Pick the [TOP PAIN] for this Telia Finland challenge.
-
-For this pain, run a Five Whys. Propose three root-cause hypotheses and the disproof evidence for each — what would have to be true for the hypothesis to be wrong.
-
-Specify the minimum data extract needed to test each hypothesis and which Telia team is most likely to own that data (BSS / OSS, Salesforce / Vlocity CRM-CPQ, Telia ACE contact centre, ServiceNow, Microsoft 365 / SharePoint, the data platform, network management systems, billing, or any other system referenced in the Telia context pack).
-
-Output a root-cause map and a test plan.`,
+    text: `Let's pick the top [NUMBER] pains for this challenge. For these listed top pains, run a Five Whys. Propose 3 root-cause hypotheses and the disproof evidence for each. Specify the minimum data cut & owners to pull. Output a root-cause map, test plan, and privacy constraints.`,
   },
   {
     step: 3,
     label: "Ideate",
-    text: `Generate and cluster possible AI-driven solutions for this Telia Finland challenge into three options:
+    text: `Generate and cluster possible AI-driven ideas into 3 options:
 
-1. Process — policy, ways of working, governance changes.
+1. Process — policy, ways of working.
 2. Analytics / ML — forecast, optimise, recommend.
-3. AI & Automation — RAG, agents, computer vision, copilot patterns.
+3. Automation — CV, RAG / Co-Pilot, tasking.
 
-For each category, list 2–3 distinct ideas. For each idea give me a brief description.
-
-Tabulate and score each idea on Impact × Feasibility × Confidence × Time-to-Value (1–5 each) and show the total score for that idea.
-
-Recommend one pilot, scoring it on three things:
-
-- Ease of build — which option needs the fewest existing Telia systems to be connected? (i.e. the option that depends least on Salesforce / Vlocity, BSS / OSS, ServiceNow, Telia ACE, SharePoint or Microsoft 365)
-- Owner clarity — which option has the clearest single person in the room today who could lead it?
-- Strategic anchor — which option ties to a clear forcing function the room recognises today (a deadline, a leadership commitment, or a measurable outcome already on a roadmap).`,
+Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. Recommend one pilot with the smallest integration surface and clearest value proof to Boehringer Ingelheim.`,
   },
   {
     step: 4,
     label: "Brief",
-    text: `For the recommended pilot, create a one-page Telia Finland pilot brief including:
-
-• Target user (named or archetype, drawn from the persona list above)
-• Problem statement in their voice
-• Success metric with current baseline and target uplift
-• Key flow in 5–7 steps
-• Screens or components needed
-• Sample UI copy in plain business English (no marketing tone, no superlatives)
-• Representative sample data (no real customer / partner / employee data; use synthetic Telia-like names and amounts)
-• Integration points across the Telia stack`,
+    text: `For option [NUMBER], create a one-page pilot brief including: Target user(s), problem statement, success metrics & baselines, target uplift, key flow (5\u20137 steps), screens/components, sample UI copy, representative sample data, integration points, and relevant guardrails (GDPR/PCI, domain-specific regulation boundaries, bias tests, fallback behaviour).`,
   },
   {
     step: 5,
     label: "Build",
-    variants: [
-      {
-        id: "ai-studio",
-        title: "Google AI Studio",
-        subtitle: "Chat returns a PRD prompt → paste into AI Studio to build",
-        text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes:
-
-- Product name + one-liner description (actions, process, capabilities)
-- Who it's for (primary user, secondary users)
-- Screens + key components (list every screen and what sits on it)
-- Brand colours (Telia palette: primary purple, neutrals, semantic colours for success / warning / alert)
-- Main user flow (5–8 steps from entry to outcome)
-- Sample data (synthetic, plausible, Finnish locale, no real names)
-- Concise headlines and CTAs (plain business English, no marketing tone)
-- UI instructions (layout patterns, density, typography hierarchy, component states: empty / loading / populated / error)
-- Success metric card (baseline → target from the brief)
-- Constraints (no real customer / partner / employee PII; synthetic data only)
-
-Return the Google AI Studio prompt only — no preamble, no commentary, no explanation of what you are about to do. Just the prompt, ready to paste into Google AI Studio.`,
-      },
-      {
-        id: "copilot-html",
-        title: "Microsoft 365 Copilot",
-        subtitle: "Chat returns a downloadable HTML mockup file — done",
-        text: `Create a single .html file for a clickable mock-up based on the information in the product brief generated above.
-
-Target user: from the brief generated above
-Main user flow: from the brief generated above
-
-Requirements:
-
-• One .html file, inline CSS and JavaScript, no external dependencies.
-• Apply the Telia brand UI directly inside the file (do not reference external files):
-    • Brand colours: Telia primary purple (#990AE3) for primary actions, headers and key accents. Clean light slate or off-white background. Dark slate body text. Semantic colours: green for success, amber for warning, red for alert.
-    • Typography: Telia Sans (or a clean web-safe sans-serif fallback such as Inter or system-ui) with a clear hierarchy: display, heading, body, caption.
-    • Layout: generous whitespace, consistent rounded corners, subtle shadows, compact-but-readable density, responsive desktop-first layout.
-    • Component states: every interactive component must render empty, loading, populated and error states.
-• Cover all the screens needed by the main user flow as suggested by the selected challenge card and the brief. Do not artificially cap the screen count. Include navigation between screens so the flow is clickable end-to-end.
-• Synthetic sample data inline. No real names, no API calls. Use plausible Finnish-locale data (Helsinki, Espoo, Tampere; € amounts; Finnish company or contact placeholders).
-• Plain business English in all UI copy. No marketing tone, no superlatives.
-• A success-metric tile showing baseline and target from the brief.
-
-Return the file as a downloadable .html using Copilot's file-creation capability. Do not paste HTML into the chat.`,
-      },
-    ],
+    text: `You are a product design expert. Using only the brief above, write a single [PLATFORM] product requirements prompt that includes: Product name + one-liner description (actions, process, capabilities), who it's for, screens + key components, brand colours, main user flow, sample data, concise headlines/CTAs, UI instructions, success metric card, constraints (no PII). Return the [PLATFORM] prompt only.`,
   },
 ];
 
@@ -239,44 +155,29 @@ function buildPromptSegments(
   baseText: string,
   challenge: ChallengeCard | null
 ): { segments: PromptSegment[]; text: string; injected: boolean } {
-  // Step 1 (Widen) carries a `[SELECTED CHALLENGE STATEMENT]` placeholder.
-  // When a challenge is selected, swap it in-place. By default we inject
-  // the card title only. Cards with `injectionMode: "full"` instead get
-  // the entire structured challenge block injected for richer context.
+  // Step 1 (Widen) carries a `[SELECTED CHALLENGE]` placeholder.
+  // When a challenge is selected, swap it in-place with the card title.
+  // Cards with `injectionMode: "full"` instead get the entire structured
+  // challenge block injected for richer context.
   if (step === 1 && challenge) {
-    const tokenWithSuffix = "[SELECTED CHALLENGE STATEMENT] at Telia Finland.";
-    const tokenOnly = "[SELECTED CHALLENGE STATEMENT]";
+    const token = "[SELECTED CHALLENGE]";
 
-    if (
-      challenge.injectionMode === "full" &&
-      baseText.includes(tokenWithSuffix)
-    ) {
-      const idx = baseText.indexOf(tokenWithSuffix);
+    if (baseText.includes(token)) {
+      const idx = baseText.indexOf(token);
       const before = baseText.slice(0, idx);
-      const after = baseText.slice(idx + tokenWithSuffix.length);
-      const injectedText = `following Telia Finland challenge:\n\n${formatChallengeText(
-        challenge
-      )}\n`;
+      const after = baseText.slice(idx + token.length);
+      const injectedText =
+        challenge.injectionMode === "full"
+          ? `the following challenge:\n\n${formatChallengeText(challenge)}\n`
+          : challenge.title;
       const segments: PromptSegment[] = [
         ...splitPlaceholders(before),
         { type: "injected", text: injectedText },
         ...splitPlaceholders(after),
       ];
-      return { segments, text: before + injectedText + after, injected: true };
-    }
-
-    if (baseText.includes(tokenOnly)) {
-      const idx = baseText.indexOf(tokenOnly);
-      const before = baseText.slice(0, idx);
-      const after = baseText.slice(idx + tokenOnly.length);
-      const segments: PromptSegment[] = [
-        ...splitPlaceholders(before),
-        { type: "injected", text: challenge.title },
-        ...splitPlaceholders(after),
-      ];
       return {
         segments,
-        text: before + challenge.title + after,
+        text: before + injectedText + after,
         injected: true,
       };
     }

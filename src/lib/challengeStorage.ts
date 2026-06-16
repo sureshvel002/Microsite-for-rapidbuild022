@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-// Schema mirrors the Telia Finland AI Immersion Day discovery brief: each
-// card frames a *business problem* for breakout discussion (not a solution
-// brief). If you re-use this app for another client whose discovery brief
-// has a different shape, update this interface, the storage key suffix,
+// Schema mirrors the Boehringer Ingelheim AI Immersion Day discovery brief:
+// each card frames a *business problem* for breakout discussion (not a
+// solution brief). If you re-use this app for another client whose discovery
+// brief has a different shape, update this interface, the storage key suffix,
 // formatChallengeText, and the renderers in ChallengeCards.tsx + Prompts.tsx.
 export interface ChallengeCard {
   number: string;               // e.g. "C1" — stable internal id (not shown in UI)
-  company: string;              // e.g. "Telia Finland"
+  company: string;              // e.g. "Boehringer Ingelheim"
   theme: string;                // e.g. "Customer Care / Omnichannel"
   title: string;                // short problem framing
   summary: string;              // 1-line crisp description shown on card tile
@@ -30,7 +30,7 @@ export interface ChallengeCard {
 // auto-invalidated whenever the data shape changes. Bump the suffix on
 // each new client immersion *and* whenever the ChallengeCard interface
 // above changes shape.
-const STORAGE_KEY = "selectedChallenge:telia-finland-v4";
+const STORAGE_KEY = "selectedChallenge:boehringer-ingelheim-v1";
 const STORAGE_EVENT = "selectedChallenge:changed";
 
 // Best-effort cleanup of legacy keys from prior immersions / schemas so
@@ -40,6 +40,7 @@ const LEGACY_STORAGE_KEYS = [
   "selectedChallenge:telia-finland",
   "selectedChallenge:telia-finland-v2",
   "selectedChallenge:telia-finland-v3",
+  "selectedChallenge:telia-finland-v4",
 ];
 
 if (typeof window !== "undefined") {

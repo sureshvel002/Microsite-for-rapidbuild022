@@ -9,8 +9,8 @@ const AI_TOOLS = [
   { name: "Open Google AI Studio", url: "https://aistudio.google.com", color: "bg-googleai hover:bg-googleai/90 text-primary-foreground" },
 ];
 
-const PDF_PATH = "/documents/telia_finland_deepresearch.pdf";
-const DOWNLOAD_FILENAME = "Telia Finland - Context Pack.pdf";
+const PDF_PATH = "/documents/bi_ai_immersion_day_discovery_brief.pdf";
+const DOWNLOAD_FILENAME = "Boehringer Ingelheim - Context Pack.pdf";
 
 const DeepResearch = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const DeepResearch = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="text-lg font-semibold font-display text-card-foreground">Telia Finland Context Pack</h1>
+            <h1 className="text-lg font-semibold font-display text-card-foreground">Boehringer Ingelheim Context Pack</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -54,7 +54,7 @@ const DeepResearch = () => {
           <iframe
             src={PDF_PATH}
             className="w-full h-full"
-            title="Telia Finland Context Pack"
+            title="Boehringer Ingelheim Context Pack"
           />
         </div>
       </div>
