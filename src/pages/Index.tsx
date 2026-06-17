@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Download, Images, MessageSquare, ArrowRight, ChevronRight } from "lucide-react";
 import tcsLogo from "@/assets/TCS Co Logo SVG.svg";
-import biLogo from "@/assets/BI Co Logo SVG.svg";
 
 const steps = [
   {
@@ -9,7 +8,7 @@ const steps = [
     title: "Context Pack",
     tagline: "Get Context",
     description:
-      "Download the Boehringer Ingelheim discovery brief — business model, pipeline, strategic priorities and competitive landscape.",
+      "Download the executive pre-workshop briefing — account snapshots, strategic priorities and competitive landscape across six Belgian accounts.",
     icon: Download,
     path: "/deep-research",
     gradient: "from-primary to-accent",
@@ -19,21 +18,21 @@ const steps = [
     title: "Challenge Cards",
     tagline: "Pick Challenge",
     description:
-      "Explore the business problems extracted from the discovery brief — framed for mixed leadership / HR breakout discussions.",
+      "Explore the prioritised business problems extracted from the briefing — two per account, framed for domain-advisor & consultant breakout discussions.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-accent to-primary",
   },
-  {
-    step: 3,
-    title: "Prompts",
-    tagline: "Run Prompt",
-    description:
-      "Double Diamond framework prompts tailored for the Boehringer Ingelheim immersion. Copy and use with your preferred AI assistant.",
-    icon: MessageSquare,
-    path: "/prompts",
-    gradient: "from-primary to-accent",
-  },
+  // {
+  //   step: 3,
+  //   title: "Prompts",
+  //   tagline: "Run Prompt",
+  //   description:
+  //     "Double Diamond framework prompts tailored for the TCS Belgium immersion. Copy and use with your preferred AI assistant.",
+  //   icon: MessageSquare,
+  //   path: "/prompts",
+  //   gradient: "from-primary to-accent",
+  // },
 ];
 
 const Index = () => {
@@ -49,21 +48,15 @@ const Index = () => {
             alt="TCS"
             className="h-7 md:h-8 w-auto"
           />
-          <div className="h-7 md:h-8 w-px bg-border" aria-hidden="true" />
-          <img
-            src={biLogo}
-            alt="Boehringer Ingelheim"
-            className="h-auto w-40 md:w-48"
-          />
         </div>
 
         {/* Title block */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            Boehringer Ingelheim — AI Immersion Day
+            TCS Belgium — AI Immersion
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the Boehringer Ingelheim immersion — discovery context, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
+            Resources for the TCS Belgium domain-advisory immersion — executive briefing, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
           </p>
         </div>
 

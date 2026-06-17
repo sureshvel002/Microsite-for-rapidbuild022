@@ -17,146 +17,281 @@ import {
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
-// Cards from the Boehringer Ingelheim AI Immersion Day discovery brief,
-// framed as business problems for mixed leadership / HR breakout discussion
-// (not solution briefs). Ordered by impact priority — highest-impact cards
-// first. The internal `number` (Cxx) is kept as a stable id for storage
+// Cards from the TCS Belgium AI Immersion executive briefing,
+// framed as business problems for domain-advisor & consultant breakout
+// discussion (not solution briefs). Two cards per account, 12 total.
+// The internal `number` (Cxx) is kept as a stable id for storage
 // but is not surfaced in the UI per current design.
 const challenges: ChallengeCard[] = [
+  // ── BNP Paribas Fortis ──────────────────────────────────────────
   {
     number: "C1",
-    company: "Boehringer Ingelheim",
-    theme: "Hiring & Recruitment / Launch & Scientific Talent",
-    title: "Critical launch roles are sourced too slowly to hit the launch window",
+    company: "BNP Paribas Fortis",
+    theme: "Finance \u2022 Risk \u2022 Compliance \u2022 Reporting & Control-Evidence Generation",
+    title: "Cut manual evidence out of regulatory reporting",
     summary:
-      "Launch-critical roles in commercial, medical and computational science take too long to fill, putting peak-share at risk.",
+      "Analysts spend more time assembling and reconciling evidence than reasoning about risk, while requirements expand faster than headcount.",
     challengeStatement:
-      "When a launch or a new platform lands, we're given a date, not a runway. The roles we need most — launch commercial, medical, oncology, computational science — are the hardest to fill, and by the time we've sourced and screened, the window has moved. We're always recruiting against the clock, and the clock keeps speeding up.",
+      "Every reporting and DORA cycle, my analysts spend more time assembling and reconciling evidence than reasoning about risk. The bank wants strict cost discipline while taxes and cost of risk eat our margin \u2014 yet control evidence is still largely hand-built, because requirements expand faster than the headcount we\u2019re allowed to add.",
     whyNow:
-      "Hernexeos (US Aug 2025) and Jascayd (approved Oct/Dec 2025) are launching now, and survodutide's Phase III obesity readout (Apr 2026) points to a category-defining launch. The $20bn US build adds sustained demand. Launch peak-share is won or lost in the first months — exactly when hard-to-fill roles are still open.",
+      "DORA applies across the EU financial sector from 17 Jan 2025, raising the bar on ICT-risk evidence, resilience testing and incident handling \u2014 while a EUR 124m banking-tax rise forces cost discipline now.",
     baselineMetrics: [
-      "Two live launches (Hernexeos, Jascayd) + one late-stage obesity asset (survodutide, ~16.6% mean weight loss, Ph III)",
-      "$20bn US investment plan 2025–2030 (sustained hiring demand)",
-      "R&D \u20AC6.4bn / 22.9% of sales — a deep, specialist hiring base",
-      "Operational baseline not public: time-to-fill, req volumes, offer-accept, cost-per-hire — validate live",
+      "DORA applicable from 17 Jan 2025 \u2014 auditability, control observability, third-party oversight [DORA]",
+      "EUR 124m banking-tax increase; EUR 251m rise in cost of risk [Annual Report 2025]",
+      "Validate live: analyst-hours per report, manual DORA artefacts, rework volume",
+      "Status: no public copilot deployment \u2014 confirm; group AI investment rising",
     ],
     audienceFit:
-      "Head of Talent Acquisition (launch & scientific); HRBP Human Pharma; TA Operations Lead",
+      "DORA programme lead \u2022 Chief Risk Officer \u2022 Head of Regulatory Reporting / Finance",
     crossFunctionalHooks:
-      "Launch Excellence Lead; Medical Affairs; Innovation Unit; Employer Brand; AI Governance Counsel",
+      "CISO / cyber \u2022 internal audit \u2022 group compliance \u2022 IT & data",
   },
   {
     number: "C2",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Launch Readiness",
-    title: "Launch readiness depends on capability we must build faster than we can hire",
+    company: "BNP Paribas Fortis",
+    theme: "Bancassurance Operations \u2022 Policy Servicing, Claims Intake, Customer Comms",
+    title: "Industrialise insurance servicing, not just the AG contract",
     summary:
-      "Field, medical and access teams can't be made launch-ready at launch speed using traditional content and classroom methods.",
+      "A 15-year partnership says to digitalise and industrialise insurance \u2014 but policy changes, claims intake and customer comms are still touched by hand.",
     challengeStatement:
-      "A launch lives or dies on whether the field, medical and access teams are ready on day one. Building that readiness the old way — classroom, slides, slow content — can't keep up with the launch calendar, and every market needs it slightly differently. We're always one cycle behind the launch we're training for.",
+      "We\u2019ve signed a 15-year partnership that explicitly tells us to digitalise and industrialise insurance \u2014 but policy changes, claims intake and customer comms are still touched by hand, and bank-to-insurer handoffs break. The contract changed; the workflow hasn\u2019t.",
     whyNow:
-      "Live launches (Hernexeos, Jascayd) and a probable obesity/MASH launch (survodutide) create back-to-back readiness demand across markets. The gap is not 'do we have academies' — it's whether content can be generated and localised at launch speed.",
+      "Dec 2025 AG Insurance stake sale (EUR 1.9bn) with a 15-year distribution renewal framed to \u201Cdigitalise and industrialise\u201D; bpost bank integration added ~1m customers from Jan 2024.",
     baselineMetrics: [
-      "Two live launches + survodutide late-stage; multi-market rollout",
-      "Existing Functional-Specific Academies and Global Leadership Development Programs",
-      "Operational baseline not public: completion, time-to-competency, field-readiness scores — validate live",
-      "Academies exist; no public evidence of AI-accelerated, launch-speed content generation/localisation — that speed is the gap",
+      "AG 25% stake sold for EUR 1.9bn; 15-yr distribution renewal, Dec 2025 [BNPF Dec 2025]",
+      "bpost bank added ~1m customers from Jan 2024 [Briefing]",
+      "Validate live: policy-change time, claims volume, manual-touch & handoff-failure rate",
+      "Status: contractual reset done; workflow redesign unclear \u2014 scope to the real gap",
     ],
     audienceFit:
-      "Head of Commercial / Medical Learning; Launch Excellence Lead; COE Learning",
+      "Bancassurance leadership (AG interface) \u2022 Belgium COO / Head of Transformation",
     crossFunctionalHooks:
-      "Medical Affairs (MLR sign-off); Market access; Local affiliate L&D; Regulatory",
+      "AG Insurance counterparts \u2022 customer ops \u2022 IT / integration \u2022 compliance",
   },
+  // ── bpost / bnode ────────────────────────────────────────────────
   {
     number: "C3",
-    company: "Boehringer Ingelheim",
-    theme: "HR Shared Services / Employee & Manager Self-Service",
-    title: "Employees and managers in 130+ markets wait too long for routine HR answers",
+    company: "bpost / bnode",
+    theme: "Operations \u2022 Warehouse, Linehaul & Field-Supervisor Knowledge",
+    title: "Stop execution variance leaking margin across the network",
     summary:
-      "Repeat HR queries in a dozen languages across time zones swamp GBS agents and crowd out complex cases.",
+      "Fusing Staci, Active Ants and Radial Europe into one group, but each site runs on its own SOPs and tribal knowledge \u2014 that variance is where margin disappears.",
     challengeStatement:
-      "Most of what people ask us, we've answered a thousand times — leave, pay, policy, 'where do I go for X'. But it arrives in a dozen languages across a dozen time zones, and it sits in a queue. People lose time, our agents drown in repeat tickets, and the simple stuff crowds out the cases that actually need a human.",
+      "We\u2019re fusing Staci, Active Ants and Radial Europe into one group, but each site runs on its own SOPs and tribal knowledge. People take too long to reach competence, and the same problem gets solved five different ways \u2014 that variance is where our margin disappears.",
     whyNow:
-      "GBS already runs hire-to-retire from four hubs, and the Feb 2026 IT/GBS board seat sharpens the mandate to automate Tier-0. GenAI makes confident, source-grounded answers viable where legacy portals don't.",
+      "#Reshape2029 names \u201Cdeliver operational efficiencies\u201D and the Staci / Active Ants / Radial Europe integration as Must-Wins; synergy capture is now a core execution risk.",
     baselineMetrics: [
-      "GBS: ~2,000 staff across 4 centres (Manila, Buenos Aires, Germany, Wroclaw) running 'hire-to-retire'",
-      "130+ markets — multilingual, multi-policy demand",
-      "Harsha Deshmukh — IT & GBS board responsibility from 1 Feb 2026",
-      "Operational baseline not public: ticket volumes, deflection, handle times — validate live",
+      "#Reshape2029: >EUR 5.0bn revenue & adj. EBIT >EUR 275m by 2027 [CMD Jun 2025]",
+      "33,532 employees end-2025; ~26,628 in Belgium [bnode AR 2025 / bpost AR 2024]",
+      "Validate live: time-to-competence, SOP-lookup time, exception / variance by site",
+      "Status: no public postal knowledge copilot \u2014 confirm",
     ],
     audienceFit:
-      "Head of HR Services / HR@GBS; GBS Service-Line Owner",
+      "BeNe Last-Mile ops leader \u2022 3PL Europe leader \u2022 depot / warehouse managers",
     crossFunctionalHooks:
-      "IT & GBS (Deshmukh org); Data Privacy; COE Policy; local HR",
+      "transformation office \u2022 HR / training \u2022 CIO/CTO \u2022 integration leads",
   },
   {
     number: "C4",
-    company: "Boehringer Ingelheim",
-    theme: "Hiring & Recruitment / Responsible AI Governance",
-    title: "Hiring and talent-decision AI must be provably fair, transparent and human-overseen",
+    company: "bpost / bnode",
+    theme: "Network Orchestration \u2022 Route, Round & Workload Planning",
+    title: "Plan rounds and labour for a parcel-driven network",
     summary:
-      "EU AI Act makes recruitment AI high-risk from Aug 2026 — BI needs an assurance layer it can stand behind to regulators and works councils.",
+      "Rounds and rosters were built for shrinking mail while parcels grow and flows mix \u2014 too many decisions are still manual.",
     challengeStatement:
-      "Anything we build that touches who gets hired, promoted or moved is high-risk by law — and high-stakes for trust. We can't bolt governance on afterwards, but we also can't let 'it might be risky' freeze every useful tool. We need a way to deploy AI in talent decisions we can stand behind to a regulator, a works council and a candidate.",
+      "Our rounds and rosters were built for a shrinking mail world while parcels grow and flows mix. Too many decisions are still manual, and we absorb overtime and absenteeism we should be able to anticipate \u2014 with a fixed cost base and a workforce we can\u2019t afford to mishandle.",
     whyNow:
-      "EU AI Act Annex III makes recruitment and worker-management AI high-risk; obligations apply from 2 Aug 2026, with fines up to \u20AC15m or 3% of global turnover. German co-determination adds a works-council dimension. This is buildable now and underpins every other hiring-related card.",
+      "Belgian postal market grew 2.7% to EUR 3.724bn in 2024, parcel-led, while mail declines structurally; 2025 is the first full year without Press-concession income.",
     baselineMetrics: [
-      "EU AI Act (Reg. 2024/1689) Annex III — employment / worker-management = high-risk; obligations from 2 Aug 2026",
-      "Penalties up to \u20AC15,000,000 or 3% of worldwide annual turnover (Art. 99(4))",
-      "German Betriebsrat co-determination + GDPR Art. 22 constraints",
-      "Operational baseline not public: BI's current HR-AI inventory and works-council agreements — validate live",
-      "No public evidence of an HR-specific AI assurance layer — likely a real gap given the Aug 2026 deadline",
+      "Belgian postal market +2.7% to EUR 3.724bn, parcel / express-led [BIPT 2025]",
+      "Belgian ops loss-making Q3 2024; fixed cost base threatens profit [bpost AR 2024]",
+      "Validate live: % manual network decisions, overtime / absenteeism, round productivity",
+      "Flag: workforce decisions politically sensitive \u2014 set the off-limits boundary first",
     ],
     audienceFit:
-      "CHRO office + AI Governance / Data Privacy Counsel; People Analytics; Employee Relations / Co-determination Lead",
+      "BeNe Last-Mile ops leader \u2022 network planning \u2022 HR / industrial relations",
     crossFunctionalHooks:
-      "Legal & Compliance; IT & GBS; Data Governance; Works Council liaison",
+      "social partners / unions \u2022 transformation office \u2022 data \u2022 CIO",
   },
+  // ── Proximus ─────────────────────────────────────────────────────
   {
     number: "C5",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Skills Intelligence",
-    title: "We can't see the skills we already have, so we over-hire and under-deploy",
+    company: "Proximus",
+    theme: "Network / Fiber \u2022 Capex Economics and Take-Up",
+    title: "Turn homes-passed into homes-monetised faster",
     summary:
-      "Without an enterprise skills view, BI defaults to costly external hiring while internal talent stays invisible.",
+      "Heavy fiber capex with a halved dividend, but the gap between a home passed and a home billing is too long and too opaque.",
     challengeStatement:
-      "When a new priority lands, our first instinct is to hire — because we genuinely can't see who inside already has the adjacent skills. People who could grow into launch or AI-critical roles stay invisible, and we pay twice: external hiring cost, and disengaged internal talent who weren't asked.",
+      "We\u2019re pouring capital into fiber while the dividend was cut to fund it, but the gap between a home passed and a home connected and billing is too long and too opaque. Permits, work orders, contractor risk and take-up live in different places \u2014 so we can\u2019t see where rollout stalls.",
     whyNow:
-      "Simultaneous launch + AI + US-build demand makes internal redeployment economically essential. Without a skills view, the default is always external hiring — the slowest, costliest option for scarce roles.",
+      "~42% fiber coverage at end-2025 with heavy ongoing capex; full Unifiber ownership agreed May 2026 (raising spend); dividend halved to preserve flexibility for fiber.",
     baselineMetrics: [
-      "~54,000+ employees across 130+ markets — a large latent skills base",
-      "COE owns talent & succession and people development (natural home)",
-      "Growth-engine roles (launch, AI, manufacturing) all need adjacent skills",
-      "Operational baseline not public: internal-fill rate, skills coverage, mobility rate — validate live",
-      "No public evidence of an enterprise skills graph at BI — confirm in discovery",
+      "~42% fiber coverage; 89.5% indoor 5G end-2025 [Proximus AR 2025]",
+      "CAPEX EUR 1.249bn; adjusted FCF EUR 130m (2025) [Proximus AR 2025]",
+      "Validate live: permit cycle time, passed->connected conversion, contractor delay",
+      "Status: no public rollout / take-up cockpit \u2014 confirm",
     ],
     audienceFit:
-      "Head of Talent Management / Strategic Workforce Planning; People Analytics",
+      "Network / fiber leadership \u2022 CTO \u2022 fiber programme lead",
     crossFunctionalHooks:
-      "HRBP community; IT & GBS; Data Privacy (employee-data sensitivity); function heads",
+      "Proximus Ada (AI governance) \u2022 finance / capex \u2022 field ops \u2022 data",
   },
   {
     number: "C6",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Manufacturing Capability",
-    title: "The US manufacturing build needs GMP & Annex-1 capability faster than the labour market supplies it",
+    company: "Proximus",
+    theme: "Customer Operations \u2022 Care, Retention & Next-Best-Offer",
+    title: "Defend churn and offer timing in a post-DIGI market",
     summary:
-      "BI can pour concrete faster than it can build the qualified, GMP-ready workforce to fill new US facilities.",
+      "A new low-cost entrant has reset price expectations; care agents absorb the pressure with too little context to retain or upsell.",
     challengeStatement:
-      "We're committing billions to US manufacturing, but the people who can run modern sterile and biologics operations to current standards are scarce and slow to develop. We can pour concrete faster than we can build the qualified, GMP-ready workforce to fill the building.",
+      "A new low-cost entrant has reset price expectations across our multi-brand stack, and care agents absorb the pressure with too little context to retain or upsell in the moment. We\u2019ve committed publicly to AI-led cost cuts \u2014 so adding headcount isn\u2019t the answer.",
     whyNow:
-      "The $20bn US plan includes manufacturing capex, and EU GMP Annex 1 (in force Aug 2023) raises the capability bar globally. Qualified operators and QA staff must be ready as capacity comes online — qualification can't be rushed.",
+      "DIGI\u2019s end-2024 entry intensified Belgian mobile competition; Proximus has publicly committed to cutting 1,200 jobs by 2030 via AI-driven efficiency, and halved the dividend.",
     baselineMetrics: [
-      "$20bn US plan 2025–2030 (manufacturing capex component)",
-      "EU GMP Annex 1 contamination-control expectations",
-      "Global manufacturing & biologics (BioXcellence) network",
-      "Operational baseline not public: site headcount, qualification timelines, competency gaps — validate live",
-      "General manufacturing training exists; no public evidence of AI-accelerated qualification for the new US build",
+      "DIGI entry end-2024 increased mobile competition [BIPT 2025]",
+      "1,200 jobs to be cut by 2030 via AI efficiency; dividend halved [Reuters Feb 2026]",
+      "Validate live: churn by brand, care AHT / cost-per-contact, offer conversion",
+      "Status: Jan 2025 Microsoft deal + Proximus Ada may give a landing zone \u2014 verify",
     ],
     audienceFit:
-      "Head of Manufacturing / Operations L&D; Site HR; Quality Training Lead",
+      "Customer-operations leadership \u2022 multi-brand commercial \u2022 care leadership",
     crossFunctionalHooks:
-      "Operations / Product Supply; Quality; Regulatory; IT & GBS",
+      "Proximus Ada \u2022 HR / transformation \u2022 data \u2022 compliance (AI Act transparency)",
+  },
+  // ── Bekaert ──────────────────────────────────────────────────────
+  {
+    number: "C7",
+    company: "Bekaert",
+    theme: "Manufacturing Operations \u2022 Quality, Scrap, Throughput & Energy",
+    title: "Make a flagship plant\u2019s economics improve fast enough",
+    summary:
+      "Margin depends on what\u2019s clawed back inside the plant \u2014 scrap, quality, throughput, energy \u2014 but too much optimisation is still manual and reactive.",
+    challengeStatement:
+      "We\u2019re fighting for volumes in weak markets, so margin now depends on what we claw back inside the plant \u2014 scrap, quality, throughput, energy. The restructuring savings are real, but too much day-to-day optimisation is still manual and reactive.",
+    whyNow:
+      "FY2025 performance was supported by cost management and restructuring; tariffs and trade tensions undermined demand \u2014 the signal is disciplined performance improvement, not experimentation.",
+    baselineMetrics: [
+      "~19,000 employees; EUR 3.71bn consolidated revenue (2025) [Bekaert AR 2025]",
+      "FY2025 supported by cost mgmt & restructuring; EUR 200m buyback [FY2025]",
+      "Validate live: scrap rate, OEE / throughput, energy intensity, OT/IT data maturity",
+      "Status: no public AI platform \u2014 scope to one flagship plant with cleanest data",
+    ],
+    audienceFit:
+      "Plant / operations director \u2022 manufacturing-excellence lead \u2022 BU ops lead",
+    crossFunctionalHooks:
+      "OT/IT engineering \u2022 quality \u2022 energy / sustainability \u2022 data",
+  },
+  {
+    number: "C8",
+    company: "Bekaert",
+    theme: "Commercial Excellence \u2022 Pricing & Quotation",
+    title: "Protect margin and hit-rate in regional quoting",
+    summary:
+      "In soft markets every quote is a fight, and regional teams price under pressure with little visibility into margin leakage or win rate.",
+    challengeStatement:
+      "In soft markets every quote is a fight, and regional teams price under pressure with little visibility into where we leak margin or lose hit-rate. Quoting is slow and inconsistent across lines, so we win the wrong deals and miss the right ones.",
+    whyNow:
+      "Tariffs and trade tensions undermined demand; the CEO says teams are \u201Cfighting for volumes\u201D; business units are being made more autonomous \u2014 discipline must live in the workflow.",
+    baselineMetrics: [
+      "Tariffs / trade tensions undermined demand across key markets [AR 2025]",
+      "\u201Cfighting for volumes in challenging markets\u201D \u2014 CEO, H1 2025 [Bekaert H1 2025]",
+      "Validate live: quote turnaround, win rate, margin leakage by materials line",
+      "Status: no public quote / margin copilot \u2014 scope to one materials line",
+    ],
+    audienceFit:
+      "BU commercial leader \u2022 regional sales leadership \u2022 pricing lead",
+    crossFunctionalHooks:
+      "finance \u2022 product / engineering \u2022 data \u2022 CRM",
+  },
+  // ── Colruyt Group ────────────────────────────────────────────────
+  {
+    number: "C9",
+    company: "Colruyt Group",
+    theme: "Supply Chain \u2022 Fresh Demand Forecasting & Markdown / Waste",
+    title: "Cut fresh waste without breaking the lowest-price promise",
+    summary:
+      "Committed to the lowest price so margin must come from running tighter \u2014 fresh is where it slips most, between forecast misses, markdowns and spoilage.",
+    challengeStatement:
+      "We\u2019re committed to the lowest price, so margin has to come from running tighter \u2014 and fresh is where it slips most, between forecast misses, markdowns and spoilage. With food inflation low and competition harder, the growth cushion is gone and gross-margin drag is worse than expected.",
+    whyNow:
+      "May 2025 profit warning on stronger competition and lower-than-expected food inflation; market share slipped to 29.0% in FY2024/25 from 29.3%; margin recovery is the stated priority.",
+    baselineMetrics: [
+      "Profit warning May 2025: competition + lower food inflation [Reuters]",
+      "Belgian market share 29.0% (from 29.3%) FY2024/25 [Colruyt FY2024/25]",
+      "Validate live: fresh waste %, markdown rate, forecast accuracy by category",
+      "Status: automation heritage but no public fresh-AI deployment \u2014 confirm",
+    ],
+    audienceFit:
+      "Supply-chain leadership \u2022 fresh / category merchandising \u2022 store operations",
+    crossFunctionalHooks:
+      "data / analytics \u2022 replenishment \u2022 finance \u2022 banner operations",
+  },
+  {
+    number: "C10",
+    company: "Colruyt Group",
+    theme: "Store & DC Operations \u2022 Labour Productivity & Exception Handling",
+    title: "Lift store and DC productivity against sticky wage costs",
+    summary:
+      "Belgian wage indexation keeps pushing labour costs up, and Comarkt consolidation adds to the base \u2014 yet shelf gaps and exceptions are still fixed by hand.",
+    challengeStatement:
+      "Belgian wage indexation keeps pushing labour costs up automatically, and Comarkt consolidation adds to the base \u2014 yet shelf gaps and exceptions are still fixed by hand and tribal knowledge. We must get more productive in stores and DCs without hurting the experience that keeps customers loyal.",
+    whyNow:
+      "FY2024/25 operating costs rose mainly from Comarkt consolidation and higher personnel costs driven by Belgium\u2019s automatic wage indexation; margins compress unless offset by productivity.",
+    baselineMetrics: [
+      "Operating costs up: Comarkt consolidation + wage indexation [FY2024/25]",
+      "782 own + 1,006 affiliated / franchised stores (31 Mar 2025) [Key figures 2025]",
+      "Validate live: shelf-gap rate, exception-handling time, replenishment accuracy",
+      "Status: automation heritage; no public store / DC copilot \u2014 confirm",
+    ],
+    audienceFit:
+      "Store-operations leadership \u2022 DC / logistics \u2022 workforce planning",
+    crossFunctionalHooks:
+      "HR \u2022 data \u2022 IT \u2022 banner management",
+  },
+  // ── Euroclear ────────────────────────────────────────────────────
+  {
+    number: "C11",
+    company: "Euroclear",
+    theme: "Legal & Regulatory \u2022 Sanctions Intelligence (Controlled, Non-Decisioning)",
+    title: "Relieve the relentless sanctions and legal research load",
+    summary:
+      "Russian-assets situation is a permanent draw on legal and operations capacity \u2014 repetitive evidence retrieval, claims tracking and policy updates that never stop.",
+    challengeStatement:
+      "The Russian-assets situation is a permanent draw on legal and operations capacity \u2014 repetitive evidence retrieval, claims tracking and policy updates that never stop. Every hour reconstructing the same research is an hour not spent on growth or modernisation.",
+    whyNow:
+      "Ongoing Russian sanctioned-assets updates (latest May 2026) with sustained litigation and retaliation exposure; this is now a persistent management burden, not a side note.",
+    baselineMetrics: [
+      "Underlying net profit ~EUR 1.2bn (2025) [Euroclear 2025 results]",
+      "Russian-assets issue active; litigation / seizure exposure [Euroclear May 2026]",
+      "Validate live: legal / analyst hours on sanctions, shared legal-ops data repositories",
+      "Status: must be a controlled internal assistant, not decisioning \u2014 no public deploy",
+    ],
+    audienceFit:
+      "Legal / sanctions leadership \u2022 compliance \u2022 operations",
+    crossFunctionalHooks:
+      "risk \u2022 data governance \u2022 Microsoft platform team \u2022 information security",
+  },
+  {
+    number: "C12",
+    company: "Euroclear",
+    theme: "Client Operations \u2022 Asset Servicing, Onboarding & Exception Triage",
+    title: "Triage client-ops exceptions before they erode trust",
+    summary:
+      "Onboarding, asset-servicing queries and exception triage are where clients feel friction and where cost quietly accumulates.",
+    challengeStatement:
+      "Onboarding, asset-servicing queries and exception triage are where clients feel friction and where cost quietly accumulates. As funds and ETF flows grow, the exception load grows with them, and too much triage is still manual \u2014 but in an FMI we can\u2019t trade speed for control.",
+    whyNow:
+      "The seven-year Microsoft partnership (Jan 2025) is positioned to transform client experience using cloud, data and AI; funds is a named growth area with robust ETF flows in 2025.",
+    baselineMetrics: [
+      "7-yr Microsoft partnership (Jan 2025): client experience via cloud / data / AI [Euroclear]",
+      "Strong 2025 results; high deposits, robust ETF flows [Euroclear 2025 results]",
+      "Validate live: exception volume, query-resolution time, onboarding time",
+      "Status: split of infra vs business-value use cases unclear \u2014 confirm",
+    ],
+    audienceFit:
+      "Client-operations leadership \u2022 asset servicing \u2022 FundsPlace",
+    crossFunctionalHooks:
+      "Microsoft platform team \u2022 data products \u2022 compliance \u2022 IT",
   },
 ];
 
@@ -255,10 +390,10 @@ const ChallengeCards = () => {
       {/* Intro description — full-width, tighter top spacing */}
       <div className="px-6 pt-3 pb-2 max-w-7xl mx-auto w-full text-center shrink-0">
         <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-          Extracted and structured from the discovery brief. These cards are
+          Extracted and structured from the executive pre-workshop briefing. These cards are
           framed as{" "}
           <strong className="text-foreground">business problems</strong> for
-          mixed leadership / HR breakout discussions — not solution briefs.
+          domain-advisor & consultant breakout discussions — not solution briefs.
           Click any card on the left to view its full context, then choose one
           to carry into the prompts page.
         </p>

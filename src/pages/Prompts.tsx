@@ -54,7 +54,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:boehringer-ingelheim-v1";
+const TOOL_STORAGE_KEY = "workshopTool:tcs-belgium-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;
@@ -83,7 +83,7 @@ const prompts: Prompt[] = [
   {
     step: 1,
     label: "Widen",
-    text: `Act as a research aide for [SELECTED CHALLENGE] for Boehringer Ingelheim. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
+    text: `Act as a research aide for [SELECTED CHALLENGE] for TCS Belgium. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
   },
   {
     step: 2,
@@ -99,7 +99,7 @@ const prompts: Prompt[] = [
 2. Analytics / ML — forecast, optimise, recommend.
 3. Automation — CV, RAG / Co-Pilot, tasking.
 
-Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. Recommend one pilot with the smallest integration surface and clearest value proof to Boehringer Ingelheim.`,
+Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. Recommend one pilot with the smallest integration surface and clearest value proof to the client.`,
   },
   {
     step: 4,
@@ -109,9 +109,40 @@ Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. 
   {
     step: 5,
     label: "Build",
-    text: `You are a product design expert. Using only the brief above, write a single [PLATFORM] product requirements prompt that includes: Product name + one-liner description (actions, process, capabilities), who it's for, screens + key components, brand colours, main user flow, sample data, concise headlines/CTAs, UI instructions, success metric card, constraints (no PII). Return the [PLATFORM] prompt only.`,
+    text: `Create a single .html file for a clickable mock-up based on the information in the product brief generated above.
+
+Target user: from the brief generated above
+Main user flow: from the brief generated above
+
+Requirements:
+
+\u2022 One .html file, inline CSS and JavaScript, no external dependencies.
+\u2022 Apply the [COMPANY] brand UI directly inside the file (do not reference external files):
+    \u2022 Brand colours: [BRAND COLOURS]. Clean light slate or off-white background. Dark slate body text. Semantic colours: green for success, amber for warning, red for alert.
+    \u2022 Typography: A clean web-safe sans-serif fallback such as Inter or system-ui with a clear hierarchy: display, heading, body, caption.
+    \u2022 Layout: generous whitespace, consistent rounded corners, subtle shadows, compact-but-readable density, responsive desktop-first layout.
+    \u2022 Component states: every interactive component must render empty, loading, populated and error states.
+\u2022 Cover all the screens needed by the main user flow as suggested by the selected challenge card and the brief. Do not artificially cap the screen count. Include navigation between screens so the flow is clickable end-to-end.
+\u2022 Synthetic sample data inline. No real names, no API calls. Use plausible Belgian-locale data (Brussels, Antwerp, Ghent; \u20AC amounts; Belgian company or contact placeholders).
+\u2022 Plain business English in all UI copy. No marketing tone, no superlatives.
+\u2022 A success-metric tile showing baseline and target from the brief.
+
+Return the file as a downloadable .html using Copilot\u2019s file-creation capability. Do not paste HTML into the chat.`,
   },
 ];
+
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+// Company brand mapping — used by the Build step to inject company-specific
+// brand colours into the mock-up prompt.
+// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+const COMPANY_BRANDS: Record<string, string> = {
+  "BNP Paribas Fortis": "BNP Paribas Fortis primary green (#00915B) for primary actions, headers and key accents",
+  "bpost / bnode": "bpost primary red (#E2001A) for primary actions, headers and key accents",
+  "Proximus": "Proximus primary purple (#5B2C82) for primary actions, headers and key accents",
+  "Bekaert": "Bekaert primary blue (#003B73) for primary actions, headers and key accents",
+  "Colruyt Group": "Colruyt primary green (#006835) for primary actions, headers and key accents",
+  "Euroclear": "Euroclear primary blue (#003087) for primary actions, headers and key accents",
+};
 
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
 // Prompt segmentation — turns a plain prompt string into a list of typed
@@ -150,6 +181,62 @@ function splitPlaceholders(input: string): PromptSegment[] {
   return out;
 }
 
+// Produces segments for the resolved Build prompt. The resolved text has
+// company/brand values substituted in; we mark those substituted strings
+// as "injected" so they get the purple highlight in the UI.
+function splitWithInjections(
+  _template: string,
+  resolved: string,
+  companyName: string
+): PromptSegment[] {
+  // Simple approach: split the resolved text on placeholder-style tokens
+  // first, then mark any segment that contains the injected company name
+  // or brand string as "injected".
+  const base = splitPlaceholders(resolved);
+  const brandText = COMPANY_BRANDS[companyName] ?? companyName;
+  const out: PromptSegment[] = [];
+  for (const seg of base) {
+    if (
+      seg.type === "static" &&
+      (seg.text.includes(companyName) || seg.text.includes(brandText))
+    ) {
+      // Split on injected company / brand occurrences
+      let remainder = seg.text;
+      const targets = [brandText, companyName].filter((t) =>
+        remainder.includes(t)
+      );
+      if (targets.length === 0) {
+        out.push(seg);
+        continue;
+      }
+      // Process longest match first to avoid partial overlap
+      targets.sort((a, b) => b.length - a.length);
+      const parts: PromptSegment[] = [];
+      for (const target of targets) {
+        const temp: PromptSegment[] = [];
+        const pending = parts.length ? parts : [{ type: "static" as const, text: remainder }];
+        for (const p of pending) {
+          if (p.type !== "static" || !p.text.includes(target)) {
+            temp.push(p);
+            continue;
+          }
+          const chunks = p.text.split(target);
+          chunks.forEach((chunk, ci) => {
+            if (chunk) temp.push({ type: "static", text: chunk });
+            if (ci < chunks.length - 1) temp.push({ type: "injected", text: target });
+          });
+        }
+        parts.length = 0;
+        parts.push(...temp);
+      }
+      out.push(...(parts.length ? parts : [seg]));
+    } else {
+      out.push(seg);
+    }
+  }
+  return out;
+}
+
 function buildPromptSegments(
   step: number,
   baseText: string,
@@ -180,6 +267,31 @@ function buildPromptSegments(
         text: before + injectedText + after,
         injected: true,
       };
+    }
+  }
+
+  // Step 5 (Build) carries `[COMPANY]` and `[BRAND COLOURS]` placeholders.
+  // When a challenge is selected, inject the company name and brand colours.
+  if (step === 5 && challenge) {
+    let resolved = baseText;
+    const companyToken = "[COMPANY]";
+    const brandToken = "[BRAND COLOURS]";
+    const hasCompany = resolved.includes(companyToken);
+    const hasBrand = resolved.includes(brandToken);
+
+    if (hasCompany || hasBrand) {
+      if (hasCompany) {
+        resolved = resolved.replaceAll(companyToken, challenge.company);
+      }
+      if (hasBrand) {
+        const brandText =
+          COMPANY_BRANDS[challenge.company] ??
+          `${challenge.company} primary colour for primary actions, headers and key accents`;
+        resolved = resolved.replaceAll(brandToken, brandText);
+      }
+      // Re-segment with injected markers for changed tokens
+      const segments = splitWithInjections(baseText, resolved, challenge.company);
+      return { segments, text: resolved, injected: true };
     }
   }
 
@@ -309,10 +421,15 @@ const Prompts = () => {
   }, []);
 
   const handleCopy = useCallback(async (text: string, index: number) => {
-    await navigator.clipboard.writeText(text);
+    // Prepend the full selected challenge card so the AI tool has context
+    let clipboard = text;
+    if (challenge) {
+      clipboard = `--- Selected Challenge ---\n${formatChallengeText(challenge)}\n--- End Challenge ---\n\n${text}`;
+    }
+    await navigator.clipboard.writeText(clipboard);
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
-  }, []);
+  }, [challenge]);
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -430,6 +547,12 @@ const Prompts = () => {
                       onChange={setActiveBuildVariant}
                     />
                   )}
+
+                {/* Section title */}
+                <h3 className="text-base font-bold font-display text-foreground mt-2 mb-1">
+                  Step {prompt.step} — {prompt.label}
+                </h3>
+
                 <div
                   className={`rounded-lg border bg-card overflow-hidden ${
                     injected ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
