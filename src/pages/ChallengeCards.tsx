@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  ArrowRight,
   Copy,
   Check,
   X,
@@ -374,14 +373,6 @@ const ChallengeCards = () => {
               >
                 Clear
               </Button>
-              <Button
-                size="sm"
-                className="h-7 text-xs"
-                onClick={() => navigate("/prompts")}
-              >
-                Go to Prompts
-                <ArrowRight className="h-3.5 w-3.5 ml-1" />
-              </Button>
             </div>
           )}
         </div>
@@ -394,8 +385,7 @@ const ChallengeCards = () => {
           framed as{" "}
           <strong className="text-foreground">business problems</strong> for
           domain-advisor & consultant breakout discussions — not solution briefs.
-          Click any card on the left to view its full context, then choose one
-          to carry into the prompts page.
+          Click any card on the left to view its full context.
         </p>
       </div>
 
@@ -409,7 +399,7 @@ const ChallengeCards = () => {
                 {challenges.length} Challenges
               </span>
               <span className="text-[10px] text-muted-foreground">
-                Click to preview · Use to anchor prompts
+                Click to preview
               </span>
             </div>
             {challenges.map((card) => {
@@ -440,7 +430,7 @@ const ChallengeCards = () => {
                 clearChallenge();
                 setJustSavedNumber(null);
               }}
-              onGoToPrompts={() => navigate("/prompts")}
+
             />
           </section>
         </div>
@@ -473,7 +463,7 @@ const ChallengeCards = () => {
                 clearChallenge();
                 setJustSavedNumber(null);
               }}
-              onGoToPrompts={() => navigate("/prompts")}
+
               extraTopPadding
             />
           </div>
@@ -590,7 +580,6 @@ interface DetailContentProps {
   onCopy: () => void;
   onUse: () => void;
   onClear: () => void;
-  onGoToPrompts: () => void;
   /**
    * When rendered inside the mobile modal, the close button is positioned
    * absolutely at top-right of the modal scroll container. The sticky
@@ -608,7 +597,6 @@ function DetailContent({
   onCopy,
   onUse,
   onClear,
-  onGoToPrompts,
   extraTopPadding,
 }: DetailContentProps) {
   const isActive = activeChallenge?.number === card.number;
@@ -631,21 +619,15 @@ function DetailContent({
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-bold border border-primary/20">
                 <Sparkles className="h-4 w-4 shrink-0" />
-                Pick this challenge to anchor your prompts
+                Select this challenge
               </span>
             )}
           </div>
           <div className="flex gap-2 items-center shrink-0">
             {isActive ? (
-              <>
-                <Button variant="outline" size="sm" onClick={onClear}>
-                  Clear
-                </Button>
-                <Button size="sm" onClick={onGoToPrompts}>
-                  Go to Prompts
-                  <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                </Button>
-              </>
+              <Button variant="outline" size="sm" onClick={onClear}>
+                Clear
+              </Button>
             ) : (
               <Button
                 size="sm"
