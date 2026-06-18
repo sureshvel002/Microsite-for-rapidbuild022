@@ -83,7 +83,7 @@ const prompts: Prompt[] = [
   {
     step: 1,
     label: "Widen",
-    text: `Act as a research aide for [SELECTED CHALLENGE] for TCS Belgium. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
+    text: `Act as a research aide for [SELECTED CHALLENGE] for [COMPANY]. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
   },
   {
     step: 2,
@@ -242,29 +242,43 @@ function buildPromptSegments(
   baseText: string,
   challenge: ChallengeCard | null
 ): { segments: PromptSegment[]; text: string; injected: boolean } {
-  // Step 1 (Widen) carries a `[SELECTED CHALLENGE]` placeholder.
-  // When a challenge is selected, swap it in-place with the card title.
-  // Cards with `injectionMode: "full"` instead get the entire structured
-  // challenge block injected for richer context.
+  // Step 1 (Widen) carries `[SELECTED CHALLENGE]` and `[COMPANY]` placeholders.
+  // When a challenge is selected, swap the challenge token in-place with the
+  // card title (or the full structured block for `injectionMode: "full"`) and
+  // swap `[COMPANY]` with the selected challenge's company.
   if (step === 1 && challenge) {
     const token = "[SELECTED CHALLENGE]";
+    const companyToken = "[COMPANY]";
 
-    if (baseText.includes(token)) {
-      const idx = baseText.indexOf(token);
-      const before = baseText.slice(0, idx);
-      const after = baseText.slice(idx + token.length);
-      const injectedText =
-        challenge.injectionMode === "full"
-          ? `the following challenge:\n\n${formatChallengeText(challenge)}\n`
-          : challenge.title;
-      const segments: PromptSegment[] = [
-        ...splitPlaceholders(before),
-        { type: "injected", text: injectedText },
-        ...splitPlaceholders(after),
-      ];
+    if (baseText.includes(token) || baseText.includes(companyToken)) {
+      let segments: PromptSegment[];
+      if (baseText.includes(token)) {
+        const idx = baseText.indexOf(token);
+        const before = baseText.slice(0, idx);
+        const after = baseText.slice(idx + token.length);
+        const injectedText =
+          challenge.injectionMode === "full"
+            ? `the following challenge:\n\n${formatChallengeText(challenge)}\n`
+            : challenge.title;
+        segments = [
+          ...splitPlaceholders(before),
+          { type: "injected", text: injectedText },
+          ...splitPlaceholders(after),
+        ];
+      } else {
+        segments = splitPlaceholders(baseText);
+      }
+
+      // Swap the `[COMPANY]` placeholder for the selected challenge's company.
+      segments = segments.map((seg) =>
+        seg.type === "placeholder" && seg.text === companyToken
+          ? { type: "injected" as const, text: challenge.company }
+          : seg
+      );
+
       return {
         segments,
-        text: before + injectedText + after,
+        text: segments.map((s) => s.text).join(""),
         injected: true,
       };
     }
@@ -420,11 +434,12 @@ const Prompts = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleCopy = useCallback(async (text: string, index: number) => {
-    // Prepend the full selected challenge card so the AI tool has context
+  const handleCopy = useCallback(async (text: string, index: number, step: number) => {
+    // For the Widen step, append the full selected challenge card content so
+    // the AI tool gets the complete challenge context, not just the title.
     let clipboard = text;
-    if (challenge) {
-      clipboard = `--- Selected Challenge ---\n${formatChallengeText(challenge)}\n--- End Challenge ---\n\n${text}`;
+    if (step === 1 && challenge) {
+      clipboard = `${text}\n\n--- Challenge details ---\n${formatChallengeText(challenge)}`;
     }
     await navigator.clipboard.writeText(clipboard);
     setCopiedIndex(index);
@@ -587,7 +602,7 @@ const Prompts = () => {
                       variant="outline"
                       size="sm"
                       className={`h-7 text-xs ${copiedIndex === index ? "text-green-600 border-green-300" : ""}`}
-                      onClick={() => handleCopy(text, index)}
+                      onClick={() => handleCopy(text, index, prompt.step)}
                     >
                       {copiedIndex === index ? (
                         <>

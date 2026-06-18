@@ -549,7 +549,7 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
                   : "bg-primary/10 text-primary"
               }`}
             >
-              {card.theme}
+              {card.company}
             </span>
           </div>
           <h3
@@ -682,9 +682,9 @@ function DetailContent({
 
       {/* Scrollable body content */}
       <div className="px-6 sm:px-8 py-6 sm:py-8">
-        {/* Theme + Title */}
+        {/* Company + Title */}
         <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">
-          {card.theme}
+          {card.company}
         </p>
         <h2 className="text-2xl font-bold font-display text-card-foreground leading-snug mb-5">
           {card.title}

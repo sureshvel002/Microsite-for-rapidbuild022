@@ -23,16 +23,16 @@ const steps = [
     path: "/challenge-cards",
     gradient: "from-accent to-primary",
   },
-  // {
-  //   step: 3,
-  //   title: "Prompts",
-  //   tagline: "Run Prompt",
-  //   description:
-  //     "Double Diamond framework prompts tailored for the TCS Belgium immersion. Copy and use with your preferred AI assistant.",
-  //   icon: MessageSquare,
-  //   path: "/prompts",
-  //   gradient: "from-primary to-accent",
-  // },
+  {
+    step: 3,
+    title: "Prompts",
+    tagline: "Run Prompt",
+    description:
+      "Double Diamond framework prompts tailored for the TCS Belgium immersion. Copy and use with your preferred AI assistant.",
+    icon: MessageSquare,
+    path: "/prompts",
+    gradient: "from-primary to-accent",
+  },
 ];
 
 const Index = () => {
