@@ -2,15 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
+  ArrowRight,
   Copy,
   Check,
   X,
+  CheckCircle2,
+  Sparkles,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
   formatChallengeText,
+  useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
 // Cards from the TCS Belgium AI Immersion executive briefing,
@@ -295,14 +299,18 @@ const LG_BREAKPOINT = 1024;
 
 const ChallengeCards = () => {
   const navigate = useNavigate();
+  const [activeChallenge, selectChallenge, clearChallenge] =
+    useSelectedChallenge();
 
-  // Right-pane preview (desktop split view). Defaults to the first card.
+  // Right-pane preview (desktop split view). Defaults to the active
+  // challenge if one is selected, otherwise the first card.
   const [viewing, setViewing] = useState<ChallengeCard>(
-    () => challenges[0]
+    () => activeChallenge ?? challenges[0]
   );
   // Modal popup is the mobile fallback for the same content.
   const [mobileOpen, setMobileOpen] = useState<ChallengeCard | null>(null);
   const [copied, setCopied] = useState(false);
+  const [justSavedNumber, setJustSavedNumber] = useState<string | null>(null);
 
   const handleListItemClick = (card: ChallengeCard) => {
     setViewing(card);
@@ -313,6 +321,12 @@ const ChallengeCards = () => {
       setMobileOpen(card);
       setCopied(false);
     }
+  };
+
+  const handleUseChallenge = (card: ChallengeCard) => {
+    selectChallenge(card);
+    setJustSavedNumber(card.number);
+    setTimeout(() => setJustSavedNumber(null), 1800);
   };
 
   useEffect(() => {
@@ -341,6 +355,35 @@ const ChallengeCards = () => {
             Challenge Cards
           </h1>
 
+          {activeChallenge && (
+            <div className="ml-auto flex items-center gap-2">
+              <span className="hidden md:inline-flex items-center gap-1.5 text-xs text-muted-foreground max-w-[280px]">
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                <span className="truncate">
+                  Selected:{" "}
+                  <span className="font-semibold text-foreground">
+                    {activeChallenge.title}
+                  </span>
+                </span>
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs"
+                onClick={clearChallenge}
+              >
+                Clear
+              </Button>
+              <Button
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => navigate("/prompts")}
+              >
+                Go to Prompts
+                <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -351,7 +394,8 @@ const ChallengeCards = () => {
           framed as{" "}
           <strong className="text-foreground">business problems</strong> for
           domain-advisor & consultant breakout discussions — not solution briefs.
-          Click any card on the left to view its full context.
+          Click any card on the left to view its full context, then choose one
+          to carry into the prompts page.
         </p>
       </div>
 
@@ -365,16 +409,17 @@ const ChallengeCards = () => {
                 {challenges.length} Challenges
               </span>
               <span className="text-[10px] text-muted-foreground">
-                Click to preview
+                Click to preview · Use to anchor prompts
               </span>
             </div>
             {challenges.map((card) => {
+              const isActive = activeChallenge?.number === card.number;
               const isViewing = viewing.number === card.number;
               return (
                 <ListItem
                   key={card.number}
                   card={card}
-                  isActive={false}
+                  isActive={isActive}
                   isViewing={isViewing}
                   onClick={() => handleListItemClick(card)}
                 />
@@ -386,8 +431,16 @@ const ChallengeCards = () => {
           <section className="hidden lg:block lg:col-span-7 lg:h-full lg:overflow-y-auto rounded-xl border border-border bg-card shadow-sm">
             <DetailContent
               card={viewing}
+              activeChallenge={activeChallenge}
+              justSavedNumber={justSavedNumber}
               copied={copied}
               onCopy={() => handleCopy(viewing)}
+              onUse={() => handleUseChallenge(viewing)}
+              onClear={() => {
+                clearChallenge();
+                setJustSavedNumber(null);
+              }}
+              onGoToPrompts={() => navigate("/prompts")}
             />
           </section>
         </div>
@@ -411,8 +464,16 @@ const ChallengeCards = () => {
             </button>
             <DetailContent
               card={mobileOpen}
+              activeChallenge={activeChallenge}
+              justSavedNumber={justSavedNumber}
               copied={copied}
               onCopy={() => handleCopy(mobileOpen)}
+              onUse={() => handleUseChallenge(mobileOpen)}
+              onClear={() => {
+                clearChallenge();
+                setJustSavedNumber(null);
+              }}
+              onGoToPrompts={() => navigate("/prompts")}
               extraTopPadding
             />
           </div>
@@ -433,19 +494,24 @@ interface ListItemProps {
   onClick: () => void;
 }
 
-function ListItem({ card, isViewing, onClick }: ListItemProps) {
+function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
   return (
     <button
       onClick={onClick}
       className={`group relative w-full overflow-hidden rounded-xl border bg-card pl-5 pr-4 py-4 text-left transition-all ${
-        isViewing
+        isActive
+          ? "border-green-500/50 bg-green-50/40 shadow-md ring-1 ring-green-500/20"
+          : isViewing
           ? "border-primary bg-primary/[0.04] shadow-md"
           : "border-border hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
       }`}
     >
+      {/* Left vertical accent stripe — green when selected, primary when viewing, faint on hover */}
       <div
         className={`pointer-events-none absolute left-0 top-0 h-full w-1 transition-all ${
-          isViewing
+          isActive
+            ? "bg-gradient-to-b from-green-500 to-emerald-600"
+            : isViewing
             ? "bg-gradient-to-b from-primary to-accent"
             : "bg-transparent group-hover:bg-primary/30"
         }`}
@@ -453,10 +519,16 @@ function ListItem({ card, isViewing, onClick }: ListItemProps) {
 
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
+          {/* Header row: card-number tag + full Selected chip (when active) + theme pill.
+              The tiny mono number chip is shown ONLY here in the list view —
+              it's intentionally not included in the Widen-step prompt
+              injection or the copy-to-clipboard text. */}
           <div className="flex items-center gap-1.5 mb-2 flex-wrap">
             <span
               className={`inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-[10px] font-bold font-mono leading-none ${
-                isViewing
+                isActive
+                  ? "bg-green-50 text-green-700 border-green-200"
+                  : isViewing
                   ? "bg-primary/10 text-primary border-primary/20"
                   : "bg-muted text-muted-foreground border-border"
               }`}
@@ -464,13 +536,27 @@ function ListItem({ card, isViewing, onClick }: ListItemProps) {
             >
               {card.number}
             </span>
-            <span className="inline-block rounded-full text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-primary/10 text-primary">
-              {card.company}
+            {isActive && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-green-600 text-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                <CheckCircle2 className="h-3 w-3 shrink-0" />
+                Selected
+              </span>
+            )}
+            <span
+              className={`inline-block rounded-full text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 ${
+                isActive
+                  ? "bg-green-100 text-green-800 border border-green-200"
+                  : "bg-primary/10 text-primary"
+              }`}
+            >
+              {card.theme}
             </span>
           </div>
           <h3
             className={`text-sm font-semibold font-display leading-snug mb-1.5 transition-colors ${
-              isViewing
+              isActive
+                ? "text-green-900"
+                : isViewing
                 ? "text-primary"
                 : "text-card-foreground group-hover:text-primary"
             }`}
@@ -484,7 +570,9 @@ function ListItem({ card, isViewing, onClick }: ListItemProps) {
 
         <ChevronRight
           className={`h-4 w-4 shrink-0 mt-1 transition-all ${
-            isViewing
+            isActive
+              ? "text-green-600 translate-x-0.5"
+              : isViewing
               ? "text-primary translate-x-0.5"
               : "text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5"
           }`}
@@ -496,49 +584,107 @@ function ListItem({ card, isViewing, onClick }: ListItemProps) {
 
 interface DetailContentProps {
   card: ChallengeCard;
+  activeChallenge: ChallengeCard | null;
+  justSavedNumber: string | null;
   copied: boolean;
   onCopy: () => void;
+  onUse: () => void;
+  onClear: () => void;
+  onGoToPrompts: () => void;
+  /**
+   * When rendered inside the mobile modal, the close button is positioned
+   * absolutely at top-right of the modal scroll container. The sticky
+   * action strip needs extra right padding so its buttons don't sit under
+   * the close button.
+   */
   extraTopPadding?: boolean;
 }
 
 function DetailContent({
   card,
+  activeChallenge,
+  justSavedNumber,
   copied,
   onCopy,
+  onUse,
+  onClear,
+  onGoToPrompts,
   extraTopPadding,
 }: DetailContentProps) {
+  const isActive = activeChallenge?.number === card.number;
   return (
     <div className="flex flex-col">
-      {/* Sticky top action strip — copy button only */}
+      {/* Sticky top action strip — chip + primary action + copy.
+          Stays pinned at top of the scroll container as the body scrolls. */}
       <div
-        className={`sticky top-0 z-10 bg-card/95 supports-[backdrop-filter]:bg-card/85 backdrop-blur border-b border-border px-6 sm:px-8 py-3 ${
+        className={`sticky top-0 z-10 bg-card/95 supports-[backdrop-filter]:bg-card/85 backdrop-blur border-b border-border px-6 sm:px-8 py-4 ${
           extraTopPadding ? "pr-14" : ""
         }`}
       >
-        <div className="flex items-center justify-end">
-          <button
-            onClick={onCopy}
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-            title="Copy full challenge"
-          >
-            {copied ? (
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            {isActive ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-bold border border-green-200">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                This challenge is currently selected
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-bold border border-primary/20">
+                <Sparkles className="h-4 w-4 shrink-0" />
+                Pick this challenge to anchor your prompts
+              </span>
+            )}
+          </div>
+          <div className="flex gap-2 items-center shrink-0">
+            {isActive ? (
               <>
-                <Check className="h-3.5 w-3.5 text-green-500" /> Copied
+                <Button variant="outline" size="sm" onClick={onClear}>
+                  Clear
+                </Button>
+                <Button size="sm" onClick={onGoToPrompts}>
+                  Go to Prompts
+                  <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                </Button>
               </>
             ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" /> Copy
-              </>
+              <Button
+                size="sm"
+                onClick={onUse}
+                className={
+                  justSavedNumber === card.number
+                    ? "bg-green-600 hover:bg-green-600 text-white"
+                    : ""
+                }
+              >
+                {justSavedNumber === card.number ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 mr-1" /> Saved
+                  </>
+                ) : (
+                  <>Use this Challenge</>
+                )}
+              </Button>
             )}
-          </button>
+            <button
+              onClick={onCopy}
+              className="rounded-md p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+              title="Copy full challenge"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Scrollable body content */}
       <div className="px-6 sm:px-8 py-6 sm:py-8">
-        {/* Company + Title */}
+        {/* Theme + Title */}
         <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">
-          {card.company}
+          {card.theme}
         </p>
         <h2 className="text-2xl font-bold font-display text-card-foreground leading-snug mb-5">
           {card.title}
