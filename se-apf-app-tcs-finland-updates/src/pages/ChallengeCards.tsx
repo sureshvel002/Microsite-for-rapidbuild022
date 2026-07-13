@@ -18,7 +18,7 @@ const challenges: ChallengeCard[] = [
   {
     number: "1",
     company: "Johnson & Johnson",
-    title: "Agentic AI for Intelligent Recruitment & Candidate Screening",
+    title: "Intelligent Recruitment & Candidate Screening",
     context: [
       "J&J receives approximately 1.2 million job applications annually, making recruitment highly resource intensive",
       "Recruiters spend significant time manually screening resumes and coordinating interviews",
@@ -37,7 +37,7 @@ const challenges: ChallengeCard[] = [
   {
     number: "2",
     company: "Johnson & Johnson",
-    title: "Agentic AI for Seamless Employee Onboarding",
+    title: "Seamless Employee Onboarding",
     context: [
       "Employee onboarding requires coordination across HR, IT, Security, Payroll, and managers",
       "Multiple approvals and disconnected systems delay employee readiness",
@@ -56,7 +56,7 @@ const challenges: ChallengeCard[] = [
   {
     number: "3",
     company: "Johnson & Johnson",
-    title: "Agentic AI for Employee HR Support & Self-Service",
+    title: "Employee HR Support & Self-Service",
     context: [
       "HR teams handle thousands of repetitive questions related to payroll, benefits, leave, and company policies",
       "Employees experience delays while waiting for responses",
@@ -75,7 +75,7 @@ const challenges: ChallengeCard[] = [
   {
     number: "4",
     company: "Johnson & Johnson",
-    title: "Agentic AI for Connected HR Operations & Workflow Automation",
+    title: "Connected HR Operations & Workflow Automation",
     context: [
       "HR processes span multiple enterprise systems including Workday, Microsoft 365, ServiceNow, Payroll, and Learning platforms",
       "Employees and HR teams manually switch between applications and perform duplicate work",
@@ -94,7 +94,7 @@ const challenges: ChallengeCard[] = [
   {
     number: "5",
     company: "Johnson & Johnson",
-    title: "Agentic AI for Payroll & Compliance Operations",
+    title: "Payroll & Compliance Operations",
     context: [
       "Global payroll processing involves multiple systems, country-specific regulations, and manual validations",
       "Compliance tracking requires continuous monitoring of policies, approvals, and mandatory training",
