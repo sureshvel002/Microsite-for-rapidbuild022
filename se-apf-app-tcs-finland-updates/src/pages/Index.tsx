@@ -4,7 +4,7 @@ import { FileText, MessageSquare, Images, ArrowRight } from "lucide-react";
 const sections = [
   {
     title: "Challenge Cards",
-    description: "Explore customer-specific challenges across six Finnish accounts — mapped to AI-driven opportunities for TCS delivery.",
+    description: "Explore five Johnson & Johnson HR challenges — each mapped to an agentic-AI opportunity for TCS delivery.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-primary to-accent",
@@ -18,7 +18,7 @@ const sections = [
   },
   {
     title: "Prompts",
-    description: "Double Diamond framework prompts tailored for TCS Finland accounts. Copy and use with your preferred AI assistant.",
+    description: "Double Diamond framework prompts tailored to the Johnson & Johnson HR challenges. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
@@ -33,7 +33,7 @@ const Index = () => {
       <div className="max-w-6xl w-full animate-fade-in">
         <div className="text-center mb-12">
           <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-3">
-            TCS AI Advisory
+            TCS AI ADVISORY
           </p>
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
             AI Immersion Day
