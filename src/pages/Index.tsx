@@ -8,7 +8,7 @@ const steps = [
     title: "Context Pack",
     tagline: "Get Context",
     description:
-      "Download the executive pre-workshop briefing — account snapshots, strategic priorities and competitive landscape across six Belgian accounts.",
+      "Download the Eneco Belgium deep research report — the company, its market, its competitors, its commercial model, its assets, its technology and its organisation.",
     icon: Download,
     path: "/deep-research",
     gradient: "from-primary to-accent",
@@ -18,7 +18,7 @@ const steps = [
     title: "Challenge Cards",
     tagline: "Pick Challenge",
     description:
-      "Explore the prioritised business problems extracted from the briefing — two per account, framed for domain-advisor & consultant breakout discussions.",
+      "Explore the three challenge cards carried in the report — one technology-rooted, two business — framed for domain-advisor & consultant breakout discussions.",
     icon: Images,
     path: "/challenge-cards",
     gradient: "from-accent to-primary",
@@ -28,7 +28,7 @@ const steps = [
     title: "Prompts",
     tagline: "Run Prompt",
     description:
-      "Double Diamond framework prompts tailored for the TCS Belgium immersion. Copy and use with your preferred AI assistant.",
+      "Double Diamond framework prompts tailored for the Eneco Belgium immersion. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
@@ -53,10 +53,10 @@ const Index = () => {
         {/* Title block */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            TCS Belgium — AI Immersion
+            Eneco België — AI Immersion
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the TCS Belgium domain-advisory immersion — executive briefing, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
+            Resources for the TCS AI Immersion with Eneco België — the deep research report, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
           </p>
         </div>
 

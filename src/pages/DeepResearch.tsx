@@ -9,8 +9,8 @@ const AI_TOOLS = [
   { name: "Open Google AI Studio", url: "https://aistudio.google.com", color: "bg-googleai hover:bg-googleai/90 text-primary-foreground" },
 ];
 
-const PDF_PATH = "/documents/tcs_belgium_executive_briefing.pdf";
-const DOWNLOAD_FILENAME = "TCS Belgium - Context Pack.pdf";
+const PDF_PATH = "/documents/eneco_belgium_deep_research.pdf";
+const DOWNLOAD_FILENAME = "Eneco Belgium - Deep Research Report.pdf";
 
 const DeepResearch = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const DeepResearch = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="text-lg font-semibold font-display text-card-foreground">TCS Belgium Context Pack</h1>
+            <h1 className="text-lg font-semibold font-display text-card-foreground">Eneco Belgium Context Pack</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -54,7 +54,7 @@ const DeepResearch = () => {
           <iframe
             src={PDF_PATH}
             className="w-full h-full"
-            title="TCS Belgium Context Pack"
+            title="Eneco Belgium Context Pack"
           />
         </div>
       </div>

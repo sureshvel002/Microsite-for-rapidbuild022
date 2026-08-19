@@ -17,281 +17,121 @@ import {
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
-// Cards from the TCS Belgium AI Immersion executive briefing,
-// framed as business problems for domain-advisor & consultant breakout
-// discussion (not solution briefs). Two cards per account, 12 total.
-// The internal `number` (Cxx) is kept as a stable id for storage
-// but is not surfaced in the UI per current design.
+// Cards carried in the Eneco België deep research report (TCS Rapid Build ·
+// Orchestrated Deep Research). Three cards anchor the session — one
+// technology-rooted, two business. Each frames a *business outcome* for
+// domain-advisor & consultant breakout discussion: no card names a solution,
+// a tool, a vendor, a technology or a job title — those are invented in the
+// room. The internal `number` (Pn) is a stable id for storage and is shown
+// only as a small chip in the list view.
 const challenges: ChallengeCard[] = [
-  // ── BNP Paribas Fortis ──────────────────────────────────────────
+  // ── P1 · Technology-rooted ───────────────────────────────────────
   {
-    number: "C1",
-    company: "BNP Paribas Fortis",
-    theme: "Finance \u2022 Risk \u2022 Compliance \u2022 Reporting & Control-Evidence Generation",
-    title: "Cut manual evidence out of regulatory reporting",
+    number: "P1",
+    company: "Eneco Belgium",
+    kind: "Technology-rooted",
+    theme: "Meter-to-Cash • Billing, Settlement, Dunning & Complaint Handling",
+    title: "Money and trust stuck between the meter and the bill",
     summary:
-      "Analysts spend more time assembling and reconciling evidence than reasoning about risk, while requirements expand faster than headcount.",
+      "More than a million connection points billed on readings Eneco cannot see for itself — and nearly half of all customer escalation is about that gap, not about price.",
     challengeStatement:
-      "Every reporting and DORA cycle, my analysts spend more time assembling and reconciling evidence than reasoning about risk. The bank wants strict cost discipline while taxes and cost of risk eat our margin \u2014 yet control evidence is still largely hand-built, because requirements expand faster than the headcount we\u2019re allowed to add.",
+      "We sell to more than a million connection points but cannot see, on our own, what most of them consumed. The reading arrives from someone else, late and sometimes not at all, and the invoice waits behind it. Nearly half of everything customers escalate is about that gap rather than about price, and some households have waited years for a bill they still owe. We carry the anger, the cash cost and the disputed receivable for a failure we do not own and cannot fix alone.",
     whyNow:
-      "DORA applies across the EU financial sector from 17 Jan 2025, raising the bar on ICT-risk evidence, resilience testing and incident handling \u2014 while a EUR 124m banking-tax rise forces cost discipline now.",
+      "The market-message defect entered its fifth year in 2025, with 919 meters still blocked in April 2025 and the grid operator fined roughly €500,000 by May. Suppliers carry the unbilled receivable and the late-payment interest, and no compensation scheme exists. Customer debt is worsening at the same time — Brussels consumer debt has reached €137m at €258 per customer, nearly double Wallonia's €144 — so every week of billing delay lands on a customer less able to absorb it.",
     baselineMetrics: [
-      "DORA applicable from 17 Jan 2025 \u2014 auditability, control observability, third-party oversight [DORA]",
-      "EUR 124m banking-tax increase; EUR 251m rise in cost of risk [Annual Report 2025]",
-      "Validate live: analyst-hours per report, manual DORA artefacts, rework volume",
-      "Status: no public copilot deployment \u2014 confirm; group AI investment rising",
+      "Meters 24.2% + billing 22.6% = 46.8% of all Federal Ombudsman cases, against prices at 19% [Ombudsman 2024]",
+      "Settlement lands 6–8 weeks after Eneco receives grid-operator readings, with no published deadline [general conditions / FAQ]",
+      "Atrias/MIG6 defect in its fifth year: ~3,000 Flemish, 7,500 Walloon, 500 Brussels access points blocked 6+ months; Fluvius fined €120,190 plus €2,500/day",
+      "Three regional data regimes — Fluvius, ORES/RESA, Sibelga — with opt-in consent and a 2–3 day activation; customer data access is a grid-operator flow, not an Eneco interface",
+      "Flanders had 85,000 households on the social supplier in 2025, with 17,039 gas self-disconnections, up 9.2%",
+      "Eneco complaints halved from 2,761 to 1,386 in a year — the operational trajectory is good, the residual is structural",
+      "Validate live: unbilled receivable and its ageing, cost-to-serve per delayed settlement, repeat-contact rate during the wait",
+      "Status: what runs underneath the Belgian meter-to-cash chain is vendor-stated only, and that vendor changed owner on 28 May 2026 — state the assumption",
     ],
     audienceFit:
-      "DORA programme lead \u2022 Chief Risk Officer \u2022 Head of Regulatory Reporting / Finance",
+      "Managing Director • customer & commercial leadership • operations and support (billing, dunning, collections)",
     crossFunctionalHooks:
-      "CISO / cyber \u2022 internal audit \u2022 group compliance \u2022 IT & data",
+      "Market & regulatory affairs • grid operators (Fluvius, ORES/RESA, Sibelga) • Federal Energy Ombudsman & VREG / CWaPE / BRUGEL • collections partners • Belgian D&TS (SIMS + CS)",
+    constraints: [
+      "Three regional regimes, not one. Collections already encode €20–€2,000 compensation in Flanders and Brussels against €55 a year capped in Wallonia, with different formal-demand fees.",
+      "The upstream defect belongs to a third party and has not been fixed in five years. Assume it persists.",
+      "The Belgian meter-to-cash stack is stated only by a vendor, and that vendor changed owner in May 2026. State the assumption rather than inherit one.",
+      "Around 350 people carry the whole Belgian book, across Mechelen, Wavre and Ghent.",
+    ],
+    whyGoodBuild:
+      "A single session can produce the thing that does not exist today: an agreed account of what a customer should experience during the weeks when nobody knows what they used, and who owes whom what at each point. Everything downstream — the reminder, the advance, the complaint, the save — depends on that decision, and the room can actually make it in a day.",
   },
+  // ── P2 · Business ────────────────────────────────────────────────
   {
-    number: "C2",
-    company: "BNP Paribas Fortis",
-    theme: "Bancassurance Operations \u2022 Policy Servicing, Claims Intake, Customer Comms",
-    title: "Industrialise insurance servicing, not just the AG contract",
+    number: "P2",
+    company: "Eneco Belgium",
+    kind: "Business",
+    theme: "Retail Commercial • Pricing, Retention & Switching Defence",
+    title: "Re-winning the whole book every five years",
     summary:
-      "A 15-year partnership says to digitalise and industrialise insurance \u2014 but policy changes, claims intake and customer comms are still touched by hand.",
+      "One in five Flemish customers switches supplier each year, the invoice now legally carries an exit prompt, and Eneco's fixed tariff is priced at the top of the market.",
     challengeStatement:
-      "We\u2019ve signed a 15-year partnership that explicitly tells us to digitalise and industrialise insurance \u2014 but policy changes, claims intake and customer comms are still touched by hand, and bank-to-insurer handoffs break. The contract changed; the workflow hasn\u2019t.",
+      "One in five Flemish customers changes supplier each year, and our business segment churns hardest of all. The invoice that is meant to carry the relationship now also carries a legally mandated code telling the customer whether to leave. Ten new suppliers entered in a single year, the market's three-year satisfaction winner exited household supply altogether, and our own fixed tariff — the product most exposed to that comparison — is priced at the top of the market. The question is what we sell, and what we are trusted on, when the entire book must be won again roughly every five years.",
     whyNow:
-      "Dec 2025 AG Insurance stake sale (EUR 1.9bn) with a 15-year distribution renewal framed to \u201Cdigitalise and industrialise\u201D; bpost bank integration added ~1m customers from Jan 2024.",
+      "Since 1 July 2025 the V-check exit prompt has been compulsory on every bill and renewal letter, and the regulator links the 2025 step-up in switching directly to it. Top-three Flemish share has fallen from 77.7% to 74.0% since 2022 while smaller suppliers took 5.4 points of volume. From November 2026 the comparison tool assesses variable contracts on full quarter-hourly price history. The erosion is live, not forecast.",
     baselineMetrics: [
-      "AG 25% stake sold for EUR 1.9bn; 15-yr distribution renewal, Dec 2025 [BNPF Dec 2025]",
-      "bpost bank added ~1m customers from Jan 2024 [Briefing]",
-      "Validate live: policy-change time, claims volume, manual-touch & handoff-failure rate",
-      "Status: contractual reset done; workflow redesign unclear \u2014 scope to the real gap",
+      "Flemish electricity switching 19.35% in 2025 — households 18.94% on 562,481 switches, business 21.09% on 148,762 [VREG]",
+      "Eneco's fixed product sits 4.87 c/kWh above its own variable — roughly €1,517–1,523 a year at 3,500 kWh against €1,321 for the cheapest supplier",
+      "Residential variable adder 3.058 c/kWh against 2.581 for business and 1.000 for dynamic — the margin structure differs by a factor of three across products the same customer can choose",
+      "Ten new suppliers entered 2024–26; DATS 24, three years the Test-Aankoop winner, exited household supply on 30 July 2026, transferring 33,000 connection points",
+      "Only ~45% of a Walloon electricity bill is commodity; the excise shift runs in fixed steps to January 2029, reaching +€35.30 a year for a dual-fuel household",
+      "Eneco publicly opposes group-purchase campaigns and runs no referral programme, in a market where those campaigns are a named driver of switching",
+      "[NL, directly relevant] A Dutch mass claim with 275,000+ registrations is testing variable-tariff price-change clauses — hearing September 2026, Supreme Court ruling due December",
+      "Validate live: churn, retention and acquisition cost by cohort — Eneco publishes none of them, so the room supplies them",
     ],
     audienceFit:
-      "Bancassurance leadership (AG interface) \u2022 Belgium COO / Head of Transformation",
+      "Managing Director • customer & commercial leadership (offer, price, save) • market & regulatory affairs",
     crossFunctionalHooks:
-      "AG Insurance counterparts \u2022 customer ops \u2022 IT / integration \u2022 compliance",
+      "Operations & support — a save is not credible right after a billing failure • VREG V-test and comparison tooling • pricing & risk • group COO Customer in Rotterdam",
+    constraints: [
+      "The comparison code on the invoice is a legal duty, not a design choice.",
+      "Over half the bill sits outside Eneco's control, and the excise shift lands on government-set dates.",
+      "Day-ahead pricing went quarter-hourly on 1 October 2025; full quarter-hourly history enters the comparison tool in November 2026. Anything that cannot represent at that granularity will be misranked on the tool consumers actually use.",
+      "Eneco does not publish churn, retention or acquisition-cost figures — the room will need to supply them.",
+    ],
+    whyGoodBuild:
+      "Belgium already knows which conversations trigger churn and which invoices go wrong. A session can produce a worked, evidenced picture of one high-churn cohort end to end — what they were told, what arrived, when, and what it cost to hold them — which nobody currently owns across all three functions.",
   },
-  // ── bpost / bnode ────────────────────────────────────────────────
+  // ── P3 · Business ────────────────────────────────────────────────
   {
-    number: "C3",
-    company: "bpost / bnode",
-    theme: "Operations \u2022 Warehouse, Linehaul & Field-Supervisor Knowledge",
-    title: "Stop execution variance leaking margin across the network",
+    number: "P3",
+    company: "Eneco Belgium",
+    kind: "Business",
+    theme: "Assets & Flexibility • Storage Dispatch, Dynamic Tariffs & Household Flex",
+    title: "Flexibility is scaling faster than the earnings from it",
     summary:
-      "Fusing Staci, Active Ants and Radial Europe into one group, but each site runs on its own SOPs and tribal knowledge \u2014 that variance is where margin disappears.",
+      "Belgium's largest flexibility position, taken deliberately asset-light — 350 of the 400 MW belongs to someone else, so what it earns is a contractual question, not an engineering one.",
     challengeStatement:
-      "We\u2019re fusing Staci, Active Ants and Radial Europe into one group, but each site runs on its own SOPs and tribal knowledge. People take too long to reach competence, and the same problem gets solved five different ways \u2014 that variance is where our margin disappears.",
+      "We are accumulating flexible capability on both sides of the meter at a pace our ability to convert it into margin has not matched. On the asset side, an almost entirely wind-based book meets a market that increasingly pays nothing — or pays negatively — exactly when the wind blows. On the customer side, roughly a gigawatt of household flexibility already sits behind Belgian meters and is essentially unremunerated. And most of the fleet we will manage in 2027 belongs to somebody else, which makes the question of who captures the value a commercial one, not an engineering one.",
     whyNow:
-      "#Reshape2029 names \u201Cdeliver operational efficiencies\u201D and the Staci / Active Ants / Radial Europe integration as Must-Wins; synergy capture is now a core execution risk.",
+      "Belgium recorded 518–520 negative-price hours in 2025 — 5.9% of the year, a record — and roughly 11% of 2026 hours to date have cleared at or below zero. The single largest addition to the managed fleet, 300 MW and 1,200 MWh, delivers in 2027 on a ten-year contract. The earnings model has to be settled before the volume arrives.",
     baselineMetrics: [
-      "#Reshape2029: >EUR 5.0bn revenue & adj. EBIT >EUR 275m by 2027 [CMD Jun 2025]",
-      "33,532 employees end-2025; ~26,628 in Belgium [bnode AR 2025 / bpost AR 2024]",
-      "Validate live: time-to-competence, SOP-lookup time, exception / variance by site",
-      "Status: no public postal knowledge copilot \u2014 confirm",
+      "518–520 negative-price hours in 2025, floor −€462.30/MWh on 11 May, against 404 hours in 2024; wind and solar reached 22.23 TWh, 37% of output",
+      "400 MW / 1,540 MWh of storage under control by 2027 — of which Eneco owns 50 MW; a third of the headline rests on one developer, one hardware supplier and one delivery year",
+      "~150,000 Flemish home batteries hold roughly 1 GW of unused flexibility, yet only 0.3% of Flemish households hold a dynamic contract — and just 58 dynamic contracts exist in the whole Brussels region",
+      "Household injection nets to roughly zero after the €124.63 annual administration charge, and business injectors already pay to inject during negative hours",
+      "Both offshore assets sit under mechanisms fixed in 2017–18, and Eneco takes 100% of SeaMade's ~1.8 TWh on 12.5% equity — the sourcing structure the whole Belgian book depends on",
+      "No dispatchable Belgian generation since the 870 MW Manage project was withdrawn in September 2023",
+      "Device-level steering in Eneco's Belgian propositions is partner software, and the group's flexibility platform has no evidenced Belgian extension",
+      "Validate live: realised revenue per MW of contracted storage against 2025's actual price shape, and the revenue-share terms behind it",
     ],
     audienceFit:
-      "BeNe Last-Mile ops leader \u2022 3PL Europe leader \u2022 depot / warehouse managers",
+      "Managing Director • assets & flexibility leadership (fleet and dispatch) • customer & commercial (contracts and tariffs)",
     crossFunctionalHooks:
-      "transformation office \u2022 HR / training \u2022 CIO/CTO \u2022 integration leads",
-  },
-  {
-    number: "C4",
-    company: "bpost / bnode",
-    theme: "Network Orchestration \u2022 Route, Round & Workload Planning",
-    title: "Plan rounds and labour for a parcel-driven network",
-    summary:
-      "Rounds and rosters were built for shrinking mail while parcels grow and flows mix \u2014 too many decisions are still manual.",
-    challengeStatement:
-      "Our rounds and rosters were built for a shrinking mail world while parcels grow and flows mix. Too many decisions are still manual, and we absorb overtime and absenteeism we should be able to anticipate \u2014 with a fixed cost base and a workforce we can\u2019t afford to mishandle.",
-    whyNow:
-      "Belgian postal market grew 2.7% to EUR 3.724bn in 2024, parcel-led, while mail declines structurally; 2025 is the first full year without Press-concession income.",
-    baselineMetrics: [
-      "Belgian postal market +2.7% to EUR 3.724bn, parcel / express-led [BIPT 2025]",
-      "Belgian ops loss-making Q3 2024; fixed cost base threatens profit [bpost AR 2024]",
-      "Validate live: % manual network decisions, overtime / absenteeism, round productivity",
-      "Flag: workforce decisions politically sensitive \u2014 set the off-limits boundary first",
+      "Market & regulatory affairs (granularity, network tariffs, meter access) • operations & support — settlement is what makes any reward provable • Elia and the capacity auctions • storage counterparties • group trading in Rotterdam",
+    constraints: [
+      "Only 50 MW of Belgian storage is owned; the rest is contracted, and the terms are what determine the margin. The “>1.2 GW across 15 projects” figure is a 2027 group target across the Netherlands, Belgium and Germany, not a present Belgian capability.",
+      "The dynamic product is Flanders-only and digital-meter-gated. Wallonia has only ~5,000 SMR3-configured meters, about 3%, and time-of-use network tariffs are deferred to 2029.",
+      "Capacity payments are set by auction — €14,100/MW/year for 2026–27 rising to €27,300 for 2029–30 — not negotiable.",
+      "Grid connection is the binding constraint: roughly 800 companies in Elia's queue at April 2026, with both new storage sites due in 2027.",
     ],
-    audienceFit:
-      "BeNe Last-Mile ops leader \u2022 network planning \u2022 HR / industrial relations",
-    crossFunctionalHooks:
-      "social partners / unions \u2022 transformation office \u2022 data \u2022 CIO",
-  },
-  // ── Proximus ─────────────────────────────────────────────────────
-  {
-    number: "C5",
-    company: "Proximus",
-    theme: "Network / Fiber \u2022 Capex Economics and Take-Up",
-    title: "Turn homes-passed into homes-monetised faster",
-    summary:
-      "Heavy fiber capex with a halved dividend, but the gap between a home passed and a home billing is too long and too opaque.",
-    challengeStatement:
-      "We\u2019re pouring capital into fiber while the dividend was cut to fund it, but the gap between a home passed and a home connected and billing is too long and too opaque. Permits, work orders, contractor risk and take-up live in different places \u2014 so we can\u2019t see where rollout stalls.",
-    whyNow:
-      "~42% fiber coverage at end-2025 with heavy ongoing capex; full Unifiber ownership agreed May 2026 (raising spend); dividend halved to preserve flexibility for fiber.",
-    baselineMetrics: [
-      "~42% fiber coverage; 89.5% indoor 5G end-2025 [Proximus AR 2025]",
-      "CAPEX EUR 1.249bn; adjusted FCF EUR 130m (2025) [Proximus AR 2025]",
-      "Validate live: permit cycle time, passed->connected conversion, contractor delay",
-      "Status: no public rollout / take-up cockpit \u2014 confirm",
-    ],
-    audienceFit:
-      "Network / fiber leadership \u2022 CTO \u2022 fiber programme lead",
-    crossFunctionalHooks:
-      "Proximus Ada (AI governance) \u2022 finance / capex \u2022 field ops \u2022 data",
-  },
-  {
-    number: "C6",
-    company: "Proximus",
-    theme: "Customer Operations \u2022 Care, Retention & Next-Best-Offer",
-    title: "Defend churn and offer timing in a post-DIGI market",
-    summary:
-      "A new low-cost entrant has reset price expectations; care agents absorb the pressure with too little context to retain or upsell.",
-    challengeStatement:
-      "A new low-cost entrant has reset price expectations across our multi-brand stack, and care agents absorb the pressure with too little context to retain or upsell in the moment. We\u2019ve committed publicly to AI-led cost cuts \u2014 so adding headcount isn\u2019t the answer.",
-    whyNow:
-      "DIGI\u2019s end-2024 entry intensified Belgian mobile competition; Proximus has publicly committed to cutting 1,200 jobs by 2030 via AI-driven efficiency, and halved the dividend.",
-    baselineMetrics: [
-      "DIGI entry end-2024 increased mobile competition [BIPT 2025]",
-      "1,200 jobs to be cut by 2030 via AI efficiency; dividend halved [Reuters Feb 2026]",
-      "Validate live: churn by brand, care AHT / cost-per-contact, offer conversion",
-      "Status: Jan 2025 Microsoft deal + Proximus Ada may give a landing zone \u2014 verify",
-    ],
-    audienceFit:
-      "Customer-operations leadership \u2022 multi-brand commercial \u2022 care leadership",
-    crossFunctionalHooks:
-      "Proximus Ada \u2022 HR / transformation \u2022 data \u2022 compliance (AI Act transparency)",
-  },
-  // ── Bekaert ──────────────────────────────────────────────────────
-  {
-    number: "C7",
-    company: "Bekaert",
-    theme: "Manufacturing Operations \u2022 Quality, Scrap, Throughput & Energy",
-    title: "Make a flagship plant\u2019s economics improve fast enough",
-    summary:
-      "Margin depends on what\u2019s clawed back inside the plant \u2014 scrap, quality, throughput, energy \u2014 but too much optimisation is still manual and reactive.",
-    challengeStatement:
-      "We\u2019re fighting for volumes in weak markets, so margin now depends on what we claw back inside the plant \u2014 scrap, quality, throughput, energy. The restructuring savings are real, but too much day-to-day optimisation is still manual and reactive.",
-    whyNow:
-      "FY2025 performance was supported by cost management and restructuring; tariffs and trade tensions undermined demand \u2014 the signal is disciplined performance improvement, not experimentation.",
-    baselineMetrics: [
-      "~19,000 employees; EUR 3.71bn consolidated revenue (2025) [Bekaert AR 2025]",
-      "FY2025 supported by cost mgmt & restructuring; EUR 200m buyback [FY2025]",
-      "Validate live: scrap rate, OEE / throughput, energy intensity, OT/IT data maturity",
-      "Status: no public AI platform \u2014 scope to one flagship plant with cleanest data",
-    ],
-    audienceFit:
-      "Plant / operations director \u2022 manufacturing-excellence lead \u2022 BU ops lead",
-    crossFunctionalHooks:
-      "OT/IT engineering \u2022 quality \u2022 energy / sustainability \u2022 data",
-  },
-  {
-    number: "C8",
-    company: "Bekaert",
-    theme: "Commercial Excellence \u2022 Pricing & Quotation",
-    title: "Protect margin and hit-rate in regional quoting",
-    summary:
-      "In soft markets every quote is a fight, and regional teams price under pressure with little visibility into margin leakage or win rate.",
-    challengeStatement:
-      "In soft markets every quote is a fight, and regional teams price under pressure with little visibility into where we leak margin or lose hit-rate. Quoting is slow and inconsistent across lines, so we win the wrong deals and miss the right ones.",
-    whyNow:
-      "Tariffs and trade tensions undermined demand; the CEO says teams are \u201Cfighting for volumes\u201D; business units are being made more autonomous \u2014 discipline must live in the workflow.",
-    baselineMetrics: [
-      "Tariffs / trade tensions undermined demand across key markets [AR 2025]",
-      "\u201Cfighting for volumes in challenging markets\u201D \u2014 CEO, H1 2025 [Bekaert H1 2025]",
-      "Validate live: quote turnaround, win rate, margin leakage by materials line",
-      "Status: no public quote / margin copilot \u2014 scope to one materials line",
-    ],
-    audienceFit:
-      "BU commercial leader \u2022 regional sales leadership \u2022 pricing lead",
-    crossFunctionalHooks:
-      "finance \u2022 product / engineering \u2022 data \u2022 CRM",
-  },
-  // ── Colruyt Group ────────────────────────────────────────────────
-  {
-    number: "C9",
-    company: "Colruyt Group",
-    theme: "Supply Chain \u2022 Fresh Demand Forecasting & Markdown / Waste",
-    title: "Cut fresh waste without breaking the lowest-price promise",
-    summary:
-      "Committed to the lowest price so margin must come from running tighter \u2014 fresh is where it slips most, between forecast misses, markdowns and spoilage.",
-    challengeStatement:
-      "We\u2019re committed to the lowest price, so margin has to come from running tighter \u2014 and fresh is where it slips most, between forecast misses, markdowns and spoilage. With food inflation low and competition harder, the growth cushion is gone and gross-margin drag is worse than expected.",
-    whyNow:
-      "May 2025 profit warning on stronger competition and lower-than-expected food inflation; market share slipped to 29.0% in FY2024/25 from 29.3%; margin recovery is the stated priority.",
-    baselineMetrics: [
-      "Profit warning May 2025: competition + lower food inflation [Reuters]",
-      "Belgian market share 29.0% (from 29.3%) FY2024/25 [Colruyt FY2024/25]",
-      "Validate live: fresh waste %, markdown rate, forecast accuracy by category",
-      "Status: automation heritage but no public fresh-AI deployment \u2014 confirm",
-    ],
-    audienceFit:
-      "Supply-chain leadership \u2022 fresh / category merchandising \u2022 store operations",
-    crossFunctionalHooks:
-      "data / analytics \u2022 replenishment \u2022 finance \u2022 banner operations",
-  },
-  {
-    number: "C10",
-    company: "Colruyt Group",
-    theme: "Store & DC Operations \u2022 Labour Productivity & Exception Handling",
-    title: "Lift store and DC productivity against sticky wage costs",
-    summary:
-      "Belgian wage indexation keeps pushing labour costs up, and Comarkt consolidation adds to the base \u2014 yet shelf gaps and exceptions are still fixed by hand.",
-    challengeStatement:
-      "Belgian wage indexation keeps pushing labour costs up automatically, and Comarkt consolidation adds to the base \u2014 yet shelf gaps and exceptions are still fixed by hand and tribal knowledge. We must get more productive in stores and DCs without hurting the experience that keeps customers loyal.",
-    whyNow:
-      "FY2024/25 operating costs rose mainly from Comarkt consolidation and higher personnel costs driven by Belgium\u2019s automatic wage indexation; margins compress unless offset by productivity.",
-    baselineMetrics: [
-      "Operating costs up: Comarkt consolidation + wage indexation [FY2024/25]",
-      "782 own + 1,006 affiliated / franchised stores (31 Mar 2025) [Key figures 2025]",
-      "Validate live: shelf-gap rate, exception-handling time, replenishment accuracy",
-      "Status: automation heritage; no public store / DC copilot \u2014 confirm",
-    ],
-    audienceFit:
-      "Store-operations leadership \u2022 DC / logistics \u2022 workforce planning",
-    crossFunctionalHooks:
-      "HR \u2022 data \u2022 IT \u2022 banner management",
-  },
-  // ── Euroclear ────────────────────────────────────────────────────
-  {
-    number: "C11",
-    company: "Euroclear",
-    theme: "Legal & Regulatory \u2022 Sanctions Intelligence (Controlled, Non-Decisioning)",
-    title: "Relieve the relentless sanctions and legal research load",
-    summary:
-      "Russian-assets situation is a permanent draw on legal and operations capacity \u2014 repetitive evidence retrieval, claims tracking and policy updates that never stop.",
-    challengeStatement:
-      "The Russian-assets situation is a permanent draw on legal and operations capacity \u2014 repetitive evidence retrieval, claims tracking and policy updates that never stop. Every hour reconstructing the same research is an hour not spent on growth or modernisation.",
-    whyNow:
-      "Ongoing Russian sanctioned-assets updates (latest May 2026) with sustained litigation and retaliation exposure; this is now a persistent management burden, not a side note.",
-    baselineMetrics: [
-      "Underlying net profit ~EUR 1.2bn (2025) [Euroclear 2025 results]",
-      "Russian-assets issue active; litigation / seizure exposure [Euroclear May 2026]",
-      "Validate live: legal / analyst hours on sanctions, shared legal-ops data repositories",
-      "Status: must be a controlled internal assistant, not decisioning \u2014 no public deploy",
-    ],
-    audienceFit:
-      "Legal / sanctions leadership \u2022 compliance \u2022 operations",
-    crossFunctionalHooks:
-      "risk \u2022 data governance \u2022 Microsoft platform team \u2022 information security",
-  },
-  {
-    number: "C12",
-    company: "Euroclear",
-    theme: "Client Operations \u2022 Asset Servicing, Onboarding & Exception Triage",
-    title: "Triage client-ops exceptions before they erode trust",
-    summary:
-      "Onboarding, asset-servicing queries and exception triage are where clients feel friction and where cost quietly accumulates.",
-    challengeStatement:
-      "Onboarding, asset-servicing queries and exception triage are where clients feel friction and where cost quietly accumulates. As funds and ETF flows grow, the exception load grows with them, and too much triage is still manual \u2014 but in an FMI we can\u2019t trade speed for control.",
-    whyNow:
-      "The seven-year Microsoft partnership (Jan 2025) is positioned to transform client experience using cloud, data and AI; funds is a named growth area with robust ETF flows in 2025.",
-    baselineMetrics: [
-      "7-yr Microsoft partnership (Jan 2025): client experience via cloud / data / AI [Euroclear]",
-      "Strong 2025 results; high deposits, robust ETF flows [Euroclear 2025 results]",
-      "Validate live: exception volume, query-resolution time, onboarding time",
-      "Status: split of infra vs business-value use cases unclear \u2014 confirm",
-    ],
-    audienceFit:
-      "Client-operations leadership \u2022 asset servicing \u2022 FundsPlace",
-    crossFunctionalHooks:
-      "Microsoft platform team \u2022 data products \u2022 compliance \u2022 IT",
+    whyGoodBuild:
+      "One session can produce a defensible, numbers-first view of what a single contracted asset and a single household segment would actually have earned against 2025's real price shape, and what would have to be true — commercially and contractually — to retain more of it. That is a decision object a managing director can take into a capital conversation, not a demonstration.",
   },
 ];
 
@@ -390,12 +230,13 @@ const ChallengeCards = () => {
       {/* Intro description — full-width, tighter top spacing */}
       <div className="px-6 pt-3 pb-2 max-w-7xl mx-auto w-full text-center shrink-0">
         <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-          Extracted and structured from the executive pre-workshop briefing. These cards are
-          framed as{" "}
-          <strong className="text-foreground">business problems</strong> for
-          domain-advisor & consultant breakout discussions — not solution briefs.
-          Click any card on the left to view its full context, then choose one
-          to carry into the prompts page.
+          The three cards carried in the Eneco België deep research report — one
+          technology-rooted, two business. Each is framed as a{" "}
+          <strong className="text-foreground">business outcome</strong> for
+          domain-advisor & consultant breakout discussions — not a solution brief,
+          and no card names a solution, a tool or a vendor. Click any card on the
+          left to view its full context, then choose one to carry into the prompts
+          page.
         </p>
       </div>
 
@@ -551,6 +392,11 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
             >
               {card.company}
             </span>
+            {card.kind && (
+              <span className="inline-block rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                {card.kind}
+              </span>
+            )}
           </div>
           <h3
             className={`text-sm font-semibold font-display leading-snug mb-1.5 transition-colors ${
@@ -737,6 +583,36 @@ function DetailContent({
             </p>
           </div>
         </div>
+
+        {/* Boundaries the room designs within — from the report's own card. */}
+        {card.constraints && card.constraints.length > 0 && (
+          <div className="mt-6">
+            <Section label="Constraints the room must respect">
+              <ul className="space-y-1.5">
+                {card.constraints.map((c, i) => (
+                  <li
+                    key={i}
+                    className="text-sm text-muted-foreground leading-relaxed flex gap-2"
+                  >
+                    <span className="text-accent mt-0.5 shrink-0">▸</span> {c}
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          </div>
+        )}
+
+        {/* What one session can realistically produce from this card. */}
+        {card.whyGoodBuild && (
+          <div className="rounded-lg border border-primary/25 bg-primary/[0.04] px-4 py-3">
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+              Why this is a good build
+            </h3>
+            <p className="text-sm text-card-foreground leading-relaxed">
+              {card.whyGoodBuild}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

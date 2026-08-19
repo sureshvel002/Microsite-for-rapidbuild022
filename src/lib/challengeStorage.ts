@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
 
-// Schema mirrors the TCS Belgium AI Immersion executive briefing:
-// each card frames a *business problem* for domain-advisor & consultant
-// breakout discussion (not a solution brief). If you re-use this app for
-// another client whose discovery brief has a different shape, update this
-// interface, the storage key suffix, formatChallengeText, and the renderers
-// in ChallengeCards.tsx + Prompts.tsx.
+// Schema mirrors the Eneco België deep research report: each card frames a
+// *business outcome* for domain-advisor & consultant breakout discussion —
+// never a solution brief, and never naming a solution, tool, vendor or job
+// title (those are invented in the room). If you re-use this app for another
+// client whose context pack has a different shape, update this interface, the
+// storage key suffix, formatChallengeText, and the renderers in
+// ChallengeCards.tsx + Prompts.tsx.
 export interface ChallengeCard {
-  number: string;               // e.g. "C01" — stable internal id (not shown in UI)
-  company: string;              // e.g. "BNP Paribas Fortis"
-  theme: string;                // e.g. "Customer Care / Omnichannel"
+  number: string;               // e.g. "P1" — stable internal id
+  company: string;              // e.g. "Eneco Belgium" — also injected into prompts
+  theme: string;                // e.g. "Meter-to-cash / Billing & complaints"
   title: string;                // short problem framing
   summary: string;              // 1-line crisp description shown on card tile
   challengeStatement: string;   // the quoted business-problem statement
   whyNow: string;               // contextual paragraph: why this matters now
-  baselineMetrics: string[];    // evidence bullets (sourced from brief)
+  baselineMetrics: string[];    // evidence bullets (sourced from the report)
   audienceFit: string;          // primary breakout audience
   crossFunctionalHooks: string; // adjacent stakeholders
+  /** Card lens — "Technology-rooted" or "Business". Shown as a pill. */
+  kind?: string;
+  /** Boundaries the room must design within (from the report's card). */
+  constraints?: string[];
+  /** Why one session can produce something real from this card. */
+  whyGoodBuild?: string;
   /**
    * Controls how this challenge is injected into the Widen-step prompt
    * when selected. Defaults to "title" (only the card title is injected).
@@ -31,7 +38,7 @@ export interface ChallengeCard {
 // auto-invalidated whenever the data shape changes. Bump the suffix on
 // each new client immersion *and* whenever the ChallengeCard interface
 // above changes shape.
-const STORAGE_KEY = "selectedChallenge:tcs-belgium-v1";
+const STORAGE_KEY = "selectedChallenge:eneco-belgium-v1";
 const STORAGE_EVENT = "selectedChallenge:changed";
 
 // Best-effort cleanup of legacy keys from prior immersions / schemas so
@@ -43,6 +50,7 @@ const LEGACY_STORAGE_KEYS = [
   "selectedChallenge:telia-finland-v3",
   "selectedChallenge:telia-finland-v4",
   "selectedChallenge:boehringer-ingelheim-v1",
+  "selectedChallenge:tcs-belgium-v1",
 ];
 
 if (typeof window !== "undefined") {
@@ -78,6 +86,16 @@ export function formatChallengeText(card: ChallengeCard): string {
     "Cross-functional hooks:",
     card.crossFunctionalHooks,
   ];
+  if (card.constraints?.length) {
+    lines.push(
+      "",
+      "Constraints the room must respect:",
+      ...card.constraints.map((c) => `\u25CF ${c}`)
+    );
+  }
+  if (card.whyGoodBuild) {
+    lines.push("", "Why this is a good build:", card.whyGoodBuild);
+  }
   return lines.join("\n");
 }
 

@@ -54,7 +54,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:tcs-belgium-v1";
+const TOOL_STORAGE_KEY = "workshopTool:eneco-belgium-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;
@@ -123,7 +123,7 @@ Requirements:
     \u2022 Layout: generous whitespace, consistent rounded corners, subtle shadows, compact-but-readable density, responsive desktop-first layout.
     \u2022 Component states: every interactive component must render empty, loading, populated and error states.
 \u2022 Cover all the screens needed by the main user flow as suggested by the selected challenge card and the brief. Do not artificially cap the screen count. Include navigation between screens so the flow is clickable end-to-end.
-\u2022 Synthetic sample data inline. No real names, no API calls. Use plausible Belgian-locale data (Brussels, Antwerp, Ghent; \u20AC amounts; Belgian company or contact placeholders).
+\u2022 Synthetic sample data inline. No real names, no API calls. Use plausible Belgian-locale data (Mechelen, Wavre, Ghent, Antwerp; \u20AC amounts; Dutch- and French-language placeholders \u2014 never English-only; EAN connection-point references and Belgian company or contact placeholders).
 \u2022 Plain business English in all UI copy. No marketing tone, no superlatives.
 \u2022 A success-metric tile showing baseline and target from the brief.
 
@@ -136,12 +136,8 @@ Return the file as a downloadable .html using Copilot\u2019s file-creation capab
 // brand colours into the mock-up prompt.
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
 const COMPANY_BRANDS: Record<string, string> = {
-  "BNP Paribas Fortis": "BNP Paribas Fortis primary green (#00915B) for primary actions, headers and key accents",
-  "bpost / bnode": "bpost primary red (#E2001A) for primary actions, headers and key accents",
-  "Proximus": "Proximus primary purple (#5B2C82) for primary actions, headers and key accents",
-  "Bekaert": "Bekaert primary blue (#003B73) for primary actions, headers and key accents",
-  "Colruyt Group": "Colruyt primary green (#006835) for primary actions, headers and key accents",
-  "Euroclear": "Euroclear primary blue (#003087) for primary actions, headers and key accents",
+  "Eneco Belgium":
+    "Eneco brand red (#E5322D) for primary actions, headers and key accents, with a warm coral secondary (#F26A4B) and a deep slate (#1F2933) for text",
 };
 
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
@@ -766,11 +762,34 @@ function SelectedChallengePanel({
           </p>
         </PanelSection>
 
-        <PanelSection label="Cross-functional hooks" last>
+        <PanelSection label="Cross-functional hooks">
           <p className="text-xs text-card-foreground leading-relaxed">
             {challenge.crossFunctionalHooks}
           </p>
         </PanelSection>
+
+        {challenge.constraints && challenge.constraints.length > 0 && (
+          <PanelSection label="Constraints the room must respect">
+            <ul className="space-y-1.5">
+              {challenge.constraints.map((c, i) => (
+                <li
+                  key={i}
+                  className="text-xs text-muted-foreground leading-relaxed flex gap-2"
+                >
+                  <span className="text-accent mt-0.5 shrink-0">▸</span> {c}
+                </li>
+              ))}
+            </ul>
+          </PanelSection>
+        )}
+
+        {challenge.whyGoodBuild && (
+          <PanelSection label="Why this is a good build" last>
+            <p className="text-xs text-card-foreground leading-relaxed">
+              {challenge.whyGoodBuild}
+            </p>
+          </PanelSection>
+        )}
       </div>
     </div>
   );
