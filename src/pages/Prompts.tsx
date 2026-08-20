@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
-  formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
@@ -240,8 +239,9 @@ function buildPromptSegments(
 ): { segments: PromptSegment[]; text: string; injected: boolean } {
   // Step 1 (Widen) carries `[SELECTED CHALLENGE]` and `[COMPANY]` placeholders.
   // When a challenge is selected, swap the challenge token in-place with the
-  // card title (or the full structured block for `injectionMode: "full"`) and
-  // swap `[COMPANY]` with the selected challenge's company.
+  // card *title only* — never the card's own findings, which the AI is meant
+  // to research for itself from the context pack — and swap `[COMPANY]` with
+  // the selected challenge's company.
   if (step === 1 && challenge) {
     const token = "[SELECTED CHALLENGE]";
     const companyToken = "[COMPANY]";
@@ -252,13 +252,9 @@ function buildPromptSegments(
         const idx = baseText.indexOf(token);
         const before = baseText.slice(0, idx);
         const after = baseText.slice(idx + token.length);
-        const injectedText =
-          challenge.injectionMode === "full"
-            ? `the following challenge:\n\n${formatChallengeText(challenge)}\n`
-            : challenge.title;
         segments = [
           ...splitPlaceholders(before),
-          { type: "injected", text: injectedText },
+          { type: "injected", text: challenge.title },
           ...splitPlaceholders(after),
         ];
       } else {
@@ -314,11 +310,10 @@ function buildPromptSegments(
   };
 }
 
-// Inline highlight for system-injected challenge content. When the injected
-// payload is long (e.g. C11's `injectionMode: "full"` block), it's
-// collapsed by default with a Read more / Read less toggle — keeps the
-// surrounding prompt instructions readable. Short injections (title-only
-// mode) render as a plain inline highlight, no toggle.
+// Inline highlight for system-injected challenge content. Today's injections
+// (card title, company name, brand colours) are short and render as a plain
+// inline highlight. An unusually long one is collapsed behind a Read more /
+// Read less toggle so it can't bury the surrounding prompt instructions.
 function InjectedSegment({ text }: { text: string }) {
   const COLLAPSE_THRESHOLD = 220;
   const [expanded, setExpanded] = useState(false);
@@ -430,17 +425,14 @@ const Prompts = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleCopy = useCallback(async (text: string, index: number, step: number) => {
-    // For the Widen step, append the full selected challenge card content so
-    // the AI tool gets the complete challenge context, not just the title.
-    let clipboard = text;
-    if (step === 1 && challenge) {
-      clipboard = `${text}\n\n--- Challenge details ---\n${formatChallengeText(challenge)}`;
-    }
-    await navigator.clipboard.writeText(clipboard);
+  // Copies exactly what the card shows. The Widen step deliberately carries
+  // only the challenge *title* — the AI is meant to research it from the
+  // context pack already in the chat, not be handed the card's own findings.
+  const handleCopy = useCallback(async (text: string, index: number) => {
+    await navigator.clipboard.writeText(text);
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
-  }, [challenge]);
+  }, []);
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
@@ -598,7 +590,7 @@ const Prompts = () => {
                       variant="outline"
                       size="sm"
                       className={`h-7 text-xs ${copiedIndex === index ? "text-green-600 border-green-300" : ""}`}
-                      onClick={() => handleCopy(text, index, prompt.step)}
+                      onClick={() => handleCopy(text, index)}
                     >
                       {copiedIndex === index ? (
                         <>

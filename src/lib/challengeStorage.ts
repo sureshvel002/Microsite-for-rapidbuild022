@@ -24,14 +24,6 @@ export interface ChallengeCard {
   constraints?: string[];
   /** Why one session can produce something real from this card. */
   whyGoodBuild?: string;
-  /**
-   * Controls how this challenge is injected into the Widen-step prompt
-   * when selected. Defaults to "title" (only the card title is injected).
-   * Set to "full" for cards that benefit from the entire structured block
-   * (theme, statement, why now, baseline metrics, audience, hooks) being
-   * passed to the AI verbatim.
-   */
-  injectionMode?: "title" | "full";
 }
 
 // Storage key includes a client + schema tag so stale selections are
@@ -63,10 +55,11 @@ if (typeof window !== "undefined") {
   }
 }
 
+// Full structured rendering of a card, used by the Copy button on the
+// Challenge Cards page. It is deliberately NOT used by the Widen-step prompt,
+// which injects the card title alone. The internal `number` and `company` are
+// left out — they are ids, not content.
 export function formatChallengeText(card: ChallengeCard): string {
-  // Note: the internal `number` (e.g. "C1") and `company` are intentionally
-  // NOT rendered into the output — they're internal IDs only and should not
-  // surface in the Widen-step prompt injection or in copy-to-clipboard text.
   const lines = [
     `Theme: ${card.theme}`,
     `Challenge: ${card.title}`,
