@@ -1,40 +1,41 @@
 import { useEffect, useState } from "react";
 
-// Schema mirrors the Eneco België deep research report: each card frames a
-// *business outcome* for domain-advisor & consultant breakout discussion —
-// never a solution brief, and never naming a solution, tool, vendor or job
-// title (those are invented in the room). If you re-use this app for another
-// client whose context pack has a different shape, update this interface, the
-// storage key suffix, formatChallengeText, and the renderers in
-// ChallengeCards.tsx + Prompts.tsx.
+// Schema mirrors the challenge cards carried in the AFM deep research reports.
+// Each report closes with two cards in a fixed shape — the challenge, who
+// feels it, why it persists, what solved looks like, the evidence base and an
+// open question — and this interface is that shape, field for field. A card
+// frames a *business outcome* for domain-advisor & consultant breakout
+// discussion: it never names a solution, a tool, a vendor or a job title,
+// because those are invented in the room.
+//
+// If you re-use this app for another client whose context pack has a
+// different card shape, update this interface, the storage key, formatChallengeText,
+// and the renderers in ChallengeCards.tsx + Prompts.tsx.
 export interface ChallengeCard {
-  number: string;               // e.g. "P1" — stable internal id
-  company: string;              // e.g. "Eneco Belgium" — also injected into prompts
-  theme: string;                // e.g. "Meter-to-cash / Billing & complaints"
-  title: string;                // short problem framing
-  summary: string;              // 1-line crisp description shown on card tile
-  challengeStatement: string;   // the quoted business-problem statement
-  whyNow: string;               // contextual paragraph: why this matters now
-  baselineMetrics: string[];    // evidence bullets (sourced from the report)
-  audienceFit: string;          // primary breakout audience
-  crossFunctionalHooks: string; // adjacent stakeholders
-  /** Card lens — "Technology-rooted" or "Business". Shown as a pill. */
-  kind?: string;
-  /** Boundaries the room must design within (from the report's card). */
-  constraints?: string[];
-  /** Why one session can produce something real from this card. */
-  whyGoodBuild?: string;
+  number: string;        // "C1" / "C2" — stable id, scoped to its company
+  companyId: string;     // owning company slug, e.g. "leroy-merlin"
+  company: string;       // display name, also injected into the prompts
+  theme: string;         // short label for the pill, e.g. "Shadow AI • Inventory"
+  title: string;         // the card's own title
+  summary: string;       // 1-line framing shown on the card tile
+  challenge: string;     // "The challenge"
+  whoFeelsIt: string;    // "Who feels it"
+  whyItPersists: string; // "Why it persists"
+  whatSolvedLooksLike: string; // "What solved looks like"
+  evidenceBase: string;  // "Evidence base"
+  openQuestion: string;  // "Open question"
 }
 
-// Storage key includes a client + schema tag so stale selections are
-// auto-invalidated whenever the data shape changes. Bump the suffix on
-// each new client immersion *and* whenever the ChallengeCard interface
-// above changes shape.
-const STORAGE_KEY = "selectedChallenge:eneco-belgium-v1";
+// Selections are scoped per company, so moving between AFM companies never
+// carries a stale card across. Bump the version suffix whenever the
+// ChallengeCard interface above changes shape.
+const STORAGE_VERSION = "v1";
+const storageKey = (companyId: string) =>
+  `selectedChallenge:afm:${companyId}:${STORAGE_VERSION}`;
 const STORAGE_EVENT = "selectedChallenge:changed";
 
-// Best-effort cleanup of legacy keys from prior immersions / schemas so
-// users don't leave orphan entries in localStorage.
+// Best-effort cleanup of keys from prior immersions / schemas so users don't
+// leave orphan entries in localStorage.
 const LEGACY_STORAGE_KEYS = [
   "selectedChallenge",
   "selectedChallenge:telia-finland",
@@ -43,6 +44,9 @@ const LEGACY_STORAGE_KEYS = [
   "selectedChallenge:telia-finland-v4",
   "selectedChallenge:boehringer-ingelheim-v1",
   "selectedChallenge:tcs-belgium-v1",
+  "selectedChallenge:eneco-belgium-v1",
+  "workshopTool:tcs-belgium-v1",
+  "workshopTool:eneco-belgium-v1",
 ];
 
 if (typeof window !== "undefined") {
@@ -57,39 +61,32 @@ if (typeof window !== "undefined") {
 
 // Full structured rendering of a card, used by the Copy button on the
 // Challenge Cards page. It is deliberately NOT used by the Widen-step prompt,
-// which injects the card title alone. The internal `number` and `company` are
-// left out — they are ids, not content.
+// which injects the card title alone. `number` and `companyId` are left out —
+// they are ids, not content.
 export function formatChallengeText(card: ChallengeCard): string {
-  const lines = [
+  return [
+    `Company: ${card.company}`,
     `Theme: ${card.theme}`,
     `Challenge: ${card.title}`,
     "",
-    "Challenge statement:",
-    `\u201C${card.challengeStatement}\u201D`,
+    "The challenge:",
+    card.challenge,
     "",
-    "Why now:",
-    card.whyNow,
+    "Who feels it:",
+    card.whoFeelsIt,
     "",
-    "Baseline metrics / evidence:",
-    ...card.baselineMetrics.map((m) => `\u25CF ${m}`),
+    "Why it persists:",
+    card.whyItPersists,
     "",
-    "Audience fit:",
-    card.audienceFit,
+    "What solved looks like:",
+    card.whatSolvedLooksLike,
     "",
-    "Cross-functional hooks:",
-    card.crossFunctionalHooks,
-  ];
-  if (card.constraints?.length) {
-    lines.push(
-      "",
-      "Constraints the room must respect:",
-      ...card.constraints.map((c) => `\u25CF ${c}`)
-    );
-  }
-  if (card.whyGoodBuild) {
-    lines.push("", "Why this is a good build:", card.whyGoodBuild);
-  }
-  return lines.join("\n");
+    "Evidence base:",
+    card.evidenceBase,
+    "",
+    "Open question:",
+    card.openQuestion,
+  ].join("\n");
 }
 
 // Validate a candidate object loosely matches the current ChallengeCard
@@ -97,28 +94,33 @@ export function formatChallengeText(card: ChallengeCard): string {
 function isValidChallenge(value: unknown): value is ChallengeCard {
   if (!value || typeof value !== "object") return false;
   const v = value as Record<string, unknown>;
-  return (
-    typeof v.number === "string" &&
-    typeof v.company === "string" &&
-    typeof v.theme === "string" &&
-    typeof v.title === "string" &&
-    typeof v.summary === "string" &&
-    typeof v.challengeStatement === "string" &&
-    typeof v.whyNow === "string" &&
-    Array.isArray(v.baselineMetrics) &&
-    typeof v.audienceFit === "string" &&
-    typeof v.crossFunctionalHooks === "string"
-  );
+  const required = [
+    "number",
+    "companyId",
+    "company",
+    "theme",
+    "title",
+    "summary",
+    "challenge",
+    "whoFeelsIt",
+    "whyItPersists",
+    "whatSolvedLooksLike",
+    "evidenceBase",
+    "openQuestion",
+  ];
+  return required.every((field) => typeof v[field] === "string");
 }
 
-export function getSelectedChallenge(): ChallengeCard | null {
-  if (typeof window === "undefined") return null;
+export function getSelectedChallenge(companyId: string): ChallengeCard | null {
+  if (typeof window === "undefined" || !companyId) return null;
+  const key = storageKey(companyId);
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(key);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as unknown;
-    if (!isValidChallenge(parsed)) {
-      window.localStorage.removeItem(STORAGE_KEY);
+    // A card stored under one company must never surface under another.
+    if (!isValidChallenge(parsed) || parsed.companyId !== companyId) {
+      window.localStorage.removeItem(key);
       return null;
     }
     return parsed;
@@ -129,31 +131,30 @@ export function getSelectedChallenge(): ChallengeCard | null {
 
 export function setSelectedChallenge(card: ChallengeCard): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(card));
+  window.localStorage.setItem(storageKey(card.companyId), JSON.stringify(card));
   // Notify same-tab listeners (the native `storage` event only fires across tabs).
   window.dispatchEvent(new CustomEvent(STORAGE_EVENT));
 }
 
-export function clearSelectedChallenge(): void {
+export function clearSelectedChallenge(companyId: string): void {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(STORAGE_KEY);
+  window.localStorage.removeItem(storageKey(companyId));
   window.dispatchEvent(new CustomEvent(STORAGE_EVENT));
 }
 
-export function useSelectedChallenge(): [
-  ChallengeCard | null,
-  (card: ChallengeCard) => void,
-  () => void
-] {
+export function useSelectedChallenge(
+  companyId: string
+): [ChallengeCard | null, (card: ChallengeCard) => void, () => void] {
   const [challenge, setChallenge] = useState<ChallengeCard | null>(() =>
-    getSelectedChallenge()
+    getSelectedChallenge(companyId)
   );
 
   useEffect(() => {
-    const sync = () => setChallenge(getSelectedChallenge());
+    setChallenge(getSelectedChallenge(companyId));
 
+    const sync = () => setChallenge(getSelectedChallenge(companyId));
     const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) sync();
+      if (e.key === storageKey(companyId)) sync();
     };
 
     window.addEventListener("storage", onStorage);
@@ -162,7 +163,7 @@ export function useSelectedChallenge(): [
       window.removeEventListener("storage", onStorage);
       window.removeEventListener(STORAGE_EVENT, sync);
     };
-  }, []);
+  }, [companyId]);
 
   return [
     challenge,
@@ -171,7 +172,7 @@ export function useSelectedChallenge(): [
       setChallenge(card);
     },
     () => {
-      clearSelectedChallenge();
+      clearSelectedChallenge(companyId);
       setChallenge(null);
     },
   ];

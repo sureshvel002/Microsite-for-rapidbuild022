@@ -1,6 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, ExternalLink } from "lucide-react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Download, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { companyPath, getCompany } from "@/data/afm";
+import { readableTextOn } from "@/lib/brand";
 
 const AI_TOOLS = [
   { name: "Open ChatGPT", url: "https://chat.openai.com", color: "bg-chatgpt hover:bg-chatgpt/90 text-primary-foreground" },
@@ -9,16 +11,17 @@ const AI_TOOLS = [
   { name: "Open Google AI Studio", url: "https://aistudio.google.com", color: "bg-googleai hover:bg-googleai/90 text-primary-foreground" },
 ];
 
-const PDF_PATH = "/documents/eneco_belgium_deep_research.pdf";
-const DOWNLOAD_FILENAME = "Eneco Belgium - Deep Research Report.pdf";
-
 const DeepResearch = () => {
   const navigate = useNavigate();
+  const { companyId } = useParams();
+  const company = getCompany(companyId);
+
+  if (!company) return <Navigate to="/" replace />;
 
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = PDF_PATH;
-    link.download = DOWNLOAD_FILENAME;
+    link.href = company.pdf;
+    link.download = company.pdfDownloadName;
     link.click();
   };
 
@@ -27,11 +30,26 @@ const DeepResearch = () => {
       {/* Header */}
       <header className="border-b border-border bg-card px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+          <div className="flex items-center gap-3 min-w-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(companyPath(company.id))}
+            >
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
-            <h1 className="text-lg font-semibold font-display text-card-foreground">Eneco Belgium Context Pack</h1>
+            <span
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold"
+              style={{
+                background: company.brand.primary,
+                color: readableTextOn(company.brand.primary),
+              }}
+            >
+              {company.monogram}
+            </span>
+            <h1 className="text-lg font-semibold font-display text-card-foreground truncate">
+              {company.name} Context Pack
+            </h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleDownload}>
@@ -44,6 +62,17 @@ const DeepResearch = () => {
                 </Button>
               </a>
             ))}
+            <Button
+              size="sm"
+              onClick={() => navigate(companyPath(company.id, "challenge-cards"))}
+              style={{
+                background: company.brand.primary,
+                color: readableTextOn(company.brand.primary),
+              }}
+              className="hover:opacity-90"
+            >
+              Challenge cards <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Button>
           </div>
         </div>
       </header>
@@ -52,9 +81,9 @@ const DeepResearch = () => {
       <div className="flex-1 p-4">
         <div className="max-w-5xl mx-auto h-[calc(100vh-100px)] bg-card rounded-xl border border-border shadow-sm overflow-hidden">
           <iframe
-            src={PDF_PATH}
+            src={company.pdf}
             className="w-full h-full"
-            title="Eneco Belgium Context Pack"
+            title={`${company.name} Context Pack`}
           />
         </div>
       </div>

@@ -15,7 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 30% 10%;
 
-    --primary: 210 90% 40%;
+    /* AFM ocean blue (#008BD2) — the house colour of afm.family. */
+    --primary: 200 100% 41%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 30% 92%;
@@ -32,7 +33,11 @@
 
     --border: 220 15% 88%;
     --input: 220 15% 88%;
-    --ring: 210 90% 40%;
+    --ring: 200 100% 41%;
+
+    /* AFM house palette: ocean blue #008BD2, warm orange #EC7220. */
+    --afm-blue: 200 100% 41%;
+    --afm-orange: 24 84% 53%;
 
     --radius: 0.75rem;
 
@@ -98,6 +103,18 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+  }
+}
+
+/* The company chooser leans on motion. Anyone who has asked their system to
+   reduce it gets the same layout, held still. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
 

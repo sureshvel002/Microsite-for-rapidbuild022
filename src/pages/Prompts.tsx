@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Copy,
@@ -17,6 +17,8 @@ import {
   type ChallengeCard,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
+import { type AfmCompany, companyPath, getCompany } from "@/data/afm";
+import { readableInk, readableTextOn } from "@/lib/brand";
 
 interface PromptVariant {
   id: string;
@@ -53,7 +55,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:eneco-belgium-v1";
+const TOOL_STORAGE_KEY = "workshopTool:afm-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;
@@ -108,36 +110,44 @@ Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. 
   {
     step: 5,
     label: "Build",
-    text: `Create a single .html file for a clickable mock-up based on the information in the product brief generated above.
+    // Two build paths, each producing a prompt for a different platform. The
+    // tool picker above the card carries the instruction to paste this in the
+    // same chat as Steps 0\u20134 and says which platform each one is for.
+    variants: [
+      {
+        id: "google-ai-studio",
+        title: "Google AI Studio",
+        subtitle:
+          "Returns a product-requirements prompt to paste into AI Studio\u2019s Build tab",
+        text: `You are a product design expert. Using only the brief above, write a single Google AI Studio product requirements prompt that includes Product name + one liner description (actions, process, capabilities), who it\u2019s for, screens + key components, brand colors, main user flow, sample data, concise headlines/CTAs, UI instructions, success metric card, constraints (no PII). Return the Google AI Studio prompt only.
 
-Target user: from the brief generated above
-Main user flow: from the brief generated above
+Brand colours to specify for [COMPANY]: [BRAND COLOURS]`,
+      },
+      {
+        id: "claude-design",
+        title: "Claude Design",
+        subtitle:
+          "Returns a prototype prompt to paste into claude.ai/design",
+        text: `You are a product design expert. Using only the brief above, write a single Claude Design prompt that will produce an interactive, click-through prototype at claude.ai/design.
 
-Requirements:
+The prompt you return must specify:
 
-\u2022 One .html file, inline CSS and JavaScript, no external dependencies.
-\u2022 Apply the [COMPANY] brand UI directly inside the file (do not reference external files):
-    \u2022 Brand colours: [BRAND COLOURS]. Clean light slate or off-white background. Dark slate body text. Semantic colours: green for success, amber for warning, red for alert.
-    \u2022 Typography: A clean web-safe sans-serif fallback such as Inter or system-ui with a clear hierarchy: display, heading, body, caption.
-    \u2022 Layout: generous whitespace, consistent rounded corners, subtle shadows, compact-but-readable density, responsive desktop-first layout.
-    \u2022 Component states: every interactive component must render empty, loading, populated and error states.
-\u2022 Cover all the screens needed by the main user flow as suggested by the selected challenge card and the brief. Do not artificially cap the screen count. Include navigation between screens so the flow is clickable end-to-end.
-\u2022 Synthetic sample data inline. No real names, no API calls. Use plausible Belgian-locale data (Mechelen, Wavre, Ghent, Antwerp; \u20AC amounts; Dutch- and French-language placeholders \u2014 never English-only; EAN connection-point references and Belgian company or contact placeholders).
-\u2022 Plain business English in all UI copy. No marketing tone, no superlatives.
-\u2022 A success-metric tile showing baseline and target from the brief.
+\u2022 Product name and a one-line description of what it does \u2014 actions, process, capabilities.
+\u2022 Who it is for: the [COMPANY] roles named in the brief, and the decision each one is trying to make.
+\u2022 The screen set and the flow between the screens, named in order, with the entry screen stated first.
+\u2022 Key components on each screen, and the states each must render: empty, loading, populated, error.
+\u2022 The design system to work in: brand colours [BRAND COLOURS]; a clean sans-serif hierarchy of display, heading, body and caption; generous whitespace; one consistent corner radius; subtle elevation; green, amber and red reserved for success, warning and alert.
+\u2022 Representative synthetic sample data \u2014 French-locale names, places and \u20AC amounts. No real people, no PII.
+\u2022 The UI copy: headlines, labels, CTAs and empty-state microcopy, in plain business English with no marketing tone.
+\u2022 A success-metric card carrying the baseline and the target from the brief.
+\u2022 What is interactive: which elements are clickable, where each one navigates, and the hover and focus states \u2014 so the mockup can be shared as a prototype and tested with real people.
+\u2022 A closing instruction to audit the result against WCAG 2.1 AA \u2014 colour contrast, focus states, keyboard navigation \u2014 and to fix whatever fails.
 
-Return the file as a downloadable .html using Copilot\u2019s file-creation capability. Do not paste HTML into the chat.`,
+Write it dense enough for Claude Design to act on in one pass, since the first generation sets the direction and everything after it is refinement. Return the Claude Design prompt only.`,
+      },
+    ],
   },
 ];
-
-// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-// Company brand mapping — used by the Build step to inject company-specific
-// brand colours into the mock-up prompt.
-// — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const COMPANY_BRANDS: Record<string, string> = {
-  "Eneco Belgium":
-    "Eneco brand red (#E5322D) for primary actions, headers and key accents, with a warm coral secondary (#F26A4B) and a deep slate (#1F2933) for text",
-};
 
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
 // Prompt segmentation — turns a plain prompt string into a list of typed
@@ -182,13 +192,13 @@ function splitPlaceholders(input: string): PromptSegment[] {
 function splitWithInjections(
   _template: string,
   resolved: string,
-  companyName: string
+  companyName: string,
+  brandText: string
 ): PromptSegment[] {
   // Simple approach: split the resolved text on placeholder-style tokens
   // first, then mark any segment that contains the injected company name
   // or brand string as "injected".
   const base = splitPlaceholders(resolved);
-  const brandText = COMPANY_BRANDS[companyName] ?? companyName;
   const out: PromptSegment[] = [];
   for (const seg of base) {
     if (
@@ -235,20 +245,21 @@ function splitWithInjections(
 function buildPromptSegments(
   step: number,
   baseText: string,
+  company: AfmCompany,
   challenge: ChallengeCard | null
 ): { segments: PromptSegment[]; text: string; injected: boolean } {
   // Step 1 (Widen) carries `[SELECTED CHALLENGE]` and `[COMPANY]` placeholders.
-  // When a challenge is selected, swap the challenge token in-place with the
-  // card *title only* — never the card's own findings, which the AI is meant
-  // to research for itself from the context pack — and swap `[COMPANY]` with
-  // the selected challenge's company.
-  if (step === 1 && challenge) {
+  // `[COMPANY]` always resolves — the company comes from the route. The
+  // challenge token resolves to the card *title only* once a card is picked:
+  // never the card's own findings, which the AI is meant to research for
+  // itself from the context pack.
+  if (step === 1) {
     const token = "[SELECTED CHALLENGE]";
     const companyToken = "[COMPANY]";
 
     if (baseText.includes(token) || baseText.includes(companyToken)) {
       let segments: PromptSegment[];
-      if (baseText.includes(token)) {
+      if (challenge && baseText.includes(token)) {
         const idx = baseText.indexOf(token);
         const before = baseText.slice(0, idx);
         const after = baseText.slice(idx + token.length);
@@ -261,10 +272,10 @@ function buildPromptSegments(
         segments = splitPlaceholders(baseText);
       }
 
-      // Swap the `[COMPANY]` placeholder for the selected challenge's company.
+      // `[COMPANY]` is known from the route, with or without a card.
       segments = segments.map((seg) =>
         seg.type === "placeholder" && seg.text === companyToken
-          ? { type: "injected" as const, text: challenge.company }
+          ? { type: "injected" as const, text: company.name }
           : seg
       );
 
@@ -276,9 +287,9 @@ function buildPromptSegments(
     }
   }
 
-  // Step 5 (Build) carries `[COMPANY]` and `[BRAND COLOURS]` placeholders.
-  // When a challenge is selected, inject the company name and brand colours.
-  if (step === 5 && challenge) {
+  // Step 5 (Build) carries `[COMPANY]` and `[BRAND COLOURS]` placeholders,
+  // both of which come from the chosen company rather than from the card.
+  if (step === 5) {
     let resolved = baseText;
     const companyToken = "[COMPANY]";
     const brandToken = "[BRAND COLOURS]";
@@ -286,17 +297,20 @@ function buildPromptSegments(
     const hasBrand = resolved.includes(brandToken);
 
     if (hasCompany || hasBrand) {
+      const brandText = company.brand.promptDescription;
       if (hasCompany) {
-        resolved = resolved.replaceAll(companyToken, challenge.company);
+        resolved = resolved.replaceAll(companyToken, company.name);
       }
       if (hasBrand) {
-        const brandText =
-          COMPANY_BRANDS[challenge.company] ??
-          `${challenge.company} primary colour for primary actions, headers and key accents`;
         resolved = resolved.replaceAll(brandToken, brandText);
       }
       // Re-segment with injected markers for changed tokens
-      const segments = splitWithInjections(baseText, resolved, challenge.company);
+      const segments = splitWithInjections(
+        baseText,
+        resolved,
+        company.name,
+        brandText
+      );
       return { segments, text: resolved, injected: true };
     }
   }
@@ -319,7 +333,7 @@ function InjectedSegment({ text }: { text: string }) {
   const [expanded, setExpanded] = useState(false);
 
   const highlightClass =
-    "rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20";
+    "rounded-sm bg-[color:var(--brand-10)] text-[color:var(--brand-text)] px-1 font-semibold ring-1 ring-[color:var(--brand-20)]";
 
   if (text.length <= COLLAPSE_THRESHOLD) {
     return (
@@ -357,7 +371,7 @@ function InjectedSegment({ text }: { text: string }) {
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="ml-1.5 align-baseline text-[11px] font-bold text-primary hover:underline inline-flex items-center gap-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+        className="ml-1.5 align-baseline text-[11px] font-bold text-[color:var(--brand-text)] hover:underline inline-flex items-center gap-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-40)] rounded"
         aria-expanded={expanded}
       >
         {expanded ? "Read less" : "Read more"}
@@ -397,9 +411,11 @@ function PromptBody({ segments }: { segments: PromptSegment[] }) {
 
 const Prompts = () => {
   const navigate = useNavigate();
+  const { companyId } = useParams();
+  const company = getCompany(companyId);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
-  const [challenge, , clearChallenge] = useSelectedChallenge();
+  const [challenge, , clearChallenge] = useSelectedChallenge(companyId ?? "");
   // Tracks the currently selected workshop tool. Persisted in localStorage
   // so the pick survives reloads. Falls back to the first variant defined
   // in the prompts data when nothing is stored yet.
@@ -434,16 +450,46 @@ const Prompts = () => {
     setTimeout(() => setCopiedIndex(null), 2000);
   }, []);
 
+  if (!company) return <Navigate to="/" replace />;
+
+  const brand = company.brand.primary;
+
   return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
+    <div
+      className="h-screen bg-background flex flex-col overflow-hidden"
+      style={
+        {
+          "--brand": brand,
+          "--brand-ink": readableTextOn(brand),
+          "--brand-text": readableInk(brand),
+          "--brand-05": `${brand}0D`,
+          "--brand-10": `${brand}1A`,
+          "--brand-15": `${brand}26`,
+          "--brand-20": `${brand}33`,
+          "--brand-30": `${brand}4D`,
+          "--brand-40": `${brand}66`,
+          "--brand-50": `${brand}80`,
+        } as React.CSSProperties
+      }
+    >
       {/* Header */}
       <header className="border-b border-border bg-card px-4 py-2 shrink-0">
         <div className="max-w-[1600px] mx-auto flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(companyPath(company.id))}
+          >
             <ArrowLeft className="h-4 w-4 mr-1" /> Back
           </Button>
-          <h1 className="text-lg font-semibold font-display text-card-foreground">
-            Double Diamond Framework Prompts
+          <span
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold"
+            style={{ background: "var(--brand)", color: "var(--brand-ink)" }}
+          >
+            {company.monogram}
+          </span>
+          <h1 className="text-lg font-semibold font-display text-card-foreground truncate">
+            {company.name} — Double Diamond Framework Prompts
           </h1>
         </div>
       </header>
@@ -455,7 +501,7 @@ const Prompts = () => {
           <div className="w-[45%] shrink-0 hidden lg:flex flex-col gap-3 min-h-0">
             <SelectedChallengePanel
               challenge={challenge}
-              onChange={() => navigate("/challenge-cards")}
+              onChange={() => navigate(companyPath(company.id, "challenge-cards"))}
               onClear={clearChallenge}
             />
 
@@ -480,7 +526,7 @@ const Prompts = () => {
           <div className="lg:hidden flex flex-col gap-3 mb-4">
             <SelectedChallengePanel
               challenge={challenge}
-              onChange={() => navigate("/challenge-cards")}
+              onChange={() => navigate(companyPath(company.id, "challenge-cards"))}
               onClear={clearChallenge}
             />
             <div className="rounded-lg border border-border overflow-hidden bg-black relative">
@@ -515,7 +561,7 @@ const Prompts = () => {
                   fill in manually
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="rounded-sm bg-primary/10 text-primary px-1 font-semibold ring-1 ring-primary/20 text-[10px] leading-tight">
+                  <span className="rounded-sm bg-[color:var(--brand-10)] text-[color:var(--brand-text)] px-1 font-semibold ring-1 ring-[color:var(--brand-20)] text-[10px] leading-tight">
                     selected challenge
                   </span>
                   auto-injected
@@ -535,6 +581,7 @@ const Prompts = () => {
               const { segments, text, injected } = buildPromptSegments(
                 prompt.step,
                 baseText,
+                company,
                 challenge
               );
               return (
@@ -558,27 +605,29 @@ const Prompts = () => {
 
                 <div
                   className={`rounded-lg border bg-card overflow-hidden ${
-                    injected ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
+                    injected
+                      ? "border-[color:var(--brand-40)] ring-1 ring-[color:var(--brand-20)]"
+                      : "border-border"
                   }`}
                 >
                   {/* Card header */}
                   <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30">
                     <div className="flex items-center gap-2.5">
-                      <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                      <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-[color:var(--brand)] text-[color:var(--brand-ink)] text-xs font-bold">
                         {prompt.step}
                       </span>
                       <span className="text-sm font-semibold text-card-foreground font-display">
                         {prompt.label}
                       </span>
                       {injected && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-10)] text-[color:var(--brand-text)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                           <Sparkles className="h-3 w-3" />
                           Challenge injected
                         </span>
                       )}
                       {hasVariants && activeVariant && (
                         <span
-                          className="inline-flex items-center gap-1 rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                          className="inline-flex items-center gap-1 rounded-full bg-[color:var(--brand-10)] text-[color:var(--brand-text)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
                           title="Paste this prompt into the same chat as Steps 0–4. The label below tells you what it produces."
                         >
                           <Bot className="h-3 w-3" />
@@ -658,8 +707,8 @@ function SelectedChallengePanel({
     return (
       <div className="rounded-lg border border-dashed border-border bg-card/50 p-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="rounded-md bg-primary/10 p-1.5 shrink-0">
-            <Sparkles className="h-4 w-4 text-primary" />
+          <div className="rounded-md bg-[color:var(--brand-10)] p-1.5 shrink-0">
+            <Sparkles className="h-4 w-4 text-[color:var(--brand-text)]" />
           </div>
           <div className="min-w-0">
             <p className="text-xs font-semibold text-card-foreground truncate">
@@ -670,7 +719,12 @@ function SelectedChallengePanel({
             </p>
           </div>
         </div>
-        <Button size="sm" className="h-7 text-xs shrink-0" onClick={onChange}>
+        <Button
+          size="sm"
+          className="h-7 text-xs shrink-0 hover:opacity-90"
+          style={{ background: "var(--brand)", color: "var(--brand-ink)" }}
+          onClick={onChange}
+        >
           Choose Challenge
         </Button>
       </div>
@@ -678,14 +732,14 @@ function SelectedChallengePanel({
   }
 
   return (
-    <div className="rounded-lg border border-primary/30 bg-card shadow-sm overflow-hidden flex flex-col min-h-0 flex-1">
+    <div className="rounded-lg border border-[color:var(--brand-30)] bg-card shadow-sm overflow-hidden flex flex-col min-h-0 flex-1">
       {/* Sticky header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border flex items-center justify-between gap-2 shrink-0">
+      <div className="px-3 py-2 bg-gradient-to-r from-[color:var(--brand-15)] to-[color:var(--brand-05)] border-b border-border flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="rounded-md bg-primary/15 p-1 shrink-0">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <div className="rounded-md bg-[color:var(--brand-15)] p-1 shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-text)]" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary shrink-0">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--brand-text)] shrink-0">
             Selected Challenge
           </span>
           <span className="text-[10px] text-muted-foreground truncate">
@@ -695,7 +749,7 @@ function SelectedChallengePanel({
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={onChange}
-            className="text-[11px] font-medium text-primary hover:underline px-1.5 py-0.5 rounded"
+            className="text-[11px] font-medium text-[color:var(--brand-text)] hover:underline px-1.5 py-0.5 rounded"
             title="Pick a different challenge"
           >
             Change
@@ -710,78 +764,53 @@ function SelectedChallengePanel({
         </div>
       </div>
 
-      {/* Scrollable full-content body (mirrors the Challenge Cards popup) */}
+      {/* Scrollable full-content body (mirrors the Challenge Cards detail) */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
-        <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">
+        <p className="text-[10px] font-bold text-[color:var(--brand-text)] uppercase tracking-wider mb-1">
           {challenge.theme}
         </p>
         <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-3">
           {challenge.title}
         </h3>
 
-        {/* Highlighted challenge statement */}
-        <div className="mb-4 rounded-md border-l-[3px] border-accent bg-accent/5 px-3 py-2">
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">
-            Challenge statement
+        <div className="mb-4 rounded-md border-l-[3px] border-[color:var(--brand)] bg-[color:var(--brand-05)] px-3 py-2">
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--brand-text)] mb-1">
+            The challenge
           </h4>
-          <p className="text-xs text-card-foreground leading-relaxed italic">
-            &ldquo;{challenge.challengeStatement}&rdquo;
+          <p className="text-xs text-card-foreground leading-relaxed">
+            {challenge.challenge}
           </p>
         </div>
 
-        <PanelSection label="Why now">
+        <PanelSection label="Who feels it">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            {challenge.whyNow}
+            {challenge.whoFeelsIt}
           </p>
         </PanelSection>
 
-        <PanelSection label="Baseline metrics / evidence">
-          <ul className="space-y-1.5">
-            {challenge.baselineMetrics.map((m, i) => (
-              <li
-                key={i}
-                className="text-xs text-muted-foreground leading-relaxed flex gap-2"
-              >
-                <span className="text-primary mt-0.5 shrink-0">●</span> {m}
-              </li>
-            ))}
-          </ul>
-        </PanelSection>
-
-        <PanelSection label="Audience fit">
-          <p className="text-xs text-card-foreground leading-relaxed">
-            {challenge.audienceFit}
+        <PanelSection label="Why it persists">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {challenge.whyItPersists}
           </p>
         </PanelSection>
 
-        <PanelSection label="Cross-functional hooks">
-          <p className="text-xs text-card-foreground leading-relaxed">
-            {challenge.crossFunctionalHooks}
+        <PanelSection label="What solved looks like">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {challenge.whatSolvedLooksLike}
           </p>
         </PanelSection>
 
-        {challenge.constraints && challenge.constraints.length > 0 && (
-          <PanelSection label="Constraints the room must respect">
-            <ul className="space-y-1.5">
-              {challenge.constraints.map((c, i) => (
-                <li
-                  key={i}
-                  className="text-xs text-muted-foreground leading-relaxed flex gap-2"
-                >
-                  <span className="text-accent mt-0.5 shrink-0">▸</span> {c}
-                </li>
-              ))}
-            </ul>
-          </PanelSection>
-        )}
+        <PanelSection label="Evidence base">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {challenge.evidenceBase}
+          </p>
+        </PanelSection>
 
-        {challenge.whyGoodBuild && (
-          <PanelSection label="Why this is a good build" last>
-            <p className="text-xs text-card-foreground leading-relaxed">
-              {challenge.whyGoodBuild}
-            </p>
-          </PanelSection>
-        )}
+        <PanelSection label="Open question for the room" last>
+          <p className="text-xs font-medium text-card-foreground leading-relaxed">
+            {challenge.openQuestion}
+          </p>
+        </PanelSection>
       </div>
     </div>
   );
@@ -805,13 +834,13 @@ function WorkshopToolPicker({
 }: WorkshopToolPickerProps) {
   if (variants.length === 0) return null;
   return (
-    <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-card to-accent/5 shadow-sm overflow-hidden">
-      <div className="px-4 py-2 border-b border-primary/20 bg-primary/5">
+    <div className="rounded-xl border-2 border-[color:var(--brand-30)] bg-gradient-to-br from-[color:var(--brand-10)] via-card to-[color:var(--brand-05)] shadow-sm overflow-hidden">
+      <div className="px-4 py-2 border-b border-[color:var(--brand-20)] bg-[color:var(--brand-05)]">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="rounded-md bg-primary/15 p-1 shrink-0">
-            <Wrench className="h-3.5 w-3.5 text-primary" />
+          <div className="rounded-md bg-[color:var(--brand-15)] p-1 shrink-0">
+            <Wrench className="h-3.5 w-3.5 text-[color:var(--brand-text)]" />
           </div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[color:var(--brand-text)]">
             Step 5 · Build path
           </span>
         </div>
@@ -819,7 +848,7 @@ function WorkshopToolPicker({
 
       <div className="px-4 py-3">
         <p className="text-xs text-card-foreground leading-relaxed mb-3 flex items-start gap-1.5">
-          <MessageCircle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+          <MessageCircle className="h-3.5 w-3.5 text-[color:var(--brand-text)] shrink-0 mt-0.5" />
           <span>
             Paste Step 5's prompt in the <span className="font-semibold">same chat</span> as
             Steps 0–4. Pick the tool you want to produce with:
@@ -836,32 +865,36 @@ function WorkshopToolPicker({
                 aria-pressed={isSelected}
                 className={`group relative rounded-lg border-2 px-3 py-2.5 text-left transition-all ${
                   isSelected
-                    ? "border-primary bg-primary/10 shadow-md"
-                    : "border-border bg-card hover:border-primary/50 hover:bg-muted/30"
+                    ? "border-[color:var(--brand)] bg-[color:var(--brand-10)] shadow-md"
+                    : "border-border bg-card hover:border-[color:var(--brand-50)] hover:bg-muted/30"
                 }`}
               >
                 <div className="flex items-start gap-2.5">
                   <span
                     className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
                       isSelected
-                        ? "border-primary bg-primary"
-                        : "border-muted-foreground/40 bg-transparent group-hover:border-primary/50"
+                        ? "border-[color:var(--brand)] bg-[color:var(--brand)]"
+                        : "border-muted-foreground/40 bg-transparent group-hover:border-[color:var(--brand-50)]"
                     }`}
                   >
                     {isSelected && (
-                      <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                      <Check className="h-2.5 w-2.5 text-[color:var(--brand-ink)]" />
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <Bot
                         className={`h-3.5 w-3.5 shrink-0 ${
-                          isSelected ? "text-primary" : "text-muted-foreground"
+                          isSelected
+                            ? "text-[color:var(--brand-text)]"
+                            : "text-muted-foreground"
                         }`}
                       />
                       <div
                         className={`text-sm font-bold leading-tight ${
-                          isSelected ? "text-primary" : "text-card-foreground"
+                          isSelected
+                            ? "text-[color:var(--brand-text)]"
+                            : "text-card-foreground"
                         }`}
                       >
                         {v.title}
@@ -892,7 +925,7 @@ function PanelSection({
 }) {
   return (
     <div className={last ? "" : "mb-4"}>
-      <h4 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
+      <h4 className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--brand-text)] mb-1.5">
         {label}
       </h4>
       {children}

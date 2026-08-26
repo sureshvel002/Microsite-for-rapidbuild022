@@ -67,6 +67,9 @@ export default {
         claude: "hsl(var(--claude))",
         googleai: "hsl(var(--googleai))",
         "copy-success": "hsl(var(--copy-success))",
+        // AFM house colours — the ocean blue and warm orange of afm.family.
+        "afm-blue": "hsl(var(--afm-blue))",
+        "afm-orange": "hsl(var(--afm-orange))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -86,11 +89,33 @@ export default {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        // Company chooser: tiles rise in sequence, a light sweeps across a
+        // tile on hover, and the AFM wave drifts behind the header.
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(26px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "pop-in": {
+          from: { opacity: "0", transform: "scale(0.94)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+        sheen: {
+          from: { transform: "translateX(-160%) skewX(-18deg)" },
+          to: { transform: "translateX(260%) skewX(-18deg)" },
+        },
+        "wave-drift": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-28px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.4s ease-out",
+        "fade-up": "fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "pop-in": "pop-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both",
+        sheen: "sheen 1.05s ease-out",
+        "wave-drift": "wave-drift 9s ease-in-out infinite alternate",
       },
     },
   },
