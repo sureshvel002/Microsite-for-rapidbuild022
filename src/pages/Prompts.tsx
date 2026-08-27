@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   type ChallengeCard,
+  formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 import { type AfmCompany, companyPath, getCompany } from "@/data/afm";
@@ -441,14 +442,22 @@ const Prompts = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Copies exactly what the card shows. The Widen step deliberately carries
-  // only the challenge *title* — the AI is meant to research it from the
-  // context pack already in the chat, not be handed the card's own findings.
-  const handleCopy = useCallback(async (text: string, index: number) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  }, []);
+  // Copy normally gives exactly what the card shows. The one exception is the
+  // Widen step on a card flagged `evidenceOutsideReport`: its evidence is not
+  // in the company's report, so the assistant cannot research it from the pack
+  // and the whole card is appended to the paste instead.
+  const handleCopy = useCallback(
+    async (text: string, index: number, step: number) => {
+      const clipboard =
+        step === 1 && challenge?.evidenceOutsideReport
+          ? `${text}\n\n${formatChallengeText(challenge)}`
+          : text;
+      await navigator.clipboard.writeText(clipboard);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    },
+    [challenge]
+  );
 
   if (!company) return <Navigate to="/" replace />;
 
@@ -639,7 +648,7 @@ const Prompts = () => {
                       variant="outline"
                       size="sm"
                       className={`h-7 text-xs ${copiedIndex === index ? "text-green-600 border-green-300" : ""}`}
-                      onClick={() => handleCopy(text, index)}
+                      onClick={() => handleCopy(text, index, prompt.step)}
                     >
                       {copiedIndex === index ? (
                         <>

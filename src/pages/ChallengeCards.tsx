@@ -23,7 +23,7 @@ import {
 import { companyPath, getCompany } from "@/data/afm";
 import { readableInk, readableTextOn } from "@/lib/brand";
 
-// Each AFM report closes with exactly two challenge cards. Both sit in the
+// Each AFM report closes with a small set of challenge cards. They sit in the
 // left rail and the one being read fills the pane beside it, so the page holds
 // to one screen and only the card body scrolls. Cards are business outcomes
 // for breakout discussion, not solution briefs — nothing in them names a tool,
@@ -101,8 +101,8 @@ const ChallengeCards = () => {
             {company.name} — Challenge Cards
           </h1>
           <span className="hidden xl:inline text-xs text-muted-foreground truncate">
-            · two business outcomes for breakout discussion, written for{" "}
-            {company.preparedFor}
+            · {cards.length} business outcomes for breakout discussion, written
+            for {company.preparedFor}
           </span>
 
           {activeChallenge && (
@@ -141,7 +141,7 @@ const ChallengeCards = () => {
       {/* ── Rail + card body, both inside one screen ────────────────────── */}
       <div className="flex-1 min-h-0 max-w-[1600px] w-full mx-auto px-4 sm:px-5 py-3">
         <div className="h-full lg:grid lg:grid-cols-12 lg:gap-4">
-          {/* Left rail: the two cards */}
+          {/* Left rail: this company's cards */}
           <aside className="lg:col-span-4 xl:col-span-3 flex flex-col gap-2.5 mb-3 lg:mb-0 lg:min-h-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {cards.length} challenge cards · click to read
@@ -162,8 +162,9 @@ const ChallengeCards = () => {
             ))}
             <div className="mt-auto hidden lg:block rounded-lg border border-dashed border-border bg-muted/30 p-3">
               <p className="text-[11px] leading-relaxed text-muted-foreground">
-                Pick one card to anchor the Double Diamond prompts. Everything
-                on the card comes from the {company.name} deep research report.
+                Pick one card to anchor the Double Diamond prompts. The cards
+                are drawn from the {company.name} deep research report and from
+                evidence published since it was written.
               </p>
             </div>
           </aside>

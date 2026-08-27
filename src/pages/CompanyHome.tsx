@@ -21,7 +21,7 @@ const STEPS = [
     tagline: "Get Context",
     slug: "deep-research",
     icon: Download,
-    describe: (name: string) =>
+    describe: (name: string, _cardCount: number) =>
       `Read the ${name} deep research report — the company, its market, its strategic direction, the regulatory frame and the friction map behind the challenge cards.`,
   },
   {
@@ -30,8 +30,8 @@ const STEPS = [
     tagline: "Pick Challenge",
     slug: "challenge-cards",
     icon: Images,
-    describe: (name: string) =>
-      `Explore the two challenge cards the ${name} report closes with — framed as business outcomes for domain-advisor & consultant breakout discussion.`,
+    describe: (name: string, cardCount: number) =>
+      `Explore the ${cardCount} challenge cards the ${name} report closes with — framed as business outcomes for domain-advisor & consultant breakout discussion.`,
   },
   {
     step: 3,
@@ -39,7 +39,7 @@ const STEPS = [
     tagline: "Run Prompt",
     slug: "prompts",
     icon: MessageSquare,
-    describe: () =>
+    describe: (_name: string, _cardCount: number) =>
       "Double Diamond framework prompts, anchored on the challenge you picked. Copy and use with your preferred AI assistant.",
   },
 ];
@@ -157,7 +157,7 @@ const CompanyHome = () => {
                       {section.title}
                     </h2>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      {section.describe(company.name)}
+                      {section.describe(company.name, company.challenges.length)}
                     </p>
                   </div>
                 </div>

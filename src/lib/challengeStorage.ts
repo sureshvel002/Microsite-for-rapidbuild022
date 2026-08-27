@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // Schema mirrors the challenge cards carried in the AFM deep research reports.
-// Each report closes with two cards in a fixed shape — the challenge, who
+// Each report closes with its cards in a fixed shape — the challenge, who
 // feels it, why it persists, what solved looks like, the evidence base and an
 // open question — and this interface is that shape, field for field. A card
 // frames a *business outcome* for domain-advisor & consultant breakout
@@ -24,6 +24,13 @@ export interface ChallengeCard {
   whatSolvedLooksLike: string; // "What solved looks like"
   evidenceBase: string;  // "Evidence base"
   openQuestion: string;  // "Open question"
+  /**
+   * Set where the card's evidence is not in the company's deep research report
+   * — a card written after the report cannot be researched from it. The
+   * Widen-step Copy then appends the whole card, so the assistant has the
+   * detail instead of inventing it. Cards the report covers stay title-only.
+   */
+  evidenceOutsideReport?: boolean;
 }
 
 // Selections are scoped per company, so moving between AFM companies never

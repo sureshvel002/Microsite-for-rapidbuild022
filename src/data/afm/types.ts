@@ -32,7 +32,7 @@ export interface AfmCompany {
   /** Filename used by the Download button. */
   pdfDownloadName: string;
   brand: BrandTheme;
-  /** The two challenge cards carried in that company's report. */
+  /** The challenge cards carried in that company's report. */
   challenges: ChallengeCard[];
 }
 

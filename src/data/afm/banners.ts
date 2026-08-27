@@ -59,10 +59,10 @@ export const BANNERS: AfmCompany[] = [
         number: "C2",
         companyId: "boulanger",
         company: "Boulanger",
-        theme: "Measurement • Proving customer-service AI value",
+        theme: "Investment case • Was the customer journey actually better",
         title: "Proving the agent worked",
         summary:
-          "The conversational agent is live and used, but the measures that would show it improved anything for the customer are still being built.",
+          "The agent is live and used, but the comparison that would justify the next round of funding — satisfaction and loyalty against the classic journey — does not exist yet.",
         challenge:
           "The conversational agent has been live since the end of September 2025 and is being used, but the measures that would show whether it improved anything for the customer are still being built. Contact volumes and call durations are tracked; satisfaction and loyalty comparisons against the classic journey are stated as intentions.",
         whoFeelsIt:
@@ -75,6 +75,31 @@ export const BANNERS: AfmCompany[] = [
           "Cappelaere told Républik Retail in November 2025 that the after-sales agent is the most used and generates a high volume of automatically created cases, that the team follows contact volumes, request types and call durations, and that measuring customer satisfaction and Net Promoter Score against the classic journey is a future step. Boulanger handles around six million customer requests a year with 500 dedicated customer relations staff.",
         openQuestion:
           "Which single number would you want to be able to show the executive committee in twelve months, and what is stopping you from producing it today?",
+      },
+      {
+        number: "C3",
+        companyId: "boulanger",
+        company: "Boulanger",
+        theme: "Agent operations • Evaluating and improving AI in production",
+        title: "Running what you ship",
+        summary:
+          "The assistant shipped in months and more agents are queued behind it — and running judgment-bearing software in production is a discipline nobody’s operating model was built for yet.",
+        challenge:
+          "The conversational AI has been live in the app and on the site since autumn 2025, with a specialised after-sales assistant beside it, a voicebot on the roadmap and extension across the United.b banners announced. It is production software that judges: it answers customers in free language, creates after-sales tickets, reissues invoices. The disciplines that keep the rest of the estate reliable — service levels, probes, canaries, rollback — do not yet have their equivalents for agents. Quality is sampled by humans reading transcripts, drift is discovered when complaints arrive, and every prompt change is a production change.",
+        whoFeelsIt:
+          "The technology leadership who run what the data organisation ships, at peak load and on metered capacity; the generative-AI team, for whom every prompt edit is a release; customer relations, who inherit whatever quality slips through; and every team about to ship the next agent into the same estate.",
+        whyItPersists:
+          "The operational canon was built for deterministic systems, where a passing probe means the system works. An agent can pass every technical check and quietly get worse at its actual job. Judging conversation quality at production volume was a human task, and humans do not scale to peak — so the discipline had to wait for the technology that created the problem to make its solution affordable. The companies that shipped earliest feel it first.",
+        whatSolvedLooksLike:
+          "A system that continuously watches the deployed agents, their telemetry and their anonymised conversations, and evaluates them in the background: response quality, groundedness, tool use, routing, latency, cost per session. When metrics degrade it finds the root cause, proposes a concrete fix, and proves the fix in a shadow deployment on the same live traffic before a human decides whether it ships. The estate gets cheaper, faster and better while staying provably within standards, and each new agent inherits its operations on day one.",
+        evidenceBase:
+          "Boulanger announced the conversational AI and the specialised after-sales assistant with its app relaunch of 13 November 2025, with the app at around 1.5 million users carrying roughly 20% of digital revenue, twice the year before. Marie Cappelaere, Chief Data & AI Officer of Boulanger and United.b, has described the architecture publicly as specialist agents coordinated by an orchestrator, built in months, with a voicebot planned and extension across the United.b banners intended. Boulanger handles around six million customer requests a year.",
+        openQuestion:
+          "When a live agent quietly gets worse at its job, how do you find out today — and how long does that take?",
+        // The app relaunch, the 1.5m app users, the 20% digital share and the
+        // voicebot are all later than the CTO report, so the Widen copy has to
+        // carry this card in full.
+        evidenceOutsideReport: true,
       },
     ],
   },
