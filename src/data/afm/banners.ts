@@ -187,8 +187,8 @@ export const BANNERS: AfmCompany[] = [
       "€2.5bn ex-VAT (2025), up 8% · ~648 points of contact in 37 countries · ~10,000 people · 25m customers",
     ownership:
       "Privately held within the Association Familiale Mulliez, so no financials are filed on an exchange.",
-    pdf: "/documents/Kiabi_CIO_Research_Report.pdf",
-    pdfDownloadName: "Kiabi — CIO Research Report.pdf",
+    pdf: "/documents/Kiabi_Deep_Research_Report.pdf",
+    pdfDownloadName: "Kiabi — Deep Research Report.pdf",
     brand: {
       primary: "#E5007D",
       secondary: "#040037",
@@ -204,19 +204,19 @@ export const BANNERS: AfmCompany[] = [
         theme: "Fragmented estate • Payments & finance reconciliation",
         title: "Building the view by hand",
         summary:
-          "A consolidated picture of activity means pulling from systems built at different times, then assembling it by hand.",
+          "Payment and accounting data sits across systems built at different times, so a trusted view has to be assembled by hand — two people were close to full time on reconciliation alone.",
         challenge:
-          "Getting a consolidated picture of activity means pulling from several systems that were built at different times for different purposes, then assembling it manually. On payments, that meant two people close to full time on accounting reconciliation, and analysts moving between platforms to answer a single question about transactions.",
+          "Payment and accounting information was spread across several systems built at different times for different purposes. To understand a transaction or reconcile the accounts, teams had to move between platforms and manually assemble a complete view. In payments, this meant two people working close to full time on accounting reconciliation, while analysts navigated multiple tools to investigate individual transactions.",
         whoFeelsIt:
-          "The CIO office, payment and finance teams, and every business function waiting on a number.",
+          "Payment operations and finance teams performing the manual investigation and reconciliation; technology and data teams supporting the connections between systems; and business functions waiting for trusted transaction, payment-acceptance and revenue information.",
         whyItPersists:
-          "The estate accumulated component by component as the business grew, with store-era systems carrying digital-era volumes. Each addition was rational on its own; the fragmentation is the aggregate. Replacing the foundations is a far larger commitment than putting a consolidating layer on top.",
+          "Kiabi’s technology estate grew component by component as the business expanded across stores, digital channels and countries. Store-era systems now carry digital-era transaction volumes, while newer tools have been added around them. Each addition addressed a specific need, but collectively they fragmented the transaction view. Replacing the foundations is a larger commitment than adding a consolidating layer.",
         whatSolvedLooksLike:
-          "One entry point where payment, finance and IT teams work from the same transaction data, with error codes and exceptions visible without assembly. Kiabi has now built exactly this for payments through its Purse orchestration layer, and the reconciliation staff have been redeployed to higher-value work.",
+          "Payment, finance and IT teams access the same trusted transaction data through one entry point, with transaction status, refusal codes and reconciliation exceptions visible without manual assembly. Kiabi has introduced this for payments through the Purse orchestration layer, improving payment acceptance and enabling reconciliation staff to move to higher-value work.",
         evidenceBase:
-          "Xavier Fouré, Head of International Payments, described the legacy back-office, the split data and the reconciliation burden to Républik Retail in June 2026, along with the tender at the end of 2024 and the phased production start from autumn 2025.",
+          "Xavier Fouré, Head of International Payments, described the legacy payment back office, fragmented data and reconciliation burden to Républik Retail in June 2026. He also outlined the tender launched at the end of 2024 and the phased introduction of Purse from autumn 2025.",
         openQuestion:
-          "Where else in the estate does this pattern still hold, and is the answer another orchestration layer or a consolidation programme?",
+          "Where else across Kiabi are teams still manually assembling information from multiple systems to create a trusted view, and should these gaps be addressed through additional orchestration layers or by consolidating the underlying technology estate?",
       },
       {
         number: "C2",
@@ -225,19 +225,19 @@ export const BANNERS: AfmCompany[] = [
         theme: "Analytics latency • Self-serve customer data",
         title: "The answer arrives after the decision",
         summary:
-          "Analysis required queueing behind a small analyst team, and conclusions sometimes lost their point before they arrived.",
+          "CRM and marketing depended on a specialist analyst queue, so answers sometimes arrived after the campaign or decision they were meant to inform.",
         challenge:
-          "Wanting an analysis meant entering the data analysts' prioritisation queue and coordinating with product and customer-knowledge teams. By the time conclusions came back, they had sometimes lost their point. The information existed; the latency was the problem.",
+          "CRM and marketing teams depended on specialist data analysts to turn customer data into usable insights. Each request entered a prioritisation queue and required coordination across data, product and customer-knowledge teams. By the time the analysis was delivered, the campaign or business decision had sometimes already passed. The data existed, but teams could not access answers at the speed decisions were being made.",
         whoFeelsIt:
-          "CRM and marketing teams, data analysts holding the queue, and business owners making decisions without the evidence they asked for.",
+          "CRM and marketing teams waiting for campaign insights; data analysts managing a growing queue of requests; customer-knowledge and product teams supporting the analysis; and business owners making time-sensitive decisions without the evidence they had requested.",
         whyItPersists:
-          "Customer data is spread across purchases, omnichannel journeys, in-store behaviour, digital interactions and communication preferences, and interrogating it required specialist skills that sit in a small team. Demand for analysis grows faster than the team can grow.",
+          "Customer data is distributed across purchases, omnichannel journeys, in-store behaviour, digital interactions and communication preferences. Turning this data into an answer required specialist analytical skills concentrated within a small team. As demand for customer insight increased, the volume of requests grew faster than the specialist team’s capacity to respond.",
         whatSolvedLooksLike:
-          "Business teams query their own data directly and get an answer in seconds, then push past analysis into recommendations. Kiabi has been running a beta of an agent against its CRM data; a four-week sales campaign plan was rebuilt in around thirty minutes, and the agent surfaced customer categories the team had not thought to include.",
+          "Business teams can ask questions directly of governed CRM data, receive answers quickly and move from analysis to recommended actions. Kiabi is testing this through an agent connected to its CRM data. A four-week sales campaign plan was rebuilt in around thirty minutes, and the agent identified relevant customer categories the team had not initially considered.",
         evidenceBase:
-          "Julie Huguet-Macquart, Group CRM Leader, presented this at the Connect Lille forum on 30 June and 1 July 2026, as reported by Républik Retail. She noted the beta is recent and its commercial impact is not yet measurable, and that access has been extended to customer-knowledge teams.",
+          "Julie Huguet-Macquart, Group CRM Leader, presented the CRM agent beta at the Connect Lille forum on 30 June and 1 July 2026, as reported by Républik Retail. She noted that the beta is recent, its commercial impact has not yet been measured, and access has been extended to customer-knowledge teams.",
         openQuestion:
-          "Could the same pattern serve forecasting and replenishment, as was raised from the floor at Connect Lille — and what would have to be true about data governance before that is safe?",
+          "Where else are time-sensitive business decisions delayed by dependence on specialist analysis, and could governed self-service access support areas such as forecasting and replenishment without compromising data quality, security or accountability?",
       },
     ],
   },
