@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -9,163 +9,55 @@ import {
   CheckCircle2,
   Sparkles,
   ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RichText } from "@/components/RichText";
+import { challenges, challengeThemes } from "@/lib/challengeData";
 import {
   type ChallengeCard,
+  type ChallengeChipKind,
   formatChallengeText,
   useSelectedChallenge,
 } from "@/lib/challengeStorage";
 
-// Cards from the Boehringer Ingelheim AI Immersion Day discovery brief,
-// framed as business problems for mixed leadership / HR breakout discussion
-// (not solution briefs). Ordered by impact priority — highest-impact cards
-// first. The internal `number` (Cxx) is kept as a stable id for storage
-// but is not surfaced in the UI per current design.
-const challenges: ChallengeCard[] = [
-  {
-    number: "C1",
-    company: "Boehringer Ingelheim",
-    theme: "Hiring & Recruitment / Launch & Scientific Talent",
-    title: "Critical launch roles are sourced too slowly to hit the launch window",
-    summary:
-      "Launch-critical roles in commercial, medical and computational science take too long to fill, putting peak-share at risk.",
-    challengeStatement:
-      "When a launch or a new platform lands, we're given a date, not a runway. The roles we need most — launch commercial, medical, oncology, computational science — are the hardest to fill, and by the time we've sourced and screened, the window has moved. We're always recruiting against the clock, and the clock keeps speeding up.",
-    whyNow:
-      "Hernexeos (US Aug 2025) and Jascayd (approved Oct/Dec 2025) are launching now, and survodutide's Phase III obesity readout (Apr 2026) points to a category-defining launch. The $20bn US build adds sustained demand. Launch peak-share is won or lost in the first months — exactly when hard-to-fill roles are still open.",
-    baselineMetrics: [
-      "Two live launches (Hernexeos, Jascayd) + one late-stage obesity asset (survodutide, ~16.6% mean weight loss, Ph III)",
-      "$20bn US investment plan 2025–2030 (sustained hiring demand)",
-      "R&D \u20AC6.4bn / 22.9% of sales — a deep, specialist hiring base",
-      "Operational baseline not public: time-to-fill, req volumes, offer-accept, cost-per-hire — validate live",
-    ],
-    audienceFit:
-      "Head of Talent Acquisition (launch & scientific); HRBP Human Pharma; TA Operations Lead",
-    crossFunctionalHooks:
-      "Launch Excellence Lead; Medical Affairs; Innovation Unit; Employer Brand; AI Governance Counsel",
-  },
-  {
-    number: "C2",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Launch Readiness",
-    title: "Launch readiness depends on capability we must build faster than we can hire",
-    summary:
-      "Field, medical and access teams can't be made launch-ready at launch speed using traditional content and classroom methods.",
-    challengeStatement:
-      "A launch lives or dies on whether the field, medical and access teams are ready on day one. Building that readiness the old way — classroom, slides, slow content — can't keep up with the launch calendar, and every market needs it slightly differently. We're always one cycle behind the launch we're training for.",
-    whyNow:
-      "Live launches (Hernexeos, Jascayd) and a probable obesity/MASH launch (survodutide) create back-to-back readiness demand across markets. The gap is not 'do we have academies' — it's whether content can be generated and localised at launch speed.",
-    baselineMetrics: [
-      "Two live launches + survodutide late-stage; multi-market rollout",
-      "Existing Functional-Specific Academies and Global Leadership Development Programs",
-      "Operational baseline not public: completion, time-to-competency, field-readiness scores — validate live",
-      "Academies exist; no public evidence of AI-accelerated, launch-speed content generation/localisation — that speed is the gap",
-    ],
-    audienceFit:
-      "Head of Commercial / Medical Learning; Launch Excellence Lead; COE Learning",
-    crossFunctionalHooks:
-      "Medical Affairs (MLR sign-off); Market access; Local affiliate L&D; Regulatory",
-  },
-  {
-    number: "C3",
-    company: "Boehringer Ingelheim",
-    theme: "HR Shared Services / Employee & Manager Self-Service",
-    title: "Employees and managers in 130+ markets wait too long for routine HR answers",
-    summary:
-      "Repeat HR queries in a dozen languages across time zones swamp GBS agents and crowd out complex cases.",
-    challengeStatement:
-      "Most of what people ask us, we've answered a thousand times — leave, pay, policy, 'where do I go for X'. But it arrives in a dozen languages across a dozen time zones, and it sits in a queue. People lose time, our agents drown in repeat tickets, and the simple stuff crowds out the cases that actually need a human.",
-    whyNow:
-      "GBS already runs hire-to-retire from four hubs, and the Feb 2026 IT/GBS board seat sharpens the mandate to automate Tier-0. GenAI makes confident, source-grounded answers viable where legacy portals don't.",
-    baselineMetrics: [
-      "GBS: ~2,000 staff across 4 centres (Manila, Buenos Aires, Germany, Wroclaw) running 'hire-to-retire'",
-      "130+ markets — multilingual, multi-policy demand",
-      "Harsha Deshmukh — IT & GBS board responsibility from 1 Feb 2026",
-      "Operational baseline not public: ticket volumes, deflection, handle times — validate live",
-    ],
-    audienceFit:
-      "Head of HR Services / HR@GBS; GBS Service-Line Owner",
-    crossFunctionalHooks:
-      "IT & GBS (Deshmukh org); Data Privacy; COE Policy; local HR",
-  },
-  {
-    number: "C4",
-    company: "Boehringer Ingelheim",
-    theme: "Hiring & Recruitment / Responsible AI Governance",
-    title: "Hiring and talent-decision AI must be provably fair, transparent and human-overseen",
-    summary:
-      "EU AI Act makes recruitment AI high-risk from Aug 2026 — BI needs an assurance layer it can stand behind to regulators and works councils.",
-    challengeStatement:
-      "Anything we build that touches who gets hired, promoted or moved is high-risk by law — and high-stakes for trust. We can't bolt governance on afterwards, but we also can't let 'it might be risky' freeze every useful tool. We need a way to deploy AI in talent decisions we can stand behind to a regulator, a works council and a candidate.",
-    whyNow:
-      "EU AI Act Annex III makes recruitment and worker-management AI high-risk; obligations apply from 2 Aug 2026, with fines up to \u20AC15m or 3% of global turnover. German co-determination adds a works-council dimension. This is buildable now and underpins every other hiring-related card.",
-    baselineMetrics: [
-      "EU AI Act (Reg. 2024/1689) Annex III — employment / worker-management = high-risk; obligations from 2 Aug 2026",
-      "Penalties up to \u20AC15,000,000 or 3% of worldwide annual turnover (Art. 99(4))",
-      "German Betriebsrat co-determination + GDPR Art. 22 constraints",
-      "Operational baseline not public: BI's current HR-AI inventory and works-council agreements — validate live",
-      "No public evidence of an HR-specific AI assurance layer — likely a real gap given the Aug 2026 deadline",
-    ],
-    audienceFit:
-      "CHRO office + AI Governance / Data Privacy Counsel; People Analytics; Employee Relations / Co-determination Lead",
-    crossFunctionalHooks:
-      "Legal & Compliance; IT & GBS; Data Governance; Works Council liaison",
-  },
-  {
-    number: "C5",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Skills Intelligence",
-    title: "We can't see the skills we already have, so we over-hire and under-deploy",
-    summary:
-      "Without an enterprise skills view, BI defaults to costly external hiring while internal talent stays invisible.",
-    challengeStatement:
-      "When a new priority lands, our first instinct is to hire — because we genuinely can't see who inside already has the adjacent skills. People who could grow into launch or AI-critical roles stay invisible, and we pay twice: external hiring cost, and disengaged internal talent who weren't asked.",
-    whyNow:
-      "Simultaneous launch + AI + US-build demand makes internal redeployment economically essential. Without a skills view, the default is always external hiring — the slowest, costliest option for scarce roles.",
-    baselineMetrics: [
-      "~54,000+ employees across 130+ markets — a large latent skills base",
-      "COE owns talent & succession and people development (natural home)",
-      "Growth-engine roles (launch, AI, manufacturing) all need adjacent skills",
-      "Operational baseline not public: internal-fill rate, skills coverage, mobility rate — validate live",
-      "No public evidence of an enterprise skills graph at BI — confirm in discovery",
-    ],
-    audienceFit:
-      "Head of Talent Management / Strategic Workforce Planning; People Analytics",
-    crossFunctionalHooks:
-      "HRBP community; IT & GBS; Data Privacy (employee-data sensitivity); function heads",
-  },
-  {
-    number: "C6",
-    company: "Boehringer Ingelheim",
-    theme: "Talent Development / Manufacturing Capability",
-    title: "The US manufacturing build needs GMP & Annex-1 capability faster than the labour market supplies it",
-    summary:
-      "BI can pour concrete faster than it can build the qualified, GMP-ready workforce to fill new US facilities.",
-    challengeStatement:
-      "We're committing billions to US manufacturing, but the people who can run modern sterile and biologics operations to current standards are scarce and slow to develop. We can pour concrete faster than we can build the qualified, GMP-ready workforce to fill the building.",
-    whyNow:
-      "The $20bn US plan includes manufacturing capex, and EU GMP Annex 1 (in force Aug 2023) raises the capability bar globally. Qualified operators and QA staff must be ready as capacity comes online — qualification can't be rushed.",
-    baselineMetrics: [
-      "$20bn US plan 2025–2030 (manufacturing capex component)",
-      "EU GMP Annex 1 contamination-control expectations",
-      "Global manufacturing & biologics (BioXcellence) network",
-      "Operational baseline not public: site headcount, qualification timelines, competency gaps — validate live",
-      "General manufacturing training exists; no public evidence of AI-accelerated qualification for the new US build",
-    ],
-    audienceFit:
-      "Head of Manufacturing / Operations L&D; Site HR; Quality Training Lead",
-    crossFunctionalHooks:
-      "Operations / Product Supply; Quality; Regulatory; IT & GBS",
-  },
-];
-
 const LG_BREAKPOINT = 1024;
+
+// Sentinel theme id for "show every card". Kept distinct from the real
+// theme ids in challengeData so it can never collide with one.
+const ALL_THEMES = "all";
+
+// Chip palette mirrors the source brief: green = medium difficulty,
+// orange = hard, amber = flagged build candidate, neutral = metadata.
+const CHIP_STYLES: Record<ChallengeChipKind, string> = {
+  med: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  hard: "bg-orange-100 text-orange-800 border-orange-200",
+  build: "bg-amber-100 text-amber-900 border-amber-300",
+  plain: "bg-muted text-muted-foreground border-border",
+};
 
 const ChallengeCards = () => {
   const navigate = useNavigate();
   const [activeChallenge, selectChallenge, clearChallenge] =
     useSelectedChallenge();
+
+  // Theme filter — participants land on "All themes" so nothing is hidden,
+  // then narrow to their own industry domain.
+  const [activeThemeId, setActiveThemeId] = useState<string>(ALL_THEMES);
+
+  const visibleChallenges = useMemo(
+    () =>
+      activeThemeId === ALL_THEMES
+        ? challenges
+        : challenges.filter((c) => c.themeId === activeThemeId),
+    [activeThemeId]
+  );
+
+  const themeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const c of challenges) counts[c.themeId] = (counts[c.themeId] ?? 0) + 1;
+    return counts;
+  }, []);
 
   // Right-pane preview (desktop split view). Defaults to the active
   // challenge if one is selected, otherwise the first card.
@@ -177,12 +69,18 @@ const ChallengeCards = () => {
   const [copied, setCopied] = useState(false);
   const [justSavedNumber, setJustSavedNumber] = useState<string | null>(null);
 
+  // Keep the detail pane inside the current filter — narrowing to a theme
+  // that doesn't contain the previewed card would otherwise leave a detail
+  // pane with no corresponding row in the list.
+  useEffect(() => {
+    if (!visibleChallenges.some((c) => c.number === viewing.number)) {
+      setViewing(visibleChallenges[0]);
+    }
+  }, [visibleChallenges, viewing.number]);
+
   const handleListItemClick = (card: ChallengeCard) => {
     setViewing(card);
-    if (
-      typeof window !== "undefined" &&
-      window.innerWidth < LG_BREAKPOINT
-    ) {
+    if (typeof window !== "undefined" && window.innerWidth < LG_BREAKPOINT) {
       setMobileOpen(card);
       setCopied(false);
     }
@@ -252,42 +150,53 @@ const ChallengeCards = () => {
         </div>
       </header>
 
-      {/* Intro description — full-width, tighter top spacing */}
-      <div className="px-6 pt-3 pb-2 max-w-7xl mx-auto w-full text-center shrink-0">
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-          Extracted and structured from the discovery brief. These cards are
-          framed as{" "}
-          <strong className="text-foreground">business problems</strong> for
-          mixed leadership / HR breakout discussions — not solution briefs.
-          Click any card on the left to view its full context, then choose one
-          to carry into the prompts page.
-        </p>
-      </div>
+      {/* Theme filter — the primary way into 24 cards, and the first thing
+          on the page. "All themes" stays first so no participant has to hunt
+          for the full set. */}
+      <ThemeFilter
+        activeThemeId={activeThemeId}
+        themeCounts={themeCounts}
+        totalCount={challenges.length}
+        onChange={setActiveThemeId}
+      />
 
       {/* Split view — list + detail */}
-      <div className="flex-1 px-4 sm:px-6 pb-6 max-w-7xl mx-auto w-full lg:min-h-0 lg:overflow-hidden mt-3">
+      <div className="flex-1 px-4 sm:px-6 pb-6 max-w-[1600px] mx-auto w-full lg:min-h-0 lg:overflow-hidden mt-3">
         <div className="h-full lg:grid lg:grid-cols-12 lg:gap-5">
           {/* Left: scrollable list */}
           <aside className="lg:col-span-5 lg:h-full lg:overflow-y-auto lg:pr-1 space-y-2.5 mb-4 lg:mb-0">
             <div className="hidden lg:flex items-center justify-between sticky top-0 bg-background py-2 z-10 border-b border-border mb-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                {challenges.length} Challenges
+                {visibleChallenges.length}{" "}
+                {visibleChallenges.length === 1 ? "Challenge" : "Challenges"}
+                {activeThemeId !== ALL_THEMES ? " in this theme" : ""}
               </span>
               <span className="text-[10px] text-muted-foreground">
                 Click to preview · Use to anchor prompts
               </span>
             </div>
-            {challenges.map((card) => {
+            {visibleChallenges.map((card, idx) => {
               const isActive = activeChallenge?.number === card.number;
               const isViewing = viewing.number === card.number;
+              // When showing every theme, a group header keeps the long list
+              // navigable without collapsing anything away.
+              const showGroupHeader =
+                activeThemeId === ALL_THEMES &&
+                card.themeId !== visibleChallenges[idx - 1]?.themeId;
               return (
-                <ListItem
-                  key={card.number}
-                  card={card}
-                  isActive={isActive}
-                  isViewing={isViewing}
-                  onClick={() => handleListItemClick(card)}
-                />
+                <div key={card.number} className="space-y-2.5">
+                  {showGroupHeader && (
+                    <h2 className="pt-2 text-[11px] font-bold uppercase tracking-wider text-primary/80">
+                      {card.theme}
+                    </h2>
+                  )}
+                  <ListItem
+                    card={card}
+                    isActive={isActive}
+                    isViewing={isViewing}
+                    onClick={() => handleListItemClick(card)}
+                  />
+                </div>
               );
             })}
           </aside>
@@ -352,6 +261,118 @@ const ChallengeCards = () => {
 // Subcomponents
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
 
+interface ThemeFilterProps {
+  activeThemeId: string;
+  themeCounts: Record<string, number>;
+  totalCount: number;
+  onChange: (themeId: string) => void;
+}
+
+function ThemeFilter({
+  activeThemeId,
+  themeCounts,
+  totalCount,
+  onChange,
+}: ThemeFilterProps) {
+  // Segmented control on a single line at every screen size. Each pill is
+  // `flex-1 min-w-fit`, so the seven options stretch to share the full
+  // content width when there's room and hold their natural width when there
+  // isn't — in which case the strip scrolls sideways inside its own border
+  // rather than wrapping or truncating a label.
+  return (
+    <div className="px-4 sm:px-6 pt-3 max-w-[1600px] mx-auto w-full shrink-0">
+      <div className="rounded-xl border border-border bg-card p-1.5 shadow-sm overflow-x-auto">
+        <div className="flex items-center gap-1.5">
+          <FilterPill
+            label="All themes"
+            title={`Show all ${totalCount} challenges`}
+            count={totalCount}
+            isActive={activeThemeId === ALL_THEMES}
+            onClick={() => onChange(ALL_THEMES)}
+          />
+
+          {challengeThemes.map((theme) => (
+            <FilterPill
+              key={theme.id}
+              label={theme.short}
+              title={theme.label}
+              count={themeCounts[theme.id] ?? 0}
+              isActive={activeThemeId === theme.id}
+              onClick={() => onChange(theme.id)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface FilterPillProps {
+  label: string;
+  title: string;
+  count: number;
+  isActive: boolean;
+  onClick: () => void;
+  className?: string;
+}
+
+function FilterPill({
+  label,
+  title,
+  count,
+  isActive,
+  onClick,
+  className,
+}: FilterPillProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isActive}
+      title={title}
+      className={`group flex flex-1 min-w-fit items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+        isActive
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:bg-primary/[0.07] hover:text-primary"
+      } ${className ?? ""}`}
+    >
+      <span>{label}</span>
+      <span
+        className={`shrink-0 rounded-full px-1.5 text-[10px] font-bold leading-tight tabular-nums ${
+          isActive
+            ? "bg-primary-foreground/20 text-primary-foreground"
+            : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+        }`}
+      >
+        {count}
+      </span>
+    </button>
+  );
+}
+
+function ChipRow({
+  chips,
+  className,
+}: {
+  chips: ChallengeCard["chips"];
+  className?: string;
+}) {
+  return (
+    <div className={`flex flex-wrap gap-1.5 ${className ?? ""}`}>
+      {chips.map((chip) => (
+        <span
+          key={chip.label}
+          className={`inline-block rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider leading-tight ${
+            CHIP_STYLES[chip.kind]
+          }`}
+        >
+          {chip.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 interface ListItemProps {
   card: ChallengeCard;
   isActive: boolean;
@@ -384,10 +405,10 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
 
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          {/* Header row: card-number tag + full Selected chip (when active) + theme pill.
-              The tiny mono number chip is shown ONLY here in the list view —
-              it's intentionally not included in the Widen-step prompt
-              injection or the copy-to-clipboard text. */}
+          {/* Header row: card-number tag + full Selected chip (when active) +
+              focus pill. The tiny mono number chip is shown ONLY here in the
+              list view — it's intentionally not included in the Widen-step
+              prompt injection or the copy-to-clipboard text. */}
           <div className="flex items-center gap-1.5 mb-2 flex-wrap">
             <span
               className={`inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-[10px] font-bold font-mono leading-none ${
@@ -397,7 +418,7 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
                   ? "bg-primary/10 text-primary border-primary/20"
                   : "bg-muted text-muted-foreground border-border"
               }`}
-              title={`Challenge ${card.number}`}
+              title={`Challenge ${card.number} · ${card.theme}`}
             >
               {card.number}
             </span>
@@ -414,7 +435,7 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
                   : "bg-primary/10 text-primary"
               }`}
             >
-              {card.theme}
+              {card.focus}
             </span>
           </div>
           <h3
@@ -431,6 +452,7 @@ function ListItem({ card, isActive, isViewing, onClick }: ListItemProps) {
           <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
             {card.summary}
           </p>
+          <ChipRow chips={card.chips} className="mt-2.5" />
         </div>
 
         <ChevronRight
@@ -547,63 +569,70 @@ function DetailContent({
 
       {/* Scrollable body content */}
       <div className="px-6 sm:px-8 py-6 sm:py-8">
-        {/* Theme + Title */}
+        {/* Theme · focus + Title */}
         <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">
-          {card.theme}
+          {card.theme} · {card.focus}
         </p>
-        <h2 className="text-2xl font-bold font-display text-card-foreground leading-snug mb-5">
+        <h2 className="text-2xl font-bold font-display text-card-foreground leading-snug mb-3">
           {card.title}
         </h2>
 
-        {/* Highlighted challenge statement */}
+        <ChipRow chips={card.chips} className="mb-5" />
+
+        {/* Highlighted context — the situation as it stands today */}
         <div className="mb-6 rounded-lg border-l-4 border-accent bg-accent/5 px-4 py-3">
           <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
-            Challenge statement
+            Context
           </h3>
-          <p className="text-base text-card-foreground leading-relaxed italic">
-            &ldquo;{card.challengeStatement}&rdquo;
+          <p className="text-sm text-card-foreground leading-relaxed">
+            <RichText text={card.context} />
           </p>
         </div>
 
-        <Section label="Why now">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {card.whyNow}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6">
+          <Section label="Why it's hard">
+            <BulletList items={card.whyHard} />
+          </Section>
+
+          <Section label="Why agentic AI">
+            <BulletList items={card.whyAgentic} />
+          </Section>
+        </div>
+
+        <Section label="Success criteria">
+          <BulletList items={card.successCriteria} />
+        </Section>
+
+        {/* Human sign-off gate — the boundary every card in the set carries. */}
+        <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+          <h3 className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-900 mb-1.5">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Human sign-off gate
+          </h3>
+          <p className="text-sm text-amber-950 leading-relaxed">
+            <RichText text={card.signOffGate} />
           </p>
-        </Section>
-
-        <Section label="Baseline metrics / evidence">
-          <ul className="space-y-1.5">
-            {card.baselineMetrics.map((m, i) => (
-              <li
-                key={i}
-                className="text-sm text-muted-foreground leading-relaxed flex gap-2"
-              >
-                <span className="text-primary mt-0.5 shrink-0">●</span> {m}
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="rounded-lg border border-border bg-muted/30 p-3">
-            <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
-              Audience fit
-            </h3>
-            <p className="text-xs text-card-foreground leading-relaxed">
-              {card.audienceFit}
-            </p>
-          </div>
-          <div className="rounded-lg border border-border bg-muted/30 p-3">
-            <h3 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1.5">
-              Cross-functional hooks
-            </h3>
-            <p className="text-xs text-card-foreground leading-relaxed">
-              {card.crossFunctionalHooks}
-            </p>
-          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-1.5">
+      {items.map((item, i) => (
+        <li
+          key={i}
+          className="text-sm text-muted-foreground leading-relaxed flex gap-2"
+        >
+          <span className="text-primary mt-0.5 shrink-0">●</span>
+          <span>
+            <RichText text={item} />
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 

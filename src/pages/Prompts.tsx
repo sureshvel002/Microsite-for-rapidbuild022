@@ -11,8 +11,10 @@ import {
   Bot,
   MessageCircle,
   ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RichText } from "@/components/RichText";
 import {
   type ChallengeCard,
   formatChallengeText,
@@ -54,7 +56,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:boehringer-ingelheim-v1";
+const TOOL_STORAGE_KEY = "workshopTool:gms-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;
@@ -83,7 +85,7 @@ const prompts: Prompt[] = [
   {
     step: 1,
     label: "Widen",
-    text: `Act as a research aide for [SELECTED CHALLENGE] for Boehringer Ingelheim. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
+    text: `Act as a research aide for [SELECTED CHALLENGE]. List key personas, top pains, current workarounds, and success metrics. Return 5 insights & 3 risks tailored to this challenge context.`,
   },
   {
     step: 2,
@@ -99,12 +101,12 @@ const prompts: Prompt[] = [
 2. Analytics / ML — forecast, optimise, recommend.
 3. Automation — CV, RAG / Co-Pilot, tasking.
 
-Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. Recommend one pilot with the smallest integration surface and clearest value proof to Boehringer Ingelheim.`,
+Score each on Impact \u00D7 Feasibility \u00D7 Confidence \u00D7 Time-to-Value. Recommend one pilot with the smallest integration surface and the clearest value proof for the client.`,
   },
   {
     step: 4,
     label: "Brief",
-    text: `For option [NUMBER], create a one-page pilot brief including: Target user(s), problem statement, success metrics & baselines, target uplift, key flow (5\u20137 steps), screens/components, sample UI copy, representative sample data, integration points, and relevant guardrails (GDPR/PCI, domain-specific regulation boundaries, bias tests, fallback behaviour).`,
+    text: `For option [NUMBER], create a one-page pilot brief including: Target user(s), problem statement, success metrics & baselines, target uplift, key flow (5\u20137 steps), screens/components, sample UI copy, representative sample data, integration points, and relevant guardrails (GDPR/PCI, domain-specific regulation boundaries, bias tests, fallback behaviour). Carry the human sign-off gate from the challenge card through into the flow as an explicit approval step.`,
   },
   {
     step: 5,
@@ -156,7 +158,9 @@ function buildPromptSegments(
   challenge: ChallengeCard | null
 ): { segments: PromptSegment[]; text: string; injected: boolean } {
   // Step 1 (Widen) carries a `[SELECTED CHALLENGE]` placeholder.
-  // When a challenge is selected, swap it in-place with the card title.
+  // When a challenge is selected, swap it in-place with the card title and
+  // its industry theme — the cards span six domains, so the theme is what
+  // tells the assistant which industry it is reasoning about.
   // Cards with `injectionMode: "full"` instead get the entire structured
   // challenge block injected for richer context.
   if (step === 1 && challenge) {
@@ -169,7 +173,7 @@ function buildPromptSegments(
       const injectedText =
         challenge.injectionMode === "full"
           ? `the following challenge:\n\n${formatChallengeText(challenge)}\n`
-          : challenge.title;
+          : `${challenge.title} (${challenge.theme})`;
       const segments: PromptSegment[] = [
         ...splitPlaceholders(before),
         { type: "injected", text: injectedText },
@@ -193,7 +197,7 @@ function buildPromptSegments(
 }
 
 // Inline highlight for system-injected challenge content. When the injected
-// payload is long (e.g. C11's `injectionMode: "full"` block), it's
+// payload is long (an `injectionMode: "full"` block), it's
 // collapsed by default with a Read more / Read less toggle — keeps the
 // surrounding prompt instructions readable. Short injections (title-only
 // mode) render as a plain inline highlight, no toggle.
@@ -563,7 +567,7 @@ function SelectedChallengePanel({
             Selected Challenge
           </span>
           <span className="text-[10px] text-muted-foreground truncate">
-            · {challenge.company}
+            · {challenge.theme}
           </span>
         </div>
         <div className="flex items-center gap-1 shrink-0">
@@ -587,52 +591,55 @@ function SelectedChallengePanel({
       {/* Scrollable full-content body (mirrors the Challenge Cards popup) */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3">
         <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">
-          {challenge.theme}
+          {challenge.focus}
         </p>
-        <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-3">
+        <h3 className="text-base font-bold font-display text-card-foreground leading-snug mb-2">
           {challenge.title}
         </h3>
 
-        {/* Highlighted challenge statement */}
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {challenge.chips.map((chip) => (
+            <span
+              key={chip.label}
+              className="inline-block rounded border border-border bg-muted px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider leading-tight text-muted-foreground"
+            >
+              {chip.label}
+            </span>
+          ))}
+        </div>
+
+        {/* Highlighted context — the situation as it stands today */}
         <div className="mb-4 rounded-md border-l-[3px] border-accent bg-accent/5 px-3 py-2">
           <h4 className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">
-            Challenge statement
+            Context
           </h4>
-          <p className="text-xs text-card-foreground leading-relaxed italic">
-            &ldquo;{challenge.challengeStatement}&rdquo;
+          <p className="text-xs text-card-foreground leading-relaxed">
+            <RichText text={challenge.context} />
           </p>
         </div>
 
-        <PanelSection label="Why now">
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {challenge.whyNow}
-          </p>
+        <PanelSection label="Why it's hard">
+          <PanelBullets items={challenge.whyHard} />
         </PanelSection>
 
-        <PanelSection label="Baseline metrics / evidence">
-          <ul className="space-y-1.5">
-            {challenge.baselineMetrics.map((m, i) => (
-              <li
-                key={i}
-                className="text-xs text-muted-foreground leading-relaxed flex gap-2"
-              >
-                <span className="text-primary mt-0.5 shrink-0">●</span> {m}
-              </li>
-            ))}
-          </ul>
+        <PanelSection label="Why agentic AI">
+          <PanelBullets items={challenge.whyAgentic} />
         </PanelSection>
 
-        <PanelSection label="Audience fit">
-          <p className="text-xs text-card-foreground leading-relaxed">
-            {challenge.audienceFit}
-          </p>
+        <PanelSection label="Success criteria">
+          <PanelBullets items={challenge.successCriteria} />
         </PanelSection>
 
-        <PanelSection label="Cross-functional hooks" last>
-          <p className="text-xs text-card-foreground leading-relaxed">
-            {challenge.crossFunctionalHooks}
+        {/* Human sign-off gate — the boundary every card in the set carries. */}
+        <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2">
+          <h4 className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-900 mb-1">
+            <ShieldCheck className="h-3 w-3" />
+            Human sign-off gate
+          </h4>
+          <p className="text-xs text-amber-950 leading-relaxed">
+            <RichText text={challenge.signOffGate} />
           </p>
-        </PanelSection>
+        </div>
       </div>
     </div>
   );
@@ -748,6 +755,24 @@ function PanelSection({
       </h4>
       {children}
     </div>
+  );
+}
+
+function PanelBullets({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-1.5">
+      {items.map((item, i) => (
+        <li
+          key={i}
+          className="text-xs text-muted-foreground leading-relaxed flex gap-2"
+        >
+          <span className="text-primary mt-0.5 shrink-0">●</span>
+          <span>
+            <RichText text={item} />
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
