@@ -53,7 +53,7 @@ const Index = () => {
         {/* Title block */}
         <div className="text-center mb-7 md:mb-9">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-foreground mb-2.5 md:mb-3">
-            GMS AI Immersion Day
+            GM AI Immersion Day
           </h1>
           <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Resources for the Growth Market Sales immersion — deep research context, 24 agentic challenge cards across six industry themes, and the Double Diamond prompts that turn one of them into a working pilot.
