@@ -8,7 +8,7 @@ export interface ChallengeChip {
   kind: ChallengeChipKind;
 }
 
-// Schema mirrors the GMS (Growth Market Sales) Enterprise Agentic AI
+// Schema mirrors the gm (Growth Market Sales) Enterprise Agentic AI
 // challenge-card brief: each card frames an *agentic build candidate* for
 // breakout discussion — the industry context, why it resists a naive
 // solution, why an agentic decomposition fits, what success looks like, and
@@ -45,7 +45,7 @@ export interface ChallengeCard {
 // auto-invalidated whenever the data shape changes. Bump the suffix on
 // each new client immersion *and* whenever the ChallengeCard interface
 // above changes shape.
-const STORAGE_KEY = "selectedChallenge:gms-v1";
+const STORAGE_KEY = "selectedChallenge:gm-v1";
 const STORAGE_EVENT = "selectedChallenge:changed";
 
 // Best-effort cleanup of legacy keys from prior immersions / schemas so

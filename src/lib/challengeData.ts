@@ -1,7 +1,7 @@
 import type { ChallengeCard } from "@/lib/challengeStorage";
 
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-// GMS (Growth Market Sales) Enterprise Agentic AI Challenge Cards
+// gm (Growth Market Sales) Enterprise Agentic AI Challenge Cards
 //
 // Twenty-four challenges across six industry domains, four per domain.
 // Every card is agentic by construction — work is decomposed across
@@ -10,7 +10,7 @@ import type { ChallengeCard } from "@/lib/challengeStorage";
 // action on money, clinical care, network control or a customer-facing
 // commitment.
 //
-// Source of truth: the GMS challenge-card brief. Emphasis inside body text
+// Source of truth: the gm challenge-card brief. Emphasis inside body text
 // uses `**bold**` markers, rendered inline by <RichText> in
 // ChallengeCards.tsx / Prompts.tsx. `number` is a stable internal id used
 // for storage and list badges.

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 
 // Challenge-card body text carries `**bold**` emphasis markers, authored in
-// the GMS brief to mark the crux of each bullet. Rendering them inline keeps
+// the gm brief to mark the crux of each bullet. Rendering them inline keeps
 // that emphasis without putting raw HTML into the data module.
 const EMPHASIS_RE = /\*\*(.+?)\*\*/g;
 

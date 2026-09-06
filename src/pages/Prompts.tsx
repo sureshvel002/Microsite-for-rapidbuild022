@@ -56,7 +56,7 @@ const isVariantPrompt = (p: Prompt): p is VariantPrompt =>
 // after using one tool for Steps 1–4. Persisted in localStorage so the
 // pick survives page reloads (matches the challenge-selection pattern).
 // — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
-const TOOL_STORAGE_KEY = "workshopTool:gms-v1";
+const TOOL_STORAGE_KEY = "workshopTool:gm-v1";
 
 function readStoredTool(): string | null {
   if (typeof window === "undefined") return null;

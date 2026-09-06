@@ -10,11 +10,11 @@ const AI_TOOLS = [
   { name: "Open Google AI Studio", url: "https://aistudio.google.com", color: "bg-googleai hover:bg-googleai/90 text-primary-foreground" },
 ];
 
-// Drop the GMS deep research PDF at this path in `public/` and the viewer
+// Drop the gm deep research PDF at this path in `public/` and the viewer
 // picks it up with no code change. Until it lands, the page shows a
 // "not published yet" state instead of a browser PDF error.
-const PDF_PATH = "/documents/gms_agentic_ai_deep_research.pdf";
-const DOWNLOAD_FILENAME = "GMS - Enterprise Agentic AI Context Pack.pdf";
+const PDF_PATH = "/documents/gm_agentic_ai_deep_research.pdf";
+const DOWNLOAD_FILENAME = "GM - Enterprise Agentic AI Context Pack.pdf";
 
 type PdfState = "checking" | "available" | "missing";
 
@@ -58,7 +58,7 @@ const DeepResearch = () => {
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
             <h1 className="text-lg font-semibold font-display text-card-foreground">
-              GMS Context Pack
+              GM Context Pack
             </h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -88,7 +88,7 @@ const DeepResearch = () => {
             <iframe
               src={PDF_PATH}
               className="w-full h-full"
-              title="GMS Context Pack"
+              title="GM Context Pack"
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center gap-3 px-8">
@@ -103,7 +103,7 @@ const DeepResearch = () => {
               {pdfState === "missing" && (
                 <>
                   <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-                    The GMS deep research brief hasn&rsquo;t been added to this
+                    The GM deep research brief hasn&rsquo;t been added to this
                     site yet. Once it&rsquo;s dropped in, it will open and
                     download from right here.
                   </p>

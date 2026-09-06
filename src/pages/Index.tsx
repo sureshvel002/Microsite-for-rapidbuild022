@@ -28,7 +28,7 @@ const steps = [
     title: "Prompts",
     tagline: "Run Prompt",
     description:
-      "Double Diamond framework prompts for the GMS immersion. Copy and use with your preferred AI assistant.",
+      "Double Diamond framework prompts for the GM immersion. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
     gradient: "from-primary to-accent",
