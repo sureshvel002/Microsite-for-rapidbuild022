@@ -1,37 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { Download, Images, MessageSquare, ArrowRight, ChevronRight } from "lucide-react";
+import { Images, MessageSquare, ArrowRight, ChevronRight } from "lucide-react";
 import tcsLogo from "@/assets/TCS Co Logo SVG.svg";
 
 const steps = [
   {
     step: 1,
-    title: "Context Pack",
-    tagline: "Get Context",
+    title: "Challenge Cards",
+    tagline: "Pick Challenge",
     description:
-      "Download the Eneco Belgium deep research report — the company, its market, its competitors, its commercial model, its assets, its technology and its organisation.",
-    icon: Download,
-    path: "/deep-research",
+      "Explore the five prioritised challenge cards for OP Pohjola — each framed as a business problem for leadership breakout discussion.",
+    icon: Images,
+    path: "/challenge-cards",
     gradient: "from-primary to-accent",
   },
   {
     step: 2,
-    title: "Challenge Cards",
-    tagline: "Pick Challenge",
-    description:
-      "Explore the three challenge cards carried in the report — one technology-rooted, two business — framed for domain-advisor & consultant breakout discussions.",
-    icon: Images,
-    path: "/challenge-cards",
-    gradient: "from-accent to-primary",
-  },
-  {
-    step: 3,
     title: "Prompts",
     tagline: "Run Prompt",
     description:
-      "Double Diamond framework prompts tailored for the Eneco Belgium immersion. Copy and use with your preferred AI assistant.",
+      "Double Diamond framework prompts tailored for the OP Pohjola immersion. Copy and use with your preferred AI assistant.",
     icon: MessageSquare,
     path: "/prompts",
-    gradient: "from-primary to-accent",
+    gradient: "from-accent to-primary",
   },
 ];
 
@@ -53,10 +43,10 @@ const Index = () => {
         {/* Title block */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground mb-4">
-            Eneco België — AI Immersion
+            OP Pohjola — AI Immersion
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Resources for the TCS AI Immersion with Eneco België — the deep research report, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
+            Resources for the TCS AI Immersion with OP Pohjola — the five prioritised challenge cards, the Double Diamond framework, and prompts to turn business problems into AI-driven pilots.
           </p>
         </div>
 
@@ -116,7 +106,7 @@ const Index = () => {
 
         {/* Subtle footer tag */}
         <p className="text-center text-xs font-medium tracking-widest uppercase text-muted-foreground mt-10">
-          A guided three-step journey · Get Context → Pick Challenge → Run Prompt
+          A guided two-step journey · Pick Challenge → Run Prompt
         </p>
       </div>
     </div>
